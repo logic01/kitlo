@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Component Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Template-only: section separators + labels */
+  .t-section {
+    max-width: 1280px;
+    margin-inline: auto;
+    padding: 60px 52px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .t-section:last-of-type { border-bottom: none; }
+
+  .t-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .t-heading {
+    font-family: var(--font-condensed);
+    font-weight: 900;
+    font-size: 28px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-slate);
+    margin-bottom: 32px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--color-slate);
+  }
+
+  .t-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; margin-bottom: 24px; }
+  .t-col { flex: 1; min-width: 220px; }
+  .t-col-narrow { flex: 0 0 auto; min-width: 160px; }
+  .t-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .t-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+  /* Swatch display */
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .swatch { border: 1px solid var(--color-border); overflow: hidden; }
+  .swatch-color { height: 60px; }
+  .swatch-info { padding: 10px 12px; }
+  .swatch-name { font-family: var(--font-condensed); font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--color-slate); }
+  .swatch-hex { font-family: var(--font-mono); font-size: 10px; color: var(--color-muted); margin-top: 2px; }
+
+  /* Dark bg wrapper for dark-section components */
+  .on-dark-wrap { background: var(--color-slate); padding: 40px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAV
+============================================================ -->
+<nav class="nav">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Browse gear</a></li>
+    <li><a href="#">List gear</a></li>
+    <li><a href="#" class="active">How it works</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost">Sign in</a>
+    <a href="#" class="btn btn-primary">List your gear</a>
+  </div>
+</nav>
+
+<!-- ============================================================
+     01 — COLOR PALETTE
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">01</span>
+  <div class="t-heading">Color Palette</div>
+
+  <div class="t-label" style="margin-bottom:12px;">Primary</div>
+  <div class="swatch-grid" style="margin-bottom:32px;">
+    <div class="swatch"><div class="swatch-color" style="background:#F7F7F1; border-bottom:1px solid #D8D8D0;"></div><div class="swatch-info"><div class="swatch-name">Bone White</div><div class="swatch-hex">--color-bg · #F7F7F1</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#EEEDE6;"></div><div class="swatch-info"><div class="swatch-name">Warm Surface</div><div class="swatch-hex">--color-surface · #EEEDE6</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#2F353B;"></div><div class="swatch-info"><div class="swatch-name">Backcountry Slate</div><div class="swatch-hex">--color-slate · #2F353B</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#535A2D;"></div><div class="swatch-info"><div class="swatch-name">Alpine Earth</div><div class="swatch-hex">--color-olive · #535A2D</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#F2994A;"></div><div class="swatch-info"><div class="swatch-name">Safety Amber</div><div class="swatch-hex">--color-amber · #F2994A</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#1E2428;"></div><div class="swatch-info"><div class="swatch-name">Deep Charcoal</div><div class="swatch-hex">--color-footer-bg · #1E2428</div></div></div>
+  </div>
+
+  <div class="t-label" style="margin-bottom:12px;">Condition System</div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="swatch-color" style="background:#2D6B3A;"></div><div class="swatch-info"><div class="swatch-name">Mint</div><div class="swatch-hex">--color-mint · #2D6B3A</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#535A2D;"></div><div class="swatch-info"><div class="swatch-name">Field-Ready</div><div class="swatch-hex">--color-field · #535A2D</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#D4781E;"></div><div class="swatch-info"><div class="swatch-name">Battle-Scarred</div><div class="swatch-hex">--color-battle · #D4781E</div></div></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     02 — TYPOGRAPHY
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">02</span>
+  <div class="t-heading">Typography Scale</div>
+
+  <div style="margin-bottom:12px;" class="text-overline">Overline — Roboto Mono 10px UPPERCASE</div>
+  <div style="margin-bottom:16px;" class="text-h4">H4 — Barlow Condensed 18px</div>
+  <div style="margin-bottom:16px;" class="text-h3">H3 — Barlow Condensed 22px</div>
+  <div style="margin-bottom:16px;" class="text-h2">H2 — Barlow Condensed 32px</div>
+  <div style="margin-bottom:16px;" class="text-h1">H1 — Barlow Condensed 42px</div>
+  <div style="margin-bottom:16px;" class="text-display">Display — 40–56px</div>
+  <div style="margin-bottom:24px;" class="text-hero" style="font-size:clamp(40px,5vw,64px);">HERO</div>
+
+  <div class="rule" style="margin-bottom:24px;"></div>
+
+  <p class="text-body-lg" style="max-width:480px; margin-bottom:12px;">Body Large — DM Sans 17px. Used for hero subheadings and introductory paragraphs. Color is muted to let headings breathe.</p>
+  <p class="text-body" style="max-width:480px; margin-bottom:12px;">Body — DM Sans 15px. General copy, descriptions, listing notes. Line height 1.65 for readability in the field.</p>
+  <p class="text-sm" style="margin-bottom:12px;">Small — 14px. Nav links, card body text, form labels.</p>
+  <p class="text-xs text-muted">Extra small — 13px. UI footnotes, secondary meta.</p>
+
+  <div class="rule" style="margin:24px 0;"></div>
+
+  <div class="t-row">
+    <div><span class="text-mono" style="font-size:22px; color:var(--color-olive);">$225/day</span><br><span class="text-overline" style="margin-top:6px; display:block;">Price — Roboto Mono 22px</span></div>
+    <div><span class="text-mono">640×480 VOx · 2–16× · 1,800m</span><br><span class="text-overline" style="margin-top:6px; display:block;">Spec data — Roboto Mono 14px</span></div>
+    <div><span class="text-overline">KTL-2026-00847</span><br><span class="text-overline" style="margin-top:6px; display:block;">Reference — Roboto Mono 10px</span></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     03 — BUTTONS
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">03</span>
+  <div class="t-heading">Buttons</div>
+
+  <div class="t-row">
+    <button class="btn btn-primary">Book this gear</button>
+    <button class="btn btn-secondary">List your gear</button>
+    <button class="btn btn-olive">Find gear</button>
+    <button class="btn btn-ghost">Sign in</button>
+    <button class="btn btn-outline" style="background:var(--color-slate);">Outline (on dark)</button>
+  </div>
+
+  <div class="t-row">
+    <button class="btn btn-primary btn-sm">Small primary</button>
+    <button class="btn btn-secondary btn-sm">Small secondary</button>
+    <button class="btn btn-ghost btn-sm">Small ghost</button>
+  </div>
+
+  <div class="t-row">
+    <button class="btn btn-primary btn-lg">Large — Confirm booking — charge $801.00</button>
+    <button class="btn btn-secondary btn-lg">Large secondary</button>
+  </div>
+
+  <div class="t-row">
+    <button class="btn btn-olive btn--condensed">Search Gear</button>
+    <button class="btn btn-secondary btn--condensed">Add Listing</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     04 — FORM INPUTS
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">04</span>
+  <div class="t-heading">Forms & Inputs</div>
+
+  <div class="t-grid-3" style="margin-bottom:24px;">
+    <div class="form-group">
+      <label class="input-label">Location</label>
+      <input type="text" class="input" placeholder="San Antonio, TX">
+    </div>
+    <div class="form-group">
+      <label class="input-label">Gear Type</label>
+      <input type="text" class="input" placeholder="Thermal, Night Vision, Bundle...">
+    </div>
+    <div class="form-group">
+      <label class="input-label">Daily Rate</label>
+      <input type="text" class="input" placeholder="$225">
+      <span class="form-error">Rate must be above $10/day</span>
+    </div>
+  </div>
+
+  <div class="t-label" style="margin-bottom:8px;">Search bar — combined inputs</div>
+  <div class="search-bar" style="max-width:640px; margin-bottom:24px;">
+    <input class="input" type="text" placeholder="San Antonio, TX">
+    <input class="input" type="text" placeholder="Thermal, NV, Bundle...">
+    <button class="btn btn-olive btn--condensed">Find Gear</button>
+  </div>
+
+  <div class="t-label" style="margin-bottom:8px;">Textarea</div>
+  <div class="form-group" style="max-width:480px;">
+    <label class="input-label">Notes for renters</label>
+    <textarea class="input" rows="4" placeholder="Describe any wear, quirks, or things the renter should know before pickup." style="resize:vertical;"></textarea>
+    <span class="text-xs text-muted" style="text-align:right;">0 / 500</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     05 — BADGES & TAGS
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">05</span>
+  <div class="t-heading">Badges & Tags</div>
+
+  <div class="t-label" style="margin-bottom:8px;">Condition badges</div>
+  <div class="t-row" style="margin-bottom:24px;">
+    <span class="badge-condition badge-mint">Mint</span>
+    <span class="badge-condition badge-field-ready">Field-Ready</span>
+    <span class="badge-condition badge-battle-scarred">Battle-Scarred</span>
+  </div>
+
+  <div class="t-label" style="margin-bottom:8px;">Verified Hunter badge</div>
+  <div class="t-row" style="margin-bottom:24px;">
+    <span class="badge-verified">
+      <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor"><path d="M4 0L0 1.5v3C0 7 2 9.2 4 10 6 9.2 8 7 8 4.5v-3L4 0z"/></svg>
+      Verified Hunter
+    </span>
+  </div>
+
+  <div class="t-label" style="margin-bottom:8px;">Gear type tag</div>
+  <div class="t-row" style="margin-bottom:24px;">
+    <span class="tag-type">Thermal Scope</span>
+    <span class="tag-type">Night Vision</span>
+    <span class="tag-type">Bundle</span>
+  </div>
+
+  <div class="t-label" style="margin-bottom:8px;">Booking & listing status badges</div>
+  <div class="t-row" style="margin-bottom:24px;">
+    <span class="status-badge status-confirmed">Confirmed</span>
+    <span class="status-badge status-active">Active</span>
+    <span class="status-badge status-returned">Returned</span>
+    <span class="status-badge status-completed">Completed</span>
+    <span class="status-badge status-disputed">Disputed</span>
+    <span class="status-badge status-cancelled">Cancelled</span>
+  </div>
+  <div class="t-row" style="margin-bottom:24px;">
+    <span class="status-badge status-draft">Draft</span>
+    <span class="status-badge status-pending">Pending Review</span>
+    <span class="status-badge status-paused">Paused</span>
+    <span class="status-badge status-flagged">Flagged</span>
+    <span class="status-badge status-archived">Archived</span>
+  </div>
+
+  <div class="t-label" style="margin-bottom:8px;">Admin queue reason badges</div>
+  <div class="t-row">
+    <span class="queue-reason high-value">High Value ≥ $5K</span>
+    <span class="queue-reason flagged">Flagged by User</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     06 — LISTING CARD
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">06</span>
+  <div class="t-heading">Listing Card</div>
+
+  <div class="grid-3">
+    <!-- Thermal -->
+    <div class="listing-card">
+      <div class="listing-card-img" style="background: linear-gradient(150deg, #1A2010 0%, #2A3318 100%);">
+        <span class="tag-type">Thermal Scope</span>
+      </div>
+      <div class="listing-card-body">
+        <div class="listing-card-header">
+          <div class="listing-card-name">Pulsar<br>Thermion 2 XP50</div>
+          <span class="badge-condition badge-field-ready">Field-Ready</span>
+        </div>
+        <div class="listing-card-sub">640×480 VOx · 2–16× · 1800m detect</div>
+        <div class="listing-card-footer">
+          <div class="avatar avatar-sm avatar-olive">J</div>
+          <span class="listing-card-lister-name">Jake R.</span>
+          <span class="badge-verified" style="font-size:9px; padding:1px 5px;">
+            <svg width="6" height="8" viewBox="0 0 8 10" fill="currentColor"><path d="M4 0L0 1.5v3C0 7 2 9.2 4 10 6 9.2 8 7 8 4.5v-3L4 0z"/></svg>
+          </span>
+          <span class="listing-card-rating">4.9 · 34</span>
+          <span class="listing-card-price">$225/day</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NV -->
+    <div class="listing-card">
+      <div class="listing-card-img" style="background: linear-gradient(150deg, #0E1818 0%, #1A2A28 100%);">
+        <span class="tag-type">Night Vision</span>
+      </div>
+      <div class="listing-card-body">
+        <div class="listing-card-header">
+          <div class="listing-card-name">PVS-14<br>Gen 3 Monocular</div>
+          <span class="badge-condition badge-mint">Mint</span>
+        </div>
+        <div class="listing-card-sub">Head-mount + Weapon · Gen III Intensifier</div>
+        <div class="listing-card-footer">
+          <div class="avatar avatar-sm avatar-slate">C</div>
+          <span class="listing-card-lister-name">Chris D.</span>
+          <span class="listing-card-rating">5.0 · 18</span>
+          <span class="listing-card-price">$150/day</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bundle -->
+    <div class="listing-card">
+      <div class="listing-card-img" style="background: linear-gradient(150deg, #201808 0%, #3A2C0E 100%);">
+        <span class="tag-type">Bundle</span>
+      </div>
+      <div class="listing-card-body">
+        <div class="listing-card-header">
+          <div class="listing-card-name">ATN ThOR 4<br>+ PVS-14 Kit</div>
+          <span class="badge-condition badge-battle-scarred">Battle-Scarred</span>
+        </div>
+        <div class="listing-card-sub">Thermal + NV · Complete Night Hunt Kit</div>
+        <div class="listing-card-footer">
+          <div class="avatar avatar-sm avatar-brown">M</div>
+          <span class="listing-card-lister-name">Mike T.</span>
+          <span class="listing-card-rating">4.8 · 41</span>
+          <span class="listing-card-price">$299/day</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     07 — PROFILE CARD
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">07</span>
+  <div class="t-heading">Profile Card</div>
+
+  <div style="max-width:480px; display:flex; flex-direction:column; gap:12px;">
+    <div class="profile-card">
+      <div class="avatar avatar-lg avatar-olive">J</div>
+      <div>
+        <div class="profile-name">Jake R.</div>
+        <div class="profile-meta">San Antonio, TX · 34 rentals · 4.9★</div>
+        <div class="profile-gear">Pulsar Thermion 2 XP50 — Thermal Rifle Scope</div>
+        <div class="profile-price">$225 / day · $150 deposit</div>
+        <span class="badge-verified" style="margin-top:8px; display:inline-flex;">
+          <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor"><path d="M4 0L0 1.5v3C0 7 2 9.2 4 10 6 9.2 8 7 8 4.5v-3L4 0z"/></svg>
+          Verified Hunter
+        </span>
+      </div>
+      <div class="profile-cond-tag">Field-Ready</div>
+    </div>
+    <div class="profile-card">
+      <div class="avatar avatar-lg avatar-slate">C</div>
+      <div>
+        <div class="profile-name">Chris D.</div>
+        <div class="profile-meta">San Antonio, TX · 18 rentals · 5.0★</div>
+        <div class="profile-gear">PVS-14 Gen 3 — Night Vision Monocular</div>
+        <div class="profile-price">$150 / day · $200 deposit</div>
+        <span class="badge-verified" style="margin-top:8px; display:inline-flex;">
+          <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor"><path d="M4 0L0 1.5v3C0 7 2 9.2 4 10 6 9.2 8 7 8 4.5v-3L4 0z"/></svg>
+          Verified Hunter
+        </span>
+      </div>
+      <div class="profile-cond-tag">Mint</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     08 — HOW IT WORKS + CONDITION SYSTEM
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">08</span>
+  <div class="t-heading">Step Cards + Condition System</div>
+
+  <div class="t-label" style="margin-bottom:8px;">How it works</div>
+  <div class="grid-3" style="margin-bottom:48px;">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-title">Find the gear</div>
+      <div class="step-body">Search by location and type. See the full spec sheet, condition grade, and lister profile on every listing.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-title">Book and pay</div>
+      <div class="step-body">Deposit held on card. Releases to lister at confirmed pickup. Renter Protection Plan covers damage up to $5,000.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-title">Hunt. Return. Done.</div>
+      <div class="step-body">Both parties confirm return in the app. Deposit released. Ratings left on both sides.</div>
+    </div>
+  </div>
+
+  <div class="t-label" style="margin-bottom:8px;">Condition rating system</div>
+  <div class="condition-grid">
+    <div class="condition-card">
+      <div class="condition-indicator mint"></div>
+      <div class="condition-name mint">Mint</div>
+      <div class="condition-desc">Barely used. No visible wear. Functions exactly as new. Rental history backs it up.</div>
+    </div>
+    <div class="condition-card">
+      <div class="condition-indicator field-ready"></div>
+      <div class="condition-name field-ready">Field-Ready</div>
+      <div class="condition-desc">Used on real hunts. Body wear possible — scratches on chassis, not glass. Fully functional.</div>
+    </div>
+    <div class="condition-card">
+      <div class="condition-indicator battle"></div>
+      <div class="condition-name battle">Battle-Scarred</div>
+      <div class="condition-desc">Veteran gear. Shows its history. Priced accordingly. Performance intact. Read the lister's notes.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     09 — OLIVE BAND + DARK BAND
+============================================================ -->
+<div class="t-section" style="padding:0;">
+  <span class="t-label" style="padding:24px 52px 0; display:block;">09 — Full-Width Bands</span>
+
+  <div class="olive-band" style="margin-bottom:0;">
+    <div class="olive-band-inner">
+      <div>
+        <div class="olive-band-label">Our North Star</div>
+        <div class="olive-band-headline">Access,<br>Not Waste.</div>
+      </div>
+      <div>
+        <p class="olive-band-sub" style="margin-bottom:32px;">High-end thermal and NV gear sits unused 90% of the time. Kitlo puts it to work — giving renters access to $5,000 optics for $200 a weekend.</p>
+        <div class="olive-band-pillars">
+          <div class="olive-band-pillar"><div class="olive-band-pillar-title">Field-Tested</div><div class="olive-band-pillar-body">Gear that's survived real hunts, not shelf-fresh retail stock.</div></div>
+          <div class="olive-band-pillar"><div class="olive-band-pillar-title">Verified Trust</div><div class="olive-band-pillar-body">Hunter to hunter. ID verified on both sides. Funds held until both confirm.</div></div>
+          <div class="olive-band-pillar"><div class="olive-band-pillar-title">Less Waste</div><div class="olive-band-pillar-body">One piece of gear, many hunts. More use from quality equipment.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dark-band">
+    <div class="dark-band-inner">
+      <div>
+        <div class="dark-band-heading">The transaction is protected.<br><em>Both sides.</em></div>
+        <p class="dark-band-sub">Kitlo holds the money, verifies the hunters, and covers the damage. You show up, pick up the gear, and hunt.</p>
+      </div>
+      <div class="dark-band-grid">
+        <div class="trust-card"><div class="trust-card-label">Payments</div><div class="trust-card-title">Escrow Hold</div><div class="trust-card-body">Funds held until pickup confirmed. Released on return confirmation from both parties.</div></div>
+        <div class="trust-card"><div class="trust-card-label">Coverage</div><div class="trust-card-title">$5K Damage</div><div class="trust-card-body">Renter Protection Plan required on gear over $1,000.</div></div>
+        <div class="trust-card"><div class="trust-card-label">Identity</div><div class="trust-card-title">ID Verified</div><div class="trust-card-body">Every lister verified before their first listing is published.</div></div>
+        <div class="trust-card"><div class="trust-card-label">Ratings</div><div class="trust-card-title">Two-Way</div><div class="trust-card-body">Both lister and renter are rated after every transaction.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     10 — DASHBOARD SHELL
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">10</span>
+  <div class="t-heading">Dashboard Shell — Sidebar Nav</div>
+
+  <div style="display:grid; grid-template-columns:220px 1fr; border:1px solid var(--color-border); height:400px; overflow:hidden;">
+    <!-- Sidebar -->
+    <div class="sidebar" style="position:static; height:100%; overflow-y:auto;">
+      <span class="sidebar-section-label">Renter</span>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item"><a href="#" class="active">Dashboard</a></li>
+        <li class="sidebar-item"><a href="#">My Bookings <span class="sidebar-badge">2</span></a></li>
+        <li class="sidebar-item"><a href="#">Messages <span class="sidebar-badge">5</span></a></li>
+      </ul>
+      <span class="sidebar-section-label">Lister</span>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item"><a href="#">My Listings</a></li>
+        <li class="sidebar-item"><a href="#">Earnings</a></li>
+      </ul>
+      <span class="sidebar-section-label">Account</span>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item"><a href="#">Profile & Settings</a></li>
+        <li class="sidebar-item"><a href="#">Sign out</a></li>
+      </ul>
+    </div>
+    <!-- Main area preview -->
+    <div style="background:var(--color-bg); overflow-y:auto;">
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-breadcrumb">
+            <a href="#" class="breadcrumb-item">Dashboard</a>
+            <span class="breadcrumb-item current">My Bookings</span>
+          </div>
+          <div class="page-title">My Bookings</div>
+          <div class="page-subtitle">3 active · 12 completed</div>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-secondary btn-sm">Filter</button>
+          <a href="#" class="btn btn-primary btn-sm">Find gear</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     11 — PAGE HEADER + BREADCRUMB + TABS
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">11</span>
+  <div class="t-heading">Page Header + Tabs</div>
+
+  <div style="border:1px solid var(--color-border); margin-bottom:32px;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-breadcrumb">
+          <a href="#" class="breadcrumb-item">Dashboard</a>
+          <span class="breadcrumb-item current">Earnings</span>
+        </div>
+        <div class="page-title">Earnings</div>
+      </div>
+      <div class="page-header-actions">
+        <button class="btn btn-ghost btn-sm">Export CSV</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab active">Overview</button>
+      <button class="tab">Payout History</button>
+      <button class="tab">Per Listing <span class="tab-count">3</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     12 — STEPPER
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">12</span>
+  <div class="t-heading">Stepper — Multi-Step Wizard</div>
+
+  <div style="border:1px solid var(--color-border); margin-bottom:24px;">
+    <div class="stepper">
+      <div class="stepper-step completed">
+        <div class="stepper-num">✓</div>
+        <span class="stepper-label">Category</span>
+      </div>
+      <div class="stepper-step completed">
+        <div class="stepper-num">✓</div>
+        <span class="stepper-label">Gear Details</span>
+      </div>
+      <div class="stepper-step active">
+        <div class="stepper-num">3</div>
+        <span class="stepper-label">Specs</span>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">4</div>
+        <span class="stepper-label">Condition</span>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">5</div>
+        <span class="stepper-label">Photos</span>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">6</div>
+        <span class="stepper-label">Pricing</span>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">7</div>
+        <span class="stepper-label">Deposit</span>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">8</div>
+        <span class="stepper-label">Availability</span>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">9</div>
+        <span class="stepper-label">Location</span>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">10</div>
+        <span class="stepper-label">Publish</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="t-label" style="margin-bottom:8px;">Progress bar variant (onboarding)</div>
+  <div class="progress-bar-wrap" style="border:1px solid var(--color-border);">
+    <div class="progress-bar-fill" style="width:50%;"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     13 — ALERT BANNERS
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">13</span>
+  <div class="t-heading">Alert Banners</div>
+
+  <div style="display:flex; flex-direction:column; gap:12px; max-width:640px;">
+    <div class="alert alert-info">
+      <div><span class="alert-label">Return Today</span>Pickup is scheduled for today at <strong>8:00 AM</strong>. Confirm in the app when you hand over the gear.</div>
+    </div>
+    <div class="alert alert-success">
+      <div><span class="alert-label">Payout Queued</span>$549.00 will be deposited to your account by Wednesday, Apr 30.</div>
+    </div>
+    <div class="alert alert-warning">
+      <div><span class="alert-label">Pending Review</span>Your ATN ThOR 4 640 listing is under admin review. Typically completes within 24 hours.</div>
+    </div>
+    <div class="alert alert-danger">
+      <div><span class="alert-label">Dispute Open</span>A damage claim has been filed on booking KTL-2026-00847. Resolution expected within 72 hours.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     14 — BOOKING CARD
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">14</span>
+  <div class="t-heading">Booking Cards</div>
+
+  <div style="display:flex; flex-direction:column; gap:2px; border:1px solid var(--color-border); max-width:720px;">
+    <a href="#" class="booking-card">
+      <div class="booking-card-img" style="background:linear-gradient(150deg,#1A2010,#2A3318);"></div>
+      <div>
+        <div class="booking-gear-name">Pulsar Thermion 2 XP50</div>
+        <div class="booking-meta">Apr 18–23 · 5 days · Jake R.</div>
+        <div class="booking-party">
+          <div class="avatar avatar-sm avatar-olive">J</div>
+          <span>Jake R. · San Antonio, TX</span>
+        </div>
+      </div>
+      <div class="booking-card-right">
+        <span class="status-badge status-active">Active</span>
+        <span class="text-mono" style="font-size:13px; color:var(--color-olive);">$675.00</span>
+        <span class="text-xs text-muted">Returns in 2 days</span>
+      </div>
+    </a>
+    <a href="#" class="booking-card">
+      <div class="booking-card-img" style="background:linear-gradient(150deg,#0E1818,#1A2A28);"></div>
+      <div>
+        <div class="booking-gear-name">PVS-14 Gen 3 Monocular</div>
+        <div class="booking-meta">Apr 10–14 · 4 days · Chris D.</div>
+        <div class="booking-party">
+          <div class="avatar avatar-sm avatar-slate">C</div>
+          <span>Chris D. · San Antonio, TX</span>
+        </div>
+      </div>
+      <div class="booking-card-right">
+        <span class="status-badge status-completed">Completed</span>
+        <span class="text-mono" style="font-size:13px; color:var(--color-muted);">$600.00</span>
+      </div>
+    </a>
+    <a href="#" class="booking-card">
+      <div class="booking-card-img" style="background:linear-gradient(150deg,#201808,#3A2C0E);"></div>
+      <div>
+        <div class="booking-gear-name">ATN ThOR 4 640 + PVS-14 Bundle</div>
+        <div class="booking-meta">Mar 3–8 · 5 days · Mike T.</div>
+        <div class="booking-party">
+          <div class="avatar avatar-sm avatar-brown">M</div>
+          <span>Mike T. · Austin, TX</span>
+        </div>
+      </div>
+      <div class="booking-card-right">
+        <span class="status-badge status-disputed">Disputed</span>
+        <span class="text-mono" style="font-size:13px; color:var(--color-battle);">On hold</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ============================================================
+     15 — MESSAGING UI
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">15</span>
+  <div class="t-heading">Messaging Thread</div>
+
+  <div style="border:1px solid var(--color-border); max-width:580px;">
+    <div class="message-thread-header">
+      <div class="avatar avatar-md avatar-olive">J</div>
+      <div>
+        <div class="message-thread-title">Jake R.</div>
+        <div class="message-thread-sub">Booking KTL-2026-00847 · Apr 18–23</div>
+      </div>
+    </div>
+
+    <div class="message-list" style="height:260px; overflow-y:auto;">
+      <div class="message-system">Booking confirmed — Apr 18, 2026 at 9:41 AM</div>
+
+      <div class="message-row">
+        <div class="avatar avatar-sm avatar-olive">J</div>
+        <div>
+          <div class="message-bubble">Booking confirmed for Thermion 2 XP50, Apr 18. I'll share exact pickup details here. Feel free to ask any questions.</div>
+          <span class="message-time">9:41 AM</span>
+        </div>
+      </div>
+
+      <div class="message-row self">
+        <div class="avatar avatar-sm avatar-slate">M</div>
+        <div>
+          <div class="message-bubble">Thanks Jake. Is the scope zeroed? What range and caliber?</div>
+          <span class="message-time">10:04 AM</span>
+        </div>
+      </div>
+
+      <div class="message-row">
+        <div class="avatar avatar-sm avatar-olive">J</div>
+        <div>
+          <div class="message-bubble">Zeroed at 100 yards for .308. Can re-zero for you if needed — takes about 10 minutes. Battery is at 80%, charger included.</div>
+          <span class="message-time">10:22 AM</span>
+        </div>
+      </div>
+
+      <div class="message-row self">
+        <div class="avatar avatar-sm avatar-slate">M</div>
+        <div>
+          <div class="message-bubble">Perfect. .308 is exactly what I'm running. Meet at 8am?</div>
+          <span class="message-time">10:35 AM</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="message-input-bar">
+      <input type="text" class="input" placeholder="Message Jake R." style="flex:1;">
+      <button class="btn btn-secondary btn-sm">Send</button>
+    </div>
+  </div>
+
+  <div style="max-width:480px; margin-top:24px; border:1px solid var(--color-border);">
+    <div class="t-label" style="padding:12px 16px 0; display:block;">Thread list items</div>
+    <a href="#" class="message-thread-item unread">
+      <div class="avatar avatar-md avatar-olive">J</div>
+      <div style="flex:1; min-width:0;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;">
+          <span style="font-weight:600; font-size:14px; color:var(--color-slate);">Jake R.</span>
+          <span class="text-xs text-muted" style="flex-shrink:0;">10:35 AM</span>
+        </div>
+        <div class="message-thread-preview">Perfect. .308 is exactly what I'm running. Meet at 8am?</div>
+        <div style="margin-top:4px;"><span class="status-badge status-active" style="font-size:9px;">Active</span></div>
+      </div>
+    </a>
+    <a href="#" class="message-thread-item">
+      <div class="avatar avatar-md avatar-slate">C</div>
+      <div style="flex:1; min-width:0;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;">
+          <span style="font-weight:600; font-size:14px; color:var(--color-slate);">Chris D.</span>
+          <span class="text-xs text-muted" style="flex-shrink:0;">Apr 14</span>
+        </div>
+        <div class="message-thread-preview">Confirmed return. Gear is in great shape, thanks for taking care of it.</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ============================================================
+     16 — TIMELINE
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">16</span>
+  <div class="t-heading">Booking Timeline</div>
+
+  <div style="max-width:480px;">
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot done"></div>
+        <div class="timeline-content">
+          <div class="timeline-event">Booking confirmed — payment processed</div>
+          <span class="timeline-ts">Apr 15, 2026 · 2:41 PM</span>
+          <div class="timeline-detail">KTL-2026-00847 · $801.00 charged · $150.00 deposit held</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot done"></div>
+        <div class="timeline-content">
+          <div class="timeline-event">Pickup confirmed by both parties</div>
+          <span class="timeline-ts">Apr 18, 2026 · 8:12 AM</span>
+          <div class="timeline-detail">Gear inspected and accepted. Rental active.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot now"></div>
+        <div class="timeline-content">
+          <div class="timeline-event">Active rental</div>
+          <span class="timeline-ts">Returns Apr 23, 2026</span>
+          <div class="timeline-detail">Return countdown: 2 days, 14 hours</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-event" style="color:var(--color-muted);">Return confirmation</div>
+          <span class="timeline-ts" style="font-style:italic;">Pending</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-event" style="color:var(--color-muted);">Payout released</div>
+          <span class="timeline-ts" style="font-style:italic;">Pending</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     17 — STAT CARDS
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">17</span>
+  <div class="t-heading">Stat Cards — Earnings Dashboard</div>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <span class="stat-overline">Total Earned</span>
+      <div class="stat-value stat-primary">$4,221</div>
+      <div class="stat-sublabel">All time</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-overline">Next Payout</span>
+      <div class="stat-value">$549</div>
+      <div class="stat-sublabel">Releases Apr 26</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-overline">Pending</span>
+      <div class="stat-value stat-pending">$0</div>
+      <div class="stat-sublabel">No open disputes</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-overline">YTD 2026</span>
+      <div class="stat-value">$1,872</div>
+      <div class="stat-sublabel">Tax reference</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     18 — SPEC TABLE + COST BREAKDOWN
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">18</span>
+  <div class="t-heading">Spec Table + Cost Breakdown</div>
+
+  <div class="t-grid-2">
+    <div>
+      <div class="t-label" style="margin-bottom:8px;">Spec table — Listing detail</div>
+      <div style="border:1px solid var(--color-border); padding:20px;">
+        <div class="spec-row"><span class="spec-key">Sensor resolution</span><span class="spec-value">640×480 VOx</span></div>
+        <div class="spec-row"><span class="spec-key">Detection range</span><span class="spec-value">1,800 m</span></div>
+        <div class="spec-row"><span class="spec-key">Magnification</span><span class="spec-value">2–16×</span></div>
+        <div class="spec-row"><span class="spec-key">Refresh rate</span><span class="spec-value">50 Hz</span></div>
+        <div class="spec-row"><span class="spec-key">Battery life</span><span class="spec-value">8 hrs</span></div>
+        <div class="spec-row"><span class="spec-key">Accessories</span><span class="spec-value">Remote, mount, case, charger</span></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="t-label" style="margin-bottom:8px;">Cost breakdown — Booking request</div>
+      <div style="border:1px solid var(--color-border); padding:20px;">
+        <div class="cost-table">
+          <div class="cost-row"><span class="cost-label">$225.00 × 3 days</span><span class="cost-value">$675.00</span></div>
+          <div class="cost-row"><span class="cost-label">Renter service fee (12%)</span><span class="cost-value">$81.00</span></div>
+          <div class="cost-row"><span class="cost-label">Renter Protection Plan</span><span class="cost-value">$45.00</span></div>
+          <div class="cost-row cost-total"><span class="cost-label">Total charged today</span><span class="cost-value">$801.00</span></div>
+        </div>
+        <div class="cost-deposit-row">
+          <span class="cost-deposit-label">Deposit hold (returned on return)</span>
+          <span class="cost-deposit-value">$150.00 held</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     19 — BOOKING SIDEBAR
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">19</span>
+  <div class="t-heading">Booking Sidebar — Listing Detail</div>
+
+  <div style="max-width:320px;">
+    <div class="booking-sidebar">
+      <div class="booking-sidebar-price">$225 <span>/ day</span></div>
+      <div class="date-picker-row">
+        <div class="date-picker-cell">
+          <span class="date-picker-label">Pickup</span>
+          <span class="date-picker-value">Apr 18</span>
+        </div>
+        <div class="date-picker-cell">
+          <span class="date-picker-label">Return</span>
+          <span class="date-picker-value">Apr 23</span>
+        </div>
+      </div>
+      <div class="cost-table" style="margin-bottom:16px;">
+        <div class="cost-row"><span class="cost-label">$225 × 5 days</span><span class="cost-value">$1,125</span></div>
+        <div class="cost-row"><span class="cost-label">Service fee</span><span class="cost-value">$135</span></div>
+        <div class="cost-row"><span class="cost-label">Protection plan</span><span class="cost-value">$75</span></div>
+        <div class="cost-row cost-total"><span class="cost-label">Total</span><span class="cost-value">$1,335</span></div>
+      </div>
+      <button class="btn btn-primary btn-lg" style="width:100%;">Request this gear</button>
+      <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--color-border);">
+        <div class="cost-deposit-row" style="margin-top:0;">
+          <span class="cost-deposit-label">Deposit hold</span>
+          <span class="cost-deposit-value">$150 held</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     20 — AVAILABILITY CALENDAR
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">20</span>
+  <div class="t-heading">Availability Calendar</div>
+
+  <div style="max-width:420px;">
+    <div class="calendar">
+      <div class="cal-header">
+        <button class="cal-nav-btn">← Prev</button>
+        <span class="cal-month">April 2026</span>
+        <button class="cal-nav-btn">Next →</button>
+      </div>
+      <div class="cal-weekdays">
+        <div class="cal-weekday">Su</div><div class="cal-weekday">Mo</div><div class="cal-weekday">Tu</div>
+        <div class="cal-weekday">We</div><div class="cal-weekday">Th</div><div class="cal-weekday">Fr</div><div class="cal-weekday">Sa</div>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-day other-month">30</div><div class="cal-day other-month">31</div><div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day">5</div>
+        <div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day">12</div>
+        <div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day blocked">15</div><div class="cal-day blocked">16</div><div class="cal-day blocked">17</div><div class="cal-day booked">18</div><div class="cal-day booked">19</div>
+        <div class="cal-day booked">20</div><div class="cal-day booked">21</div><div class="cal-day booked">22</div><div class="cal-day booked">23</div><div class="cal-day today">24</div><div class="cal-day selected">25</div><div class="cal-day in-range">26</div>
+        <div class="cal-day in-range">27</div><div class="cal-day in-range">28</div><div class="cal-day in-range">29</div><div class="cal-day">30</div><div class="cal-day other-month">1</div><div class="cal-day other-month">2</div><div class="cal-day other-month">3</div>
+      </div>
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--color-bg); border:1px solid var(--color-border);"></div>Available</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:rgba(45,107,58,0.15);"></div>Booked</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--color-surface); border:1px solid var(--color-border);"></div>Blocked</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--color-slate);"></div>Selected</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     21 — PHOTO UPLOAD ZONE
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">21</span>
+  <div class="t-heading">Photo Upload Zone</div>
+
+  <div style="max-width:640px;">
+    <div class="upload-zone" style="margin-bottom:20px;">
+      <div class="upload-zone-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="16" height="12" rx="1"/><path d="M7 5V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><circle cx="10" cy="11" r="2.5"/></svg>
+      </div>
+      <div class="upload-zone-title">Add Photos</div>
+      <div class="upload-zone-sub">Drag and drop or click to select · 3 photos minimum · 12 maximum</div>
+      <button class="btn btn-secondary btn-sm" style="margin-top:8px;">Choose photos</button>
+    </div>
+
+    <div class="t-label" style="margin-bottom:8px;">Photo grid with hero</div>
+    <div class="photo-grid">
+      <div class="photo-thumb hero-thumb" style="background:linear-gradient(150deg,#1A2010,#2A3318);">
+        <div class="hero-thumb-label">Hero photo</div>
+      </div>
+      <div class="photo-thumb" style="background:linear-gradient(150deg,#0E1818,#1A2A28);">
+        <button class="photo-thumb-remove">×</button>
+      </div>
+      <div class="photo-thumb" style="background:linear-gradient(150deg,#201808,#3A2C0E);">
+        <button class="photo-thumb-remove">×</button>
+      </div>
+      <div class="photo-thumb" style="background:var(--color-surface); border:2px dashed var(--color-border); display:flex; align-items:center; justify-content:center; color:var(--color-muted); font-size:24px;">+</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     22 — REVIEW CARD + STAR INPUT + TAG PILLS
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">22</span>
+  <div class="t-heading">Reviews + Rating Input</div>
+
+  <div class="t-grid-2">
+    <div>
+      <div class="t-label" style="margin-bottom:8px;">Review cards</div>
+      <div style="border:1px solid var(--color-border); padding:20px;">
+        <div class="review-summary">
+          <div class="review-summary-score">4.9</div>
+          <div>
+            <div class="review-stars">
+              <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+            </div>
+            <div class="review-summary-count">23 reviews</div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-reviewer">
+              <div class="avatar avatar-sm avatar-olive">M</div>
+              <div>
+                <div class="review-name">Marcus W.</div>
+                <div class="review-date">April 2026</div>
+              </div>
+            </div>
+            <div class="review-stars">
+              <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+            </div>
+          </div>
+          <span class="review-accuracy accurate">Accurate — Matched listing</span>
+          <div class="review-text">Exactly as described. Glass was clean, scope was zeroed. Jake had everything ready at 8am sharp. Would rent again without hesitation.</div>
+          <div class="review-tags">
+            <span class="review-tag">Exactly as described</span>
+            <span class="review-tag">Professional handoff</span>
+            <span class="review-tag">Quick to respond</span>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-reviewer">
+              <div class="avatar avatar-sm avatar-slate">T</div>
+              <div>
+                <div class="review-name">Tyler B.</div>
+                <div class="review-date">March 2026</div>
+              </div>
+            </div>
+            <div class="review-stars">
+              <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star empty"></div>
+            </div>
+          </div>
+          <span class="review-accuracy somewhat">Somewhat — Minor discrepancy</span>
+          <div class="review-text">Good scope, works as advertised. Battery was at 40%, not charged. Minor thing but worth noting.</div>
+          <div class="review-tags">
+            <span class="review-tag">Battery life was poor</span>
+            <span class="review-tag">Flexible on pickup</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="t-label" style="margin-bottom:8px;">Review submission form</div>
+      <div style="border:1px solid var(--color-border); padding:20px;">
+        <div class="t-label" style="margin-bottom:8px;">Star rating</div>
+        <div class="star-input" style="margin-bottom:20px;">
+          <button class="star-btn filled">★</button>
+          <button class="star-btn filled">★</button>
+          <button class="star-btn filled">★</button>
+          <button class="star-btn filled">★</button>
+          <button class="star-btn">★</button>
+        </div>
+
+        <div class="t-label" style="margin-bottom:8px;">Condition accuracy</div>
+        <div class="t-row" style="margin-bottom:16px;">
+          <button class="btn btn-secondary btn-sm">Yes — matched</button>
+          <button class="btn btn-ghost btn-sm">Somewhat</button>
+          <button class="btn btn-ghost btn-sm">No — off</button>
+        </div>
+
+        <div class="t-label" style="margin-bottom:8px;">Tag pills (selectable)</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;">
+          <span class="tag-pill selected">Exactly as described</span>
+          <span class="tag-pill selected-amber">Better than described</span>
+          <span class="tag-pill">Worked perfectly</span>
+          <span class="tag-pill">Glass was cleaner</span>
+          <span class="tag-pill">Battery life poor</span>
+          <span class="tag-pill">Missing accessory</span>
+        </div>
+
+        <div class="form-group">
+          <label class="input-label">Written review (optional)</label>
+          <textarea class="input" rows="3" placeholder="What would help the next hunter?"></textarea>
+          <span class="text-xs text-muted" style="text-align:right;">0 / 500</span>
+        </div>
+        <button class="btn btn-secondary" style="width:100%;">Submit review</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     23 — DATA TABLE
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">23</span>
+  <div class="t-heading">Data Table — Listings + Payouts</div>
+
+  <table class="data-table" style="margin-bottom:32px;">
+    <thead>
+      <tr>
+        <th>Gear</th>
+        <th>Type</th>
+        <th>Condition</th>
+        <th>Status</th>
+        <th>Rate</th>
+        <th>Bookings</th>
+        <th>Rating</th>
+        <th>Earnings</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="td-name">Pulsar Thermion 2 XP50</td>
+        <td class="td-mono">Thermal</td>
+        <td><span class="badge-condition badge-field-ready">Field-Ready</span></td>
+        <td><span class="status-badge status-active">Active</span></td>
+        <td class="td-mono" style="color:var(--color-olive);">$225/day</td>
+        <td class="td-mono">34</td>
+        <td class="td-mono">4.9★</td>
+        <td class="td-mono">$3,421</td>
+        <td class="td-actions"><a href="#" class="btn btn-ghost btn-sm">Edit</a><a href="#" class="btn btn-ghost btn-sm">Calendar</a></td>
+      </tr>
+      <tr>
+        <td class="td-name">PVS-14 Gen 3</td>
+        <td class="td-mono">NV</td>
+        <td><span class="badge-condition badge-mint">Mint</span></td>
+        <td><span class="status-badge status-paused">Paused</span></td>
+        <td class="td-mono" style="color:var(--color-olive);">$150/day</td>
+        <td class="td-mono">18</td>
+        <td class="td-mono">5.0★</td>
+        <td class="td-mono">$800</td>
+        <td class="td-actions"><a href="#" class="btn btn-ghost btn-sm">Edit</a><a href="#" class="btn btn-ghost btn-sm">Calendar</a></td>
+      </tr>
+      <tr>
+        <td class="td-name">ATN ThOR 4 640 + PVS-14</td>
+        <td class="td-mono">Bundle</td>
+        <td><span class="badge-condition badge-battle-scarred">Battle-Scarred</span></td>
+        <td><span class="status-badge status-pending">Pending Review</span></td>
+        <td class="td-mono" style="color:var(--color-olive);">$299/day</td>
+        <td class="td-mono">—</td>
+        <td class="td-mono">—</td>
+        <td class="td-mono">—</td>
+        <td class="td-actions"><a href="#" class="btn btn-ghost btn-sm">View</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================
+     24 — EMPTY STATE
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">24</span>
+  <div class="t-heading">Empty States</div>
+
+  <div class="t-grid-3">
+    <div style="border:1px solid var(--color-border);">
+      <div class="empty-state" style="padding:40px 20px;">
+        <div class="empty-state-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <div class="empty-state-title">No gear nearby</div>
+        <div class="empty-state-body">No listings within 50 miles of this location yet.</div>
+        <button class="btn btn-secondary btn-sm">Expand to 100 miles</button>
+      </div>
+    </div>
+    <div style="border:1px solid var(--color-border);">
+      <div class="empty-state" style="padding:40px 20px;">
+        <div class="empty-state-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+        </div>
+        <div class="empty-state-title">No listings yet</div>
+        <div class="empty-state-body">Add your first listing to start earning.</div>
+        <a href="#" class="btn btn-primary btn-sm">Add listing</a>
+      </div>
+    </div>
+    <div style="border:1px solid var(--color-border);">
+      <div class="empty-state" style="padding:40px 20px;">
+        <div class="empty-state-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        </div>
+        <div class="empty-state-title">No messages</div>
+        <div class="empty-state-body">Messages will appear here after a booking is confirmed.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     25 — MODAL
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">25</span>
+  <div class="t-heading">Modal / Confirmation Dialog</div>
+
+  <div style="position:relative; background:rgba(47,53,59,0.20); padding:40px; display:flex; justify-content:center;">
+    <div class="modal" style="position:relative;">
+      <div class="modal-header">
+        <div class="modal-title">Confirm Return</div>
+        <button class="modal-close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-sm" style="margin-bottom:16px;">Confirming this releases <strong>Marcus W.'s</strong> $150 deposit hold and queues your payout of <strong>$549.00</strong>.</p>
+        <div class="alert alert-warning">
+          <div><span class="alert-label">Before you confirm</span>Have you powered the unit on and inspected for new damage? Confirming return closes the dispute window.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-secondary">Gear returned with damage</button>
+        <button class="btn btn-primary">Confirm — gear in good condition</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     26 — TOGGLE + COUNTDOWN
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">26</span>
+  <div class="t-heading">Toggle + Countdown Display</div>
+
+  <div class="t-grid-2">
+    <div>
+      <div class="t-label" style="margin-bottom:12px;">Notification toggles</div>
+      <div style="border:1px solid var(--color-border); padding:20px; max-width:400px;">
+        <div class="toggle-wrap">
+          <div><div class="toggle-label">Push notifications</div><div class="toggle-sub">Time-sensitive events</div></div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="toggle-wrap">
+          <div><div class="toggle-label">Email notifications</div><div class="toggle-sub">Confirmations and receipts</div></div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="toggle-wrap">
+          <div><div class="toggle-label">Marketing emails</div><div class="toggle-sub">Platform updates and tips</div></div>
+          <label class="toggle">
+            <input type="checkbox">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="t-label" style="margin-bottom:12px;">Active rental countdown</div>
+      <div class="countdown-display" style="max-width:320px; margin-bottom:12px;">
+        <div class="countdown-number">2</div>
+        <div class="countdown-unit">days</div>
+        <div class="countdown-number" style="margin-left:4px;">14</div>
+        <div class="countdown-unit">hours</div>
+        <div class="countdown-number" style="margin-left:4px;">32</div>
+        <div class="countdown-unit">min</div>
+      </div>
+      <div class="countdown-display urgent" style="max-width:320px;">
+        <div class="countdown-number">0</div>
+        <div class="countdown-unit">days</div>
+        <div class="countdown-number" style="margin-left:4px;">3</div>
+        <div class="countdown-unit">hours</div>
+        <div class="countdown-number" style="margin-left:4px;">12</div>
+        <div class="countdown-unit">min</div>
+      </div>
+      <div class="t-label" style="margin-top:8px;">Urgent — overdue return</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     27 — ADMIN QUEUE ITEMS + PHOTO COMPARE
+============================================================ -->
+<div class="t-section">
+  <span class="t-label">27</span>
+  <div class="t-heading">Admin — Queue Items + Photo Comparison</div>
+
+  <div class="t-label" style="margin-bottom:8px;">Listing review queue</div>
+  <div style="border:1px solid var(--color-border); margin-bottom:32px;">
+    <a href="#" class="queue-item" style="border-bottom:1px solid var(--color-border);">
+      <div>
+        <div class="queue-item-name">ATN Mars LT 320 4× Thermal</div>
+        <div class="queue-item-meta"><span>MSRP $3,999</span><span>Brad K. · Verified · 14 listings</span><span>Submitted 18m ago</span></div>
+      </div>
+      <span class="queue-reason high-value">High Value ≥ $5K</span>
+      <div class="sla-countdown">23h 42m left</div>
+      <button class="btn btn-secondary btn-sm">Review</button>
+    </a>
+    <a href="#" class="queue-item" style="border-bottom:1px solid var(--color-border);">
+      <div>
+        <div class="queue-item-name">L3Harris GPNVG-18 Ground Panoramic NVG</div>
+        <div class="queue-item-meta"><span>MSRP $8,500</span><span>New user · Unverified · 0 listings</span><span>Submitted 2h ago</span></div>
+      </div>
+      <span class="queue-reason flagged">Flagged by User</span>
+      <div class="sla-countdown warning">1h 58m left</div>
+      <button class="btn btn-primary btn-sm">Review</button>
+    </a>
+    <a href="#" class="queue-item">
+      <div>
+        <div class="queue-item-name">Pulsar Accolade 2 LRF XP50 Pro</div>
+        <div class="queue-item-meta"><span>MSRP $5,299</span><span>Jake R. · Verified · 3 listings</span><span>Submitted 4h ago</span></div>
+      </div>
+      <span class="queue-reason high-value">High Value ≥ $5K</span>
+      <div class="sla-countdown breach">SLA BREACH — overdue</div>
+      <button class="btn btn-primary btn-sm">Review now</button>
+    </a>
+  </div>
+
+  <div class="t-label" style="margin-bottom:8px;">Photo comparison — dispute detail</div>
+  <div class="photo-compare" style="max-width:640px;">
+    <div class="photo-compare-col">
+      <div class="photo-compare-label">
+        <span>Pickup photo</span>
+        <span class="label-ts">Apr 18 · 8:09 AM</span>
+      </div>
+      <div class="photo-compare-img" style="background:linear-gradient(135deg, #1A2010 0%, #2A3318 50%, #1A2010 100%);"></div>
+    </div>
+    <div class="photo-compare-col">
+      <div class="photo-compare-label">
+        <span>Return photo — lister</span>
+        <span class="label-ts">Apr 23 · 7:51 AM</span>
+      </div>
+      <div class="photo-compare-img" style="background:linear-gradient(135deg, #1A2010 0%, #3a1010 50%, #1A2010 100%);"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="footer">
+  <div class="footer-logo">KIT<span>LO</span></div>
+  <ul class="footer-links">
+    <li><a href="#">Terms</a></li>
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Support</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 KITLO LLC · SAN ANTONIO TX</div>
+</footer>
+
+</body>
+</html>

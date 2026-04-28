@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Sitemap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F7F1;
+    --surface: #EEEDE6;
+    --slate: #2F353B;
+    --olive: #535A2D;
+    --amber: #F2994A;
+    --amber-dark: #D4781E;
+    --muted: #7A8087;
+    --border: #D8D8D0;
+    --footer-bg: #1E2428;
+    --condensed: 'Barlow Condensed', sans-serif;
+    --dm: 'DM Sans', sans-serif;
+    --mono: 'Roboto Mono', monospace;
+  }
+
+  html { font-size: 16px; background: var(--bg); color: var(--slate); font-family: var(--dm); -webkit-font-smoothing: antialiased; }
+
+  nav {
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 56px; position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo { font-family: var(--condensed); font-weight: 900; font-size: 20px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--slate); }
+  .nav-logo span { color: var(--olive); }
+  .nav-title { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .nav-right { display: flex; gap: 24px; }
+  .nav-link { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; }
+  .nav-link:hover { color: var(--slate); }
+
+  .page-wrap { max-width: 1400px; margin: 0 auto; padding: 48px; }
+
+  .map-header {
+    margin-bottom: 48px;
+  }
+  .map-overline { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+  .map-title { font-family: var(--condensed); font-weight: 900; font-size: 38px; text-transform: uppercase; color: var(--slate); margin-bottom: 12px; }
+  .map-sub { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 600px; }
+
+  /* Legend */
+  .legend { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 48px; padding: 16px 20px; border: 1px solid var(--border); background: var(--surface); }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); font-family: var(--mono); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 1px; flex-shrink: 0; }
+  .ld-public  { background: var(--bg); border: 2px solid var(--slate); }
+  .ld-auth    { background: #E8ECF0; border: 2px solid var(--slate); }
+  .ld-lister  { background: rgba(83,90,45,0.08); border: 2px solid var(--olive); }
+  .ld-booking { background: rgba(242,153,74,0.10); border: 2px solid var(--amber); }
+  .ld-admin   { background: rgba(47,53,59,0.06); border: 2px solid var(--slate); }
+
+  /* Sitemap grid */
+  .sitemap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); }
+
+  .col {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .col-header {
+    background: var(--slate);
+    padding: 12px 16px;
+    font-family: var(--condensed);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #F7F7F1;
+  }
+
+  .col-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+  /* Page node */
+  .node {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 10px 12px;
+    cursor: default;
+    transition: border-color 150ms;
+    position: relative;
+  }
+  .node:hover { border-color: var(--slate); }
+
+  .node-route {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .node-name {
+    font-family: var(--condensed);
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--slate);
+    line-height: 1.2;
+  }
+
+  .node-feature {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* Color variants */
+  .node-public  { background: var(--bg); border-color: var(--border); }
+  .node-auth    { background: #E8ECF0; border-color: #C0C8D0; }
+  .node-lister  { background: rgba(83,90,45,0.07); border-color: rgba(83,90,45,0.25); }
+  .node-booking { background: rgba(242,153,74,0.08); border-color: rgba(242,153,74,0.30); }
+  .node-admin   { background: rgba(47,53,59,0.05); border-color: #C0C4C8; }
+  .node-shared  { background: var(--surface); border-color: var(--border); }
+
+  .node-root {
+    background: var(--slate);
+    border-color: var(--slate);
+  }
+  .node-root .node-route { color: rgba(247,247,241,0.5); }
+  .node-root .node-name { color: #F7F7F1; }
+  .node-root .node-feature { color: rgba(247,247,241,0.5); }
+
+  /* Flow arrows section */
+  .flows { margin-top: 48px; }
+  .flows-title { font-family: var(--condensed); font-weight: 900; font-size: 24px; text-transform: uppercase; color: var(--slate); margin-bottom: 24px; }
+
+  .flow-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); }
+
+  .flow-card { background: var(--bg); padding: 20px 24px; }
+
+  .flow-card-title { font-family: var(--condensed); font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate); margin-bottom: 14px; }
+
+  .flow-steps { display: flex; flex-direction: column; gap: 0; }
+
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .flow-step:last-child { border-bottom: none; }
+
+  .flow-step-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    flex-shrink: 0;
+    padding-top: 2px;
+    width: 20px;
+  }
+
+  .flow-step-content {}
+
+  .flow-step-route {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--olive);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .flow-step-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--slate);
+  }
+
+  .flow-step-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .flow-arrow {
+    width: 1px;
+    height: 12px;
+    background: var(--border);
+    margin-left: 32px;
+  }
+
+  /* Cross-links section */
+  .cross-section { margin-top: 48px; }
+  .cross-title { font-family: var(--condensed); font-weight: 900; font-size: 24px; text-transform: uppercase; color: var(--slate); margin-bottom: 24px; }
+
+  .cross-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2px; }
+
+  .cross-card { background: var(--bg); padding: 20px; }
+  .cross-card-from { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .cross-card-name { font-family: var(--condensed); font-size: 15px; font-weight: 800; text-transform: uppercase; color: var(--slate); margin-bottom: 10px; }
+  .cross-links-list { display: flex; flex-direction: column; gap: 4px; }
+  .cross-link-item { font-size: 12px; color: var(--muted); display: flex; align-items: flex-start; gap: 6px; }
+  .cross-link-arrow { color: var(--olive); flex-shrink: 0; font-family: var(--mono); }
+  .cross-link-dest { font-family: var(--mono); font-size: 11px; color: var(--olive); }
+
+  /* Footer */
+  footer { background: var(--footer-bg); padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; margin-top: 80px; }
+  .footer-logo { font-family: var(--condensed); font-weight: 900; font-size: 18px; letter-spacing: 0.12em; text-transform: uppercase; color: #F7F7F1; }
+  .footer-logo span { color: var(--amber); }
+  .footer-copy { font-family: var(--mono); font-size: 11px; color: rgba(247,247,241,0.3); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">KIT<span>LO</span></div>
+  <div class="nav-title">Sitemap — Phase 1</div>
+  <div class="nav-right">
+    <a href="pages.md" class="nav-link">pages.md</a>
+    <a href="brand/template.html" class="nav-link">Component template</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <div class="map-header">
+    <div class="map-overline">Design — Task 2.2</div>
+    <div class="map-title">Visual Sitemap</div>
+    <p class="map-sub">35 pages across 9 areas. Color-coded by access level and user context. Flows show the primary user journey for each major workflow.</p>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot ld-public"></div> Public (unauthenticated OK)</div>
+    <div class="legend-item"><div class="legend-dot ld-auth"></div> Auth / Onboarding</div>
+    <div class="legend-item"><div class="legend-dot ld-lister"></div> Lister dashboard</div>
+    <div class="legend-item"><div class="legend-dot ld-booking"></div> Booking flow</div>
+    <div class="legend-item"><div class="legend-dot ld-admin"></div> Admin only</div>
+  </div>
+
+  <!-- Main sitemap grid: 5 columns -->
+  <div class="sitemap">
+
+    <!-- Col 1: Public -->
+    <div class="col">
+      <div class="col-header">Public</div>
+      <div class="col-body">
+        <div class="node node-root">
+          <span class="node-route">/</span>
+          <div class="node-name">Homepage</div>
+          <div class="node-feature">Search entry · Value prop · Featured listings</div>
+        </div>
+        <div class="node node-public">
+          <span class="node-route">/how-it-works</span>
+          <div class="node-name">How It Works</div>
+          <div class="node-feature">Lifecycle explainer · Trust signals</div>
+        </div>
+        <div class="node node-public">
+          <span class="node-route">/gear</span>
+          <div class="node-name">Search & Discovery</div>
+          <div class="node-feature">Filters · Grid · Map view</div>
+        </div>
+        <div class="node node-public">
+          <span class="node-route">/gear/[id]</span>
+          <div class="node-name">Listing Detail</div>
+          <div class="node-feature">Photos · Specs · Lister · Reviews · Booking sidebar</div>
+        </div>
+        <div class="node node-public">
+          <span class="node-route">/users/[id]</span>
+          <div class="node-name">Public Profile</div>
+          <div class="node-feature">Lister listings · Reviews received</div>
+        </div>
+        <div class="node node-public">
+          <span class="node-route">/terms</span>
+          <div class="node-name">Terms of Service</div>
+          <div class="node-feature">Legal</div>
+        </div>
+        <div class="node node-public">
+          <span class="node-route">/privacy</span>
+          <div class="node-name">Privacy Policy</div>
+          <div class="node-feature">Legal</div>
+        </div>
+        <div class="node node-public">
+          <span class="node-route">/lister-agreement</span>
+          <div class="node-name">Lister Agreement</div>
+          <div class="node-feature">Legal · Referenced during onboarding</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 2: Auth + Onboarding + Booking -->
+    <div class="col">
+      <div class="col-header">Auth + Booking Flow</div>
+      <div class="col-body">
+        <div class="node node-auth">
+          <span class="node-route">/sign-in</span>
+          <div class="node-name">Sign In</div>
+          <div class="node-feature">Clerk · OAuth + email/password</div>
+        </div>
+        <div class="node node-auth">
+          <span class="node-route">/sign-up</span>
+          <div class="node-name">Sign Up</div>
+          <div class="node-feature">Clerk → Profile setup → Intent</div>
+        </div>
+        <div class="node node-auth">
+          <span class="node-route">/lister-onboarding</span>
+          <div class="node-name">Lister Onboarding</div>
+          <div class="node-feature">ID verify · Payout · Agreement — 4-step wizard</div>
+        </div>
+
+        <div style="height:16px; border-left: 2px dashed var(--border); margin-left: 16px;"></div>
+
+        <div class="node node-booking">
+          <span class="node-route">/gear/[id]/book</span>
+          <div class="node-name">Booking Request</div>
+          <div class="node-feature">Cost breakdown · Message to lister · Pickup details</div>
+        </div>
+        <div class="node node-booking">
+          <span class="node-route">/gear/[id]/checkout</span>
+          <div class="node-name">Payment Checkout</div>
+          <div class="node-feature">Stripe Elements · Deposit hold · Charge amount on button</div>
+        </div>
+        <div class="node node-booking">
+          <span class="node-route">/gear/[id]/booking-confirmed</span>
+          <div class="node-name">Booking Confirmed</div>
+          <div class="node-feature">Ref number · Full address revealed · Add to calendar</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 3: Shared Dashboard -->
+    <div class="col">
+      <div class="col-header">Dashboard — Shared</div>
+      <div class="col-body">
+        <div class="node node-shared">
+          <span class="node-route">/dashboard</span>
+          <div class="node-name">Dashboard Home</div>
+          <div class="node-feature">Active bookings · Quick nav · Stats</div>
+        </div>
+        <div class="node node-shared">
+          <span class="node-route">/dashboard/bookings</span>
+          <div class="node-name">Bookings List</div>
+          <div class="node-feature">As renter + as lister tabs · Status filter</div>
+        </div>
+        <div class="node node-shared">
+          <span class="node-route">/dashboard/bookings/[id]</span>
+          <div class="node-name">Booking Detail</div>
+          <div class="node-feature">Pickup · Active rental · Return · Dispute — state-driven actions</div>
+        </div>
+        <div class="node node-shared">
+          <span class="node-route">/dashboard/bookings/[id]/cancel</span>
+          <div class="node-name">Cancellation</div>
+          <div class="node-feature">Refund preview · Mutual cancel option</div>
+        </div>
+        <div class="node node-shared">
+          <span class="node-route">/dashboard/bookings/[id]/review</span>
+          <div class="node-name">Leave a Review</div>
+          <div class="node-feature">Star input · Condition accuracy · Tags · Blind system</div>
+        </div>
+        <div class="node node-shared">
+          <span class="node-route">/dashboard/messages</span>
+          <div class="node-name">Messages Inbox</div>
+          <div class="node-feature">All threads · Unread count</div>
+        </div>
+        <div class="node node-shared">
+          <span class="node-route">/dashboard/messages/[id]</span>
+          <div class="node-name">Message Thread</div>
+          <div class="node-feature">Chat UI · Photo attach · System messages</div>
+        </div>
+        <div class="node node-shared">
+          <span class="node-route">/dashboard/profile</span>
+          <div class="node-name">Profile & Settings</div>
+          <div class="node-feature">Profile · Notification prefs · Security</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 4: Lister Dashboard -->
+    <div class="col">
+      <div class="col-header">Dashboard — Lister</div>
+      <div class="col-body">
+        <div class="node node-lister">
+          <span class="node-route">/dashboard/listings</span>
+          <div class="node-name">My Listings</div>
+          <div class="node-feature">Table view · Status filter · Quick actions · Bulk pause</div>
+        </div>
+        <div class="node node-lister">
+          <span class="node-route">/dashboard/listings/new</span>
+          <div class="node-name">Create Listing</div>
+          <div class="node-feature">10-step wizard — Category → Specs → Photos → Pricing → Publish</div>
+        </div>
+        <div class="node node-lister">
+          <span class="node-route">/dashboard/listings/[id]/edit</span>
+          <div class="node-name">Edit Listing</div>
+          <div class="node-feature">Pre-filled wizard · Locked fields during active booking</div>
+        </div>
+        <div class="node node-lister">
+          <span class="node-route">/dashboard/listings/[id]/calendar</span>
+          <div class="node-name">Availability Calendar</div>
+          <div class="node-feature">Interactive — block/unblock · Recurring blocks · Color-coded</div>
+        </div>
+        <div class="node node-lister">
+          <span class="node-route">/dashboard/listings/bundle/new</span>
+          <div class="node-name">Create Bundle</div>
+          <div class="node-feature">5-step wizard · Select listings → Pricing → Publish</div>
+        </div>
+        <div class="node node-lister">
+          <span class="node-route">/dashboard/earnings</span>
+          <div class="node-name">Earnings Dashboard</div>
+          <div class="node-feature">Next payout · History table · Per-listing stats · CSV export</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 5: Admin -->
+    <div class="col">
+      <div class="col-header">Admin</div>
+      <div class="col-body">
+        <div class="node node-admin">
+          <span class="node-route">/admin</span>
+          <div class="node-name">Admin Dashboard</div>
+          <div class="node-feature">Queue counts · SLA alerts</div>
+        </div>
+        <div class="node node-admin">
+          <span class="node-route">/admin/listings</span>
+          <div class="node-name">Listing Review Queue</div>
+          <div class="node-feature">High-value + flagged · SLA countdown</div>
+        </div>
+        <div class="node node-admin">
+          <span class="node-route">/admin/listings/[id]</span>
+          <div class="node-name">Listing Review</div>
+          <div class="node-feature">Split screen · Photos · Lister history · Approve / Reject / Changes</div>
+        </div>
+        <div class="node node-admin">
+          <span class="node-route">/admin/disputes</span>
+          <div class="node-name">Dispute Queue</div>
+          <div class="node-feature">Priority sort · Amounts at stake · SLA countdown</div>
+        </div>
+        <div class="node node-admin">
+          <span class="node-route">/admin/disputes/[id]</span>
+          <div class="node-name">Dispute Detail</div>
+          <div class="node-feature">Photo compare · Message thread · Timeline · Ruling wizard</div>
+        </div>
+        <div class="node node-admin">
+          <span class="node-route">/admin/users</span>
+          <div class="node-name">User Management</div>
+          <div class="node-feature">Search by email / name / booking ref</div>
+        </div>
+        <div class="node node-admin">
+          <span class="node-route">/admin/users/[id]</span>
+          <div class="node-name">User Record</div>
+          <div class="node-feature">Red flags · Booking history · Warn / Restrict / Suspend / Ban</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sitemap -->
+
+  <!-- ────────────────────────────────────────
+       Primary User Flows
+  ──────────────────────────────────────────── -->
+  <div class="flows">
+    <div class="flows-title">Primary User Flows</div>
+    <div class="flow-grid">
+
+      <!-- Renter booking flow -->
+      <div class="flow-card">
+        <div class="flow-card-title">Renter — Book Gear</div>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">01</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/</span>
+              <div class="flow-step-label">Homepage</div>
+              <div class="flow-step-note">Enter location + gear type in search bar</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">02</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/gear</span>
+              <div class="flow-step-label">Search Results</div>
+              <div class="flow-step-note">Filter by condition, price, radius. Select a listing.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">03</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/gear/[id]</span>
+              <div class="flow-step-label">Listing Detail</div>
+              <div class="flow-step-note">Review specs, photos, lister, calendar. Select dates.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">04</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/sign-in or /sign-up</span>
+              <div class="flow-step-label">Authentication</div>
+              <div class="flow-step-note">If not signed in — redirected back to listing after auth.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">05</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/gear/[id]/book</span>
+              <div class="flow-step-label">Booking Request</div>
+              <div class="flow-step-note">Review full cost breakdown. Add optional message.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">06</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/gear/[id]/checkout</span>
+              <div class="flow-step-label">Payment</div>
+              <div class="flow-step-note">Stripe card entry. Confirm charge + deposit hold.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">07</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/gear/[id]/booking-confirmed</span>
+              <div class="flow-step-label">Confirmed</div>
+              <div class="flow-step-note">Full address revealed. Message lister to coordinate.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lister flow -->
+      <div class="flow-card">
+        <div class="flow-card-title">Lister — Publish First Listing</div>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">01</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/sign-up</span>
+              <div class="flow-step-label">Create Account</div>
+              <div class="flow-step-note">Clerk auth → profile setup → select "List gear"</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">02</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/lister-onboarding</span>
+              <div class="flow-step-label">Lister Onboarding</div>
+              <div class="flow-step-note">ID verification (Stripe Identity) → bank account (Stripe Connect) → lister agreement</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">03</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/dashboard/listings/new</span>
+              <div class="flow-step-label">Create Listing</div>
+              <div class="flow-step-note">10-step wizard: category → specs → condition → photos → pricing → deposit → availability → location → publish</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">04</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/gear/[id]</span>
+              <div class="flow-step-label">Live Listing</div>
+              <div class="flow-step-note">Listing now searchable. MSRP ≥ $5K goes to admin review first.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rental lifecycle flow -->
+      <div class="flow-card">
+        <div class="flow-card-title">Rental Lifecycle — Pickup to Payout</div>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">01</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/dashboard/messages/[id]</span>
+              <div class="flow-step-label">Pre-Pickup Messaging</div>
+              <div class="flow-step-note">Renter + lister coordinate address, pickup time, gear tips.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">02</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/dashboard/bookings/[id]</span>
+              <div class="flow-step-label">Pickup Day</div>
+              <div class="flow-step-note">Renter confirms gear as described — or flags condition issue. Lister confirms handoff.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">03</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/dashboard/bookings/[id]</span>
+              <div class="flow-step-label">Active Rental</div>
+              <div class="flow-step-note">Return countdown. Renter can request extension or early return.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">04</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/dashboard/bookings/[id]</span>
+              <div class="flow-step-label">Return Day</div>
+              <div class="flow-step-note">Lister inspects — confirms clean or files damage claim. Renter confirms returned.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">05</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/dashboard/bookings/[id]/review</span>
+              <div class="flow-step-label">Leave Review</div>
+              <div class="flow-step-note">Both parties review. Blind — revealed after both submit.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">06</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/dashboard/earnings</span>
+              <div class="flow-step-label">Payout</div>
+              <div class="flow-step-note">Lister payout released after 48h dispute window. Deposit released to renter.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin review flow -->
+      <div class="flow-card">
+        <div class="flow-card-title">Admin — Dispute Resolution</div>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">01</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/admin/disputes</span>
+              <div class="flow-step-label">Dispute Queue</div>
+              <div class="flow-step-note">Prioritized by type and SLA. Damage → Late return → Pre-rental.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">02</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/admin/disputes/[id]</span>
+              <div class="flow-step-label">Evidence Review</div>
+              <div class="flow-step-note">Compare pickup vs. return photos. Read message thread. Review both statements.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">03</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/admin/disputes/[id]</span>
+              <div class="flow-step-label">Issue Ruling</div>
+              <div class="flow-step-note">Ruling wizard: select outcome → amounts → explanation → preview → confirm. Triggers Stripe disbursements.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">04</div>
+            <div class="flow-step-content">
+              <span class="flow-step-route">/dashboard/bookings/[id]/review</span>
+              <div class="flow-step-label">Reviews Unlock</div>
+              <div class="flow-step-note">Both parties notified. Reviews available for 14-day window.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────
+       Key Cross-Page Links
+  ──────────────────────────────────────────── -->
+  <div class="cross-section">
+    <div class="cross-title">Key Cross-Page Connections</div>
+    <div class="cross-grid">
+      <div class="cross-card">
+        <div class="cross-card-from">From</div>
+        <div class="cross-card-name">Homepage /</div>
+        <div class="cross-links-list">
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/gear</span> via search submit</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/gear/[id]</span> via featured listing cards</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/sign-up?intent=lister</span> via "List your gear" CTA</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/sign-in</span> via nav sign in</div></div>
+        </div>
+      </div>
+      <div class="cross-card">
+        <div class="cross-card-from">From</div>
+        <div class="cross-card-name">Listing Detail /gear/[id]</div>
+        <div class="cross-links-list">
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/gear/[id]/book</span> via "Request this gear"</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/sign-in</span> if unauthenticated (then returns)</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/users/[listerId]</span> via lister name/avatar</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/gear/[individualId]</span> from bundle component items</div></div>
+        </div>
+      </div>
+      <div class="cross-card">
+        <div class="cross-card-from">From</div>
+        <div class="cross-card-name">Booking Detail /dashboard/bookings/[id]</div>
+        <div class="cross-links-list">
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/dashboard/messages/[threadId]</span> via "Message" button</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/dashboard/bookings/[id]/review</span> on completion</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/dashboard/bookings/[id]/cancel</span> via cancel link</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/gear/[id]</span> via gear name link</div></div>
+        </div>
+      </div>
+      <div class="cross-card">
+        <div class="cross-card-from">From</div>
+        <div class="cross-card-name">Booking Confirmed</div>
+        <div class="cross-links-list">
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/dashboard/messages/[threadId]</span> via "Message lister"</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/dashboard/bookings/[id]</span> via "View my booking"</div></div>
+        </div>
+      </div>
+      <div class="cross-card">
+        <div class="cross-card-from">From</div>
+        <div class="cross-card-name">My Listings /dashboard/listings</div>
+        <div class="cross-links-list">
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/dashboard/listings/new</span> via "Add listing"</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/dashboard/listings/[id]/edit</span> via Edit row action</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/dashboard/listings/[id]/calendar</span> via Calendar row action</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/gear/[id]</span> via "View" row action</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/dashboard/listings/bundle/new</span> via "Create bundle"</div></div>
+        </div>
+      </div>
+      <div class="cross-card">
+        <div class="cross-card-from">From</div>
+        <div class="cross-card-name">Admin Dispute /admin/disputes/[id]</div>
+        <div class="cross-links-list">
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div><span class="cross-link-dest">/admin/users/[id]</span> via both party names</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div>Ruling form triggers Stripe disbursements</div></div>
+          <div class="cross-link-item"><span class="cross-link-arrow">→</span><div>Ruling triggers review unlock on booking</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<footer>
+  <div class="footer-logo">KIT<span>LO</span></div>
+  <div class="footer-copy">SITEMAP — PHASE 1 · 35 PAGES · 9 AREAS</div>
+</footer>
+
+</body>
+</html>
