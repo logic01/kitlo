@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Layout: Static / Legal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .page-sep { background: var(--color-slate); color: var(--color-on-dark); padding: 16px 52px; display: flex; align-items: baseline; gap: 20px; }
+  .page-sep-route { font-family: var(--font-mono); font-size: 13px; color: var(--color-amber); }
+  .page-sep-name { font-family: var(--font-condensed); font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-on-dark); }
+
+  .legal-shell {
+    max-width: 760px;
+    margin-inline: auto;
+    padding: 56px 52px 80px;
+  }
+  .legal-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .legal-shell h1 {
+    font-family: var(--font-condensed);
+    font-size: 38px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.02em;
+    color: var(--color-slate);
+    margin-bottom: 18px;
+    line-height: 1.0;
+  }
+  .legal-lede {
+    font-size: 17px; line-height: 1.7;
+    color: var(--color-muted);
+    border-left: 3px solid var(--color-olive);
+    padding: 6px 0 6px 18px;
+    margin-bottom: 32px;
+  }
+  .legal-shell h2 {
+    font-family: var(--font-condensed);
+    font-size: 18px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-slate);
+    margin: 32px 0 14px;
+  }
+  .legal-shell h3 {
+    font-family: var(--font-sans);
+    font-size: 15px; font-weight: 600;
+    color: var(--color-slate);
+    margin: 20px 0 8px;
+  }
+  .legal-shell p,
+  .legal-shell li {
+    font-size: 15px; line-height: 1.75;
+    color: var(--color-slate);
+    margin-bottom: 14px;
+  }
+  .legal-shell li { margin-bottom: 8px; }
+  .legal-toc {
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    padding: 18px 22px;
+    background: var(--color-surface);
+    margin-bottom: 36px;
+  }
+  .legal-toc-title {
+    font-family: var(--font-condensed);
+    font-size: 13px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-slate);
+    margin-bottom: 10px;
+  }
+  .legal-toc ol {
+    margin: 0; padding-left: 20px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--color-muted);
+    columns: 2;
+    column-gap: 24px;
+  }
+  .legal-toc a { color: var(--color-olive); text-decoration: none; }
+  .legal-toc a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+
+<!-- ================================================================
+     PAGE 9.1 — Terms of Service  /terms
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/terms</span>
+  <span class="page-sep-name">9.1 Terms of Service</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Browse gear</a></li>
+    <li><a href="#">How it works</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost">Sign in</a>
+    <a href="#" class="btn btn-secondary">List your gear</a>
+  </div>
+</nav>
+
+<div class="legal-shell">
+  <p class="legal-meta">Last updated · Oct 1, 2026 · Effective Oct 15, 2026</p>
+  <h1>Terms of Service</h1>
+  <p class="legal-lede">These Terms govern your use of Kitlo, a peer-to-peer marketplace for hunting equipment rentals. By creating an account, listing gear, or booking a rental, you agree to these terms.</p>
+
+  <div class="legal-toc">
+    <p class="legal-toc-title">Contents</p>
+    <ol>
+      <li><a href="#">Eligibility &amp; account</a></li>
+      <li><a href="#">Listing gear on Kitlo</a></li>
+      <li><a href="#">Booking &amp; rental terms</a></li>
+      <li><a href="#">Payment, fees &amp; refunds</a></li>
+      <li><a href="#">Deposits &amp; damage</a></li>
+      <li><a href="#">Disputes &amp; resolution</a></li>
+      <li><a href="#">Identity verification</a></li>
+      <li><a href="#">Prohibited conduct</a></li>
+      <li><a href="#">Intellectual property</a></li>
+      <li><a href="#">Liability &amp; warranties</a></li>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Termination</a></li>
+      <li><a href="#">Governing law</a></li>
+      <li><a href="#">Changes to these terms</a></li>
+    </ol>
+  </div>
+
+  <h2>1. Eligibility &amp; account</h2>
+  <p>To use Kitlo, you must be at least 18 years old, a US resident, and able to enter binding contracts. You are responsible for keeping your account credentials secure.</p>
+
+  <h2>2. Listing gear on Kitlo</h2>
+  <p>Listers must complete identity verification and connect a payout account before publishing. You retain ownership of your gear at all times. Kitlo never takes possession of listed items.</p>
+
+  <h3>2.1 Listing accuracy</h3>
+  <p>You agree that all photos, specifications, condition ratings, and descriptions you submit are true and accurate to the best of your knowledge.</p>
+
+  <h2>3. Booking &amp; rental terms</h2>
+  <p>A booking creates a binding rental contract between renter and lister. Kitlo is the payment facilitator and dispute mediator, but is not a party to the rental contract itself.</p>
+
+  <h2>4. Payment, fees &amp; refunds</h2>
+  <p>Renters pay Kitlo at the time of booking confirmation. Kitlo charges a 10% service fee to the renter and deducts a 15% take rate from the lister payout. Refunds follow the cancellation policy in Section 4.3.</p>
+
+  <h2>5. Deposits &amp; damage</h2>
+  <p>Every booking includes a deposit hold authorized at booking confirmation. Deposits are released to the renter 48 hours after return confirmation, unless the lister files a damage claim within that window.</p>
+
+  <p style="font-size:13px;color:var(--color-muted);font-style:italic;margin-top:36px;">[Full terms continue — sections 6 through 14 follow the same structure.]</p>
+
+  <p style="font-family:var(--font-mono);font-size:12px;color:var(--color-muted);margin-top:48px;padding-top:24px;border-top:1px solid var(--color-border);">Questions about these terms? Email <a href="#" style="color:var(--color-olive);">legal@kitlo.com</a>.</p>
+</div>
+
+
+<!-- ================================================================
+     PAGE 9.2 — Privacy Policy  /privacy
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/privacy</span>
+  <span class="page-sep-name">9.2 Privacy Policy</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Browse gear</a></li>
+    <li><a href="#">How it works</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost">Sign in</a>
+    <a href="#" class="btn btn-secondary">List your gear</a>
+  </div>
+</nav>
+
+<div class="legal-shell">
+  <p class="legal-meta">Last updated · Oct 1, 2026</p>
+  <h1>Privacy Policy</h1>
+  <p class="legal-lede">We collect what we need to run the marketplace and verify you're who you say you are. We don't sell your data. Here's exactly what we collect, why, and how to control it.</p>
+
+  <div class="legal-toc">
+    <p class="legal-toc-title">Contents</p>
+    <ol>
+      <li><a href="#">Data we collect</a></li>
+      <li><a href="#">How we use it</a></li>
+      <li><a href="#">Who we share it with</a></li>
+      <li><a href="#">Identity verification (Stripe)</a></li>
+      <li><a href="#">Payments (Stripe Connect)</a></li>
+      <li><a href="#">Cookies &amp; analytics</a></li>
+      <li><a href="#">Your rights &amp; controls</a></li>
+      <li><a href="#">Data retention</a></li>
+      <li><a href="#">Security</a></li>
+      <li><a href="#">Changes to this policy</a></li>
+    </ol>
+  </div>
+
+  <h2>1. Data we collect</h2>
+  <h3>From you, directly</h3>
+  <ul>
+    <li>Account: name, email, phone, password (hashed), city/state.</li>
+    <li>Profile: photo, bio, role intent (renter/lister/both).</li>
+    <li>Listings: photos, descriptions, specs, pricing, ZIP, availability.</li>
+    <li>Messages between renters and listers.</li>
+    <li>Reviews and ratings you write.</li>
+  </ul>
+
+  <h3>From verification &amp; payment partners</h3>
+  <ul>
+    <li>From Stripe Identity: pass/fail status only — Kitlo never receives or stores your government ID.</li>
+    <li>From Stripe Connect: payout status, account state. Kitlo never receives bank account numbers.</li>
+  </ul>
+
+  <h3>Automatically</h3>
+  <ul>
+    <li>IP address, browser, device. Used for fraud detection and security.</li>
+    <li>Usage analytics (pages viewed, search terms) for product improvement.</li>
+  </ul>
+
+  <h2>2. How we use it</h2>
+  <p>To operate the marketplace (matching renters and listers, processing bookings), to verify identity, to mediate disputes, to comply with tax law (1099-K issuance), and to keep the platform safe.</p>
+
+  <h2>3. Who we share it with</h2>
+  <p>Stripe (payments + identity), Cloudinary (photo hosting), Clerk (auth). Law enforcement only with valid legal process.</p>
+
+  <h2>7. Your rights &amp; controls</h2>
+  <p>You can download your data, correct it, or delete your account at any time from <a href="#" style="color:var(--color-olive);text-decoration:underline;">/dashboard/profile</a>. Account deletion removes personal data within 30 days, except where retention is required by law (financial records, dispute records).</p>
+
+  <p style="font-size:13px;color:var(--color-muted);font-style:italic;margin-top:36px;">[Sections 4–6 and 8–10 continue.]</p>
+
+  <p style="font-family:var(--font-mono);font-size:12px;color:var(--color-muted);margin-top:48px;padding-top:24px;border-top:1px solid var(--color-border);">Privacy questions? Email <a href="#" style="color:var(--color-olive);">privacy@kitlo.com</a>.</p>
+</div>
+
+
+<!-- ================================================================
+     PAGE 9.3 — Lister Agreement  /lister-agreement
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/lister-agreement</span>
+  <span class="page-sep-name">9.3 Lister Agreement</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Browse gear</a></li>
+    <li><a href="#">How it works</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost">Sign in</a>
+    <a href="#" class="btn btn-secondary">List your gear</a>
+  </div>
+</nav>
+
+<div class="legal-shell">
+  <p class="legal-meta">Last updated · Oct 1, 2026 · Public version</p>
+  <h1>Lister Agreement</h1>
+  <p class="legal-lede">Plain-English terms for listing gear on Kitlo. The same agreement is shown inline during lister onboarding — this page is a permanent reference for active listers.</p>
+
+  <div style="display:flex;align-items:center;gap:16px;padding:18px 22px;border:1px solid var(--color-olive-border);background:var(--color-olive-pale);border-radius:3px;margin-bottom:32px;">
+    <div style="font-family:var(--font-condensed);font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-olive);">Kitlo take rate</div>
+    <div style="font-family:var(--font-mono);font-size:22px;font-weight:600;color:var(--color-slate);margin-left:auto;">15%</div>
+    <div style="font-size:13px;color:var(--color-muted);max-width:280px;text-align:right;">Deducted from each rental before payout. Renters separately pay a 10% service fee.</div>
+  </div>
+
+  <h2>1. Your gear, your responsibility</h2>
+  <p>You own the gear. You set the daily rate, the deposit, the availability. You decide whether bookings are instant-book or require approval. Kitlo never takes possession of your equipment.</p>
+
+  <h2>2. Funds &amp; payouts</h2>
+  <p>Renters pay Kitlo at booking confirmation. We hold funds in escrow until both parties confirm return. Earnings deposit to your bank account within 24 hours of return confirmation.</p>
+
+  <h2>3. Damage &amp; deposits</h2>
+  <p>Every booking includes a deposit hold (you set the amount per listing). If gear comes back damaged, you have 48 hours from return confirmation to file a damage claim with photo evidence. Kitlo mediates between you and the renter.</p>
+
+  <h2>4. Disputes</h2>
+  <p>If you and the renter can't agree on a damage outcome, late fee, or other issue, Kitlo Support reviews evidence (photos, message thread, booking timeline) and issues a binding ruling within 5 business days.</p>
+
+  <h2>5. Cancellation</h2>
+  <p>You can cancel a confirmed booking, but lister-initiated cancellations within 48 hours of pickup may result in a $25 disruption fee to cover the renter's hassle. Repeat cancellations within a 30-day window will lower your rank in search.</p>
+
+  <h2>6. Tax reporting</h2>
+  <p>Kitlo issues a 1099-K once you cross the IRS reporting threshold for the calendar year. You handle your own taxes — Kitlo doesn't withhold.</p>
+
+  <h2>7. Termination</h2>
+  <p>Either party can end this agreement at any time. Open bookings must complete normally. Kitlo may also suspend or terminate listings that violate the Terms of Service.</p>
+
+  <h2>8. Insurance</h2>
+  <p>Kitlo's optional Protection Plan (paid by the renter at booking) covers up to $5,000 in damage per booking. For higher-value gear, you may carry your own coverage. Kitlo is not a primary insurer.</p>
+
+  <p style="font-family:var(--font-mono);font-size:12px;color:var(--color-muted);margin-top:48px;padding-top:24px;border-top:1px solid var(--color-border);">Questions? Email <a href="#" style="color:var(--color-olive);">listers@kitlo.com</a>.</p>
+</div>
+
+</body>
+</html>

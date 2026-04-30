@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo Mobile — Auth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  body { background: #2A2E29; padding: 32px 16px 60px; }
+  .page-sep { background: var(--color-slate); color: var(--color-on-dark); padding: 12px 16px; display: flex; align-items: baseline; gap: 12px; max-width: 390px; margin: 24px auto 0; }
+  .page-sep:first-of-type { margin-top: 0; }
+  .page-sep-route { font-family: var(--font-mono); font-size: 11px; color: var(--color-amber); }
+  .page-sep-name { font-family: var(--font-condensed); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-on-dark); }
+  .phone { width: 390px; margin: 0 auto; background: var(--color-bg); border: 1px solid #1A1F1A; overflow: hidden; box-shadow: 0 12px 48px rgba(0,0,0,0.3); }
+  .phone-status { background: var(--color-bg); padding: 10px 18px 6px; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: var(--color-slate); }
+  .phone-body { min-height: 720px; padding: 24px 22px 32px; }
+  .phone-logo { font-family: var(--font-condensed); font-size: 24px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-slate); text-decoration: none; display: block; text-align: center; margin-bottom: 28px; }
+  .phone-logo span { color: var(--color-amber); }
+  .auth-h { font-family: var(--font-condensed); font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.02em; color: var(--color-slate); margin-bottom: 6px; line-height: 1.05; }
+  .auth-sub { font-size: 13px; color: var(--color-muted); margin-bottom: 22px; line-height: 1.55; }
+  .oauth { width: 100%; padding: 11px; border: 1px solid var(--color-border); background: var(--color-bg); border-radius: 3px; font-size: 14px; color: var(--color-slate); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .auth-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; font-size: 11px; color: var(--color-light); text-transform: uppercase; letter-spacing: 0.08em; }
+  .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--color-border); }
+  .step-bar { display: flex; gap: 4px; margin-bottom: 24px; }
+  .step-bar-fill { height: 3px; flex: 1; background: var(--color-border); border-radius: 2px; }
+  .step-bar-fill.is-on { background: var(--color-olive); }
+  .intent-card-m { border: 1px solid var(--color-border); border-radius: 4px; padding: 16px; margin-bottom: 10px; cursor: pointer; }
+  .intent-card-m.selected { border-color: var(--color-olive); background: var(--color-olive-pale); }
+  .intent-card-m .ic-h { font-family: var(--font-condensed); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-slate); margin-bottom: 4px; }
+  .intent-card-m .ic-b { font-size: 12px; color: var(--color-muted); line-height: 1.5; }
+  .photo-circle { width: 80px; height: 80px; border-radius: 50%; background: var(--color-surface); border: 1px dashed var(--color-border); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 10px; color: var(--color-light); margin: 0 auto 10px; }
+</style>
+</head>
+<body>
+
+
+<!-- 2.1 Sign In -->
+<div class="page-sep"><span class="page-sep-route">/sign-in</span><span class="page-sep-name">2.1 Sign In (mobile)</span></div>
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body">
+    <a href="#" class="phone-logo">KIT<span>LO</span></a>
+    <h1 class="auth-h">Sign in</h1>
+    <p class="auth-sub">Welcome back to Kitlo.</p>
+
+    <button class="oauth"><span style="width:14px;height:14px;border:1px solid var(--color-border);font-size:9px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;">G</span> Continue with Google</button>
+    <button class="oauth"><span style="width:14px;height:14px;border:1px solid var(--color-border);font-size:9px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;">A</span> Continue with Apple</button>
+
+    <div class="auth-divider">or</div>
+
+    <div class="form-group">
+      <label class="input-label">Email</label>
+      <input class="input" type="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <label class="input-label">Password</label>
+        <a href="#" style="font-size:11px;color:var(--color-olive);text-decoration:underline;">Forgot?</a>
+      </div>
+      <input class="input" type="password" placeholder="••••••••••">
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;margin-top:6px;">Sign in</button>
+    <p style="text-align:center;font-size:13px;color:var(--color-muted);margin-top:18px;">No account? <a href="#" style="color:var(--color-olive);text-decoration:underline;">Create one</a></p>
+  </div>
+</div>
+
+
+<!-- 2.2a Sign Up step 1 -->
+<div class="page-sep"><span class="page-sep-route">/sign-up</span><span class="page-sep-name">2.2a Sign Up — Step 1: Account</span></div>
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body">
+    <a href="#" class="phone-logo">KIT<span>LO</span></a>
+    <div class="step-bar"><div class="step-bar-fill is-on"></div><div class="step-bar-fill"></div><div class="step-bar-fill"></div></div>
+    <p style="font-family:var(--font-mono);font-size:11px;color:var(--color-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Step 1 of 3 · Account</p>
+    <h1 class="auth-h">Create your account</h1>
+    <p class="auth-sub">Takes about a minute.</p>
+
+    <button class="oauth"><span style="width:14px;height:14px;border:1px solid var(--color-border);font-size:9px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;">G</span> Continue with Google</button>
+    <button class="oauth"><span style="width:14px;height:14px;border:1px solid var(--color-border);font-size:9px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;">A</span> Continue with Apple</button>
+
+    <div class="auth-divider">or with email</div>
+
+    <div class="form-group"><label class="input-label">Email</label><input class="input" type="email" placeholder="you@example.com"></div>
+    <div class="form-group">
+      <label class="input-label">Password</label>
+      <input class="input" type="password" placeholder="At least 8 characters">
+      <p style="font-size:11px;color:var(--color-muted);margin-top:4px;">Must include a number and a symbol.</p>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;">Continue</button>
+    <p style="font-size:11px;color:var(--color-muted);text-align:center;margin-top:14px;line-height:1.5;">By signing up, you agree to our <a href="#" style="color:var(--color-olive);">Terms</a> &amp; <a href="#" style="color:var(--color-olive);">Privacy</a>.</p>
+  </div>
+</div>
+
+
+<!-- 2.2b Sign Up step 2 -->
+<div class="page-sep"><span class="page-sep-route">/sign-up</span><span class="page-sep-name">2.2b Sign Up — Step 2: Profile</span></div>
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body">
+    <a href="#" class="phone-logo">KIT<span>LO</span></a>
+    <div class="step-bar"><div class="step-bar-fill is-on"></div><div class="step-bar-fill is-on"></div><div class="step-bar-fill"></div></div>
+    <p style="font-family:var(--font-mono);font-size:11px;color:var(--color-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Step 2 of 3 · Profile</p>
+    <h1 class="auth-h">Tell us about yourself</h1>
+    <p class="auth-sub">Hunters trust real people.</p>
+
+    <div class="photo-circle">UPLOAD</div>
+    <div style="display:flex;gap:6px;justify-content:center;margin-bottom:18px;">
+      <button class="btn btn-ghost btn-sm">Upload photo</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--color-muted);">Skip</button>
+    </div>
+
+    <div class="form-group"><label class="input-label">First name</label><input class="input" type="text"></div>
+    <div class="form-group"><label class="input-label">Last name</label><input class="input" type="text"></div>
+    <div class="form-group"><label class="input-label">City &amp; state</label><input class="input" type="text" placeholder="Bozeman, MT"></div>
+
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn btn-ghost" style="flex:0 0 auto;">Back</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;">Continue</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 2.2c Sign Up step 3 -->
+<div class="page-sep"><span class="page-sep-route">/sign-up</span><span class="page-sep-name">2.2c Sign Up — Step 3: Intent</span></div>
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body">
+    <a href="#" class="phone-logo">KIT<span>LO</span></a>
+    <div class="step-bar"><div class="step-bar-fill is-on"></div><div class="step-bar-fill is-on"></div><div class="step-bar-fill is-on"></div></div>
+    <p style="font-family:var(--font-mono);font-size:11px;color:var(--color-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Step 3 of 3 · Intent</p>
+    <h1 class="auth-h">What brings you here?</h1>
+    <p class="auth-sub">You can change this anytime.</p>
+
+    <div class="intent-card-m">
+      <div class="ic-h">Rent gear</div>
+      <p class="ic-b">Find thermal, NV, and high-value gear from verified hunters near you.</p>
+    </div>
+    <div class="intent-card-m selected">
+      <div class="ic-h">List gear</div>
+      <p class="ic-b">Earn income from gear sitting in your safe between seasons.</p>
+    </div>
+    <div class="intent-card-m">
+      <div class="ic-h">Both</div>
+      <p class="ic-b">Most hunters pick this. Rent extras, list what you've got.</p>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-ghost" style="flex:0 0 auto;">Back</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;">Continue</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

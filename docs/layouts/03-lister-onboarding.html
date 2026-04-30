@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Layout: Lister Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .page-sep {
+    background: var(--color-slate);
+    color: var(--color-on-dark);
+    padding: 16px 52px;
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .page-sep-route {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-amber);
+  }
+  .page-sep-name {
+    font-family: var(--font-condensed);
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-on-dark);
+  }
+  .placeholder-img {
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-light);
+    letter-spacing: 0.08em;
+  }
+  .onboard-shell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px 80px;
+    background: var(--color-bg);
+    min-height: calc(100vh - 60px);
+  }
+  .onboard-card {
+    width: 100%;
+    max-width: 720px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 40px 44px 36px;
+  }
+  .req-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 24px 0 8px;
+  }
+  .req-item {
+    display: flex;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    background: var(--color-surface);
+  }
+  .req-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-olive);
+    color: var(--color-on-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .req-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--color-slate);
+    margin-bottom: 3px;
+  }
+  .req-body { font-size: 13px; color: var(--color-muted); line-height: 1.55; }
+  .verify-frame {
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    background: var(--color-surface);
+    padding: 32px;
+    text-align: center;
+  }
+  .verify-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--color-bg);
+    border: 1px dashed var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-light);
+    margin: 0 auto 18px;
+  }
+  .stripe-trust {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    border-radius: 3px;
+    font-size: 13px;
+    color: var(--color-muted);
+    margin-top: 18px;
+  }
+  .agreement-scroll {
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    background: var(--color-surface);
+    padding: 20px 24px;
+    max-height: 260px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--color-muted);
+    margin-bottom: 16px;
+  }
+  .agreement-scroll h4 {
+    font-family: var(--font-condensed);
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-slate);
+    margin: 14px 0 6px;
+  }
+  .take-rate-card {
+    border: 1px solid var(--color-olive-border);
+    background: var(--color-olive-pale);
+    border-radius: 3px;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .take-rate-label {
+    font-family: var(--font-condensed);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-olive);
+  }
+  .take-rate-value {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-slate);
+  }
+</style>
+</head>
+<body>
+
+
+<!-- ================================================================
+     PAGE 3.1a — Lister Onboarding — Step 1: Intro
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/lister-onboarding</span>
+  <span class="page-sep-name">3.1a Lister Onboarding — Step 1: Intro</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost btn-sm" style="color:var(--color-muted);">Save and exit</a>
+  </div>
+</nav>
+
+<div class="onboard-shell">
+  <div class="onboard-card">
+    <div class="stepper" style="margin-bottom:36px;">
+      <div class="stepper-step is-active">
+        <div class="stepper-num">1</div>
+        <div class="stepper-label">Intro</div>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">2</div>
+        <div class="stepper-label">Verify ID</div>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">3</div>
+        <div class="stepper-label">Payout</div>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">4</div>
+        <div class="stepper-label">Agreement</div>
+      </div>
+    </div>
+
+    <p class="text-overline" style="margin-bottom:6px;">Lister setup</p>
+    <h1 style="font-family:var(--font-condensed);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin-bottom:10px;">Three things before you list</h1>
+    <p style="font-size:15px;color:var(--color-muted);line-height:1.65;">Renters trust verified hunters. We verify three things before your gear goes live. The whole process takes about 5–10 minutes.</p>
+
+    <div class="req-list">
+      <div class="req-item">
+        <div class="req-num">1</div>
+        <div>
+          <div class="req-title">Verify your identity</div>
+          <p class="req-body">Government-issued ID + a quick selfie via Stripe Identity. Done once, never again.</p>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-num">2</div>
+        <div>
+          <div class="req-title">Connect a payout account</div>
+          <p class="req-body">A US bank account or debit card via Stripe Connect. Earnings deposit automatically after each rental.</p>
+        </div>
+      </div>
+      <div class="req-item">
+        <div class="req-num">3</div>
+        <div>
+          <div class="req-title">Agree to lister terms</div>
+          <p class="req-body">Plain-English agreement covering deposits, damage, disputes, and Kitlo's take rate.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:32px;">
+      <button class="btn btn-ghost" style="flex:0 0 auto;color:var(--color-muted);">I'll do this later</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:13px;">Let's get started</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 3.1b — Lister Onboarding — Step 2: ID Verify
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/lister-onboarding</span>
+  <span class="page-sep-name">3.1b Lister Onboarding — Step 2: Verify ID</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost btn-sm" style="color:var(--color-muted);">Save and exit</a>
+  </div>
+</nav>
+
+<div class="onboard-shell">
+  <div class="onboard-card">
+    <div class="stepper" style="margin-bottom:36px;">
+      <div class="stepper-step is-complete"><div class="stepper-num">✓</div><div class="stepper-label">Intro</div></div>
+      <div class="stepper-step is-active"><div class="stepper-num">2</div><div class="stepper-label">Verify ID</div></div>
+      <div class="stepper-step"><div class="stepper-num">3</div><div class="stepper-label">Payout</div></div>
+      <div class="stepper-step"><div class="stepper-num">4</div><div class="stepper-label">Agreement</div></div>
+    </div>
+
+    <h1 style="font-family:var(--font-condensed);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin-bottom:10px;">Verify your identity</h1>
+    <p style="font-size:15px;color:var(--color-muted);line-height:1.65;margin-bottom:24px;">Stripe Identity will ask for a photo of your driver's license or passport, and a quick selfie. It usually takes 2–3 minutes.</p>
+
+    <!-- Stripe Identity embed placeholder -->
+    <div class="verify-frame">
+      <div class="verify-icon">STRIPE</div>
+      <p style="font-family:var(--font-condensed);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;color:var(--color-slate);margin-bottom:6px;">Stripe Identity verification</p>
+      <p style="font-size:13px;color:var(--color-muted);margin-bottom:18px;">Powered by Stripe. Your ID stays with Stripe — Kitlo only sees pass / fail.</p>
+      <div class="progress-bar-wrap" style="max-width:280px;margin:0 auto;">
+        <div class="progress-bar-fill" style="width:35%;"></div>
+      </div>
+      <p style="font-size:12px;color:var(--color-muted);margin-top:10px;font-family:var(--font-mono);">Step 1 of 3 · Take photo of ID front</p>
+    </div>
+
+    <div class="alert alert-info" style="margin-top:18px;">
+      <div>
+        <span class="alert-label">Why we ask</span>
+        Verifying every lister is how Kitlo keeps gear safe. Renters can see your verified status before they book.
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:28px;">
+      <button class="btn btn-ghost" style="flex:0 0 auto;">Back</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:13px;" disabled>Verifying…</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 3.1c — Lister Onboarding — Step 3: Payout
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/lister-onboarding</span>
+  <span class="page-sep-name">3.1c Lister Onboarding — Step 3: Payout Account</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost btn-sm" style="color:var(--color-muted);">Save and exit</a>
+  </div>
+</nav>
+
+<div class="onboard-shell">
+  <div class="onboard-card">
+    <div class="stepper" style="margin-bottom:36px;">
+      <div class="stepper-step is-complete"><div class="stepper-num">✓</div><div class="stepper-label">Intro</div></div>
+      <div class="stepper-step is-complete"><div class="stepper-num">✓</div><div class="stepper-label">Verify ID</div></div>
+      <div class="stepper-step is-active"><div class="stepper-num">3</div><div class="stepper-label">Payout</div></div>
+      <div class="stepper-step"><div class="stepper-num">4</div><div class="stepper-label">Agreement</div></div>
+    </div>
+
+    <h1 style="font-family:var(--font-condensed);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin-bottom:10px;">Where should we send your earnings?</h1>
+    <p style="font-size:15px;color:var(--color-muted);line-height:1.65;margin-bottom:18px;">Earnings deposit to your bank account 24 hours after each rental ends. You'll connect your account through Stripe Connect.</p>
+
+    <!-- Stripe Connect embed placeholder -->
+    <div class="verify-frame" style="text-align:left;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+        <div class="verify-icon" style="margin:0;width:48px;height:48px;">CONNECT</div>
+        <div>
+          <p style="font-family:var(--font-condensed);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;color:var(--color-slate);margin-bottom:2px;">Stripe Connect</p>
+          <p style="font-size:13px;color:var(--color-muted);">You'll be redirected to Stripe to add your bank details.</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="input-label">Account type</label>
+        <select class="input">
+          <option>Individual</option>
+          <option>Business</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="input-label">Country</label>
+        <select class="input">
+          <option>United States</option>
+        </select>
+      </div>
+      <button class="btn btn-secondary" style="width:100%;justify-content:center;">Continue to Stripe →</button>
+    </div>
+
+    <div class="stripe-trust">
+      <div class="placeholder-img" style="width:36px;height:24px;flex-shrink:0;">SSL</div>
+      <span><strong>Kitlo never sees your bank details.</strong> Stripe handles the secure connection. Bank-level encryption end-to-end.</span>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:28px;">
+      <button class="btn btn-ghost" style="flex:0 0 auto;">Back</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:13px;">Continue</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 3.1d — Lister Onboarding — Step 4: Agreement
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/lister-onboarding</span>
+  <span class="page-sep-name">3.1d Lister Onboarding — Step 4: Agreement</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost btn-sm" style="color:var(--color-muted);">Save and exit</a>
+  </div>
+</nav>
+
+<div class="onboard-shell">
+  <div class="onboard-card">
+    <div class="stepper" style="margin-bottom:36px;">
+      <div class="stepper-step is-complete"><div class="stepper-num">✓</div><div class="stepper-label">Intro</div></div>
+      <div class="stepper-step is-complete"><div class="stepper-num">✓</div><div class="stepper-label">Verify ID</div></div>
+      <div class="stepper-step is-complete"><div class="stepper-num">✓</div><div class="stepper-label">Payout</div></div>
+      <div class="stepper-step is-active"><div class="stepper-num">4</div><div class="stepper-label">Agreement</div></div>
+    </div>
+
+    <h1 style="font-family:var(--font-condensed);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin-bottom:10px;">Lister agreement</h1>
+    <p style="font-size:15px;color:var(--color-muted);line-height:1.65;margin-bottom:18px;">A plain-English read. The full legal version is linked at the bottom.</p>
+
+    <div class="take-rate-card">
+      <div>
+        <div class="take-rate-label">Kitlo take rate</div>
+        <p style="font-size:13px;color:var(--color-muted);margin-top:2px;">Deducted from each rental before payout</p>
+      </div>
+      <div class="take-rate-value">15%</div>
+    </div>
+
+    <div class="agreement-scroll">
+      <h4>1. Your gear, your responsibility</h4>
+      <p>You are the owner. You set the rate. You decide who rents it (with instant book or manual approval).</p>
+      <h4>2. Funds &amp; payouts</h4>
+      <p>Renters pay Kitlo. We hold funds until both parties confirm return. Earnings deposit to your bank within 24 hours after that.</p>
+      <h4>3. Damage &amp; deposits</h4>
+      <p>Every booking includes a deposit hold (set per listing). If gear comes back damaged, you can flag it within 48 hours. Kitlo mediates.</p>
+      <h4>4. Disputes</h4>
+      <p>If you and the renter can't agree, Kitlo Support reviews evidence and makes a binding ruling within 5 business days.</p>
+      <h4>5. Cancellation</h4>
+      <p>You can cancel a confirmed booking, but repeat lister-initiated cancellations within 30 days lower your rank in search.</p>
+      <h4>6. Tax reporting</h4>
+      <p>Kitlo issues a 1099-K once you cross the IRS reporting threshold for the calendar year. You handle your own taxes.</p>
+      <h4>7. Termination</h4>
+      <p>Either party can end this agreement at any time. Open bookings must complete normally.</p>
+    </div>
+
+    <div class="form-group" style="margin-top:6px;">
+      <label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--color-slate);line-height:1.55;cursor:pointer;">
+        <input type="checkbox" style="margin-top:3px;accent-color:var(--color-olive);">
+        <span>I have read and agree to the <a href="#" style="color:var(--color-olive);text-decoration:underline;">Kitlo Lister Agreement</a> and <a href="#" style="color:var(--color-olive);text-decoration:underline;">Terms of Service</a>.</span>
+      </label>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:24px;">
+      <button class="btn btn-ghost" style="flex:0 0 auto;">Back</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:13px;">Complete &amp; create my first listing</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Layout: Dashboard (Lister)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .page-sep { background: var(--color-slate); color: var(--color-on-dark); padding: 16px 52px; display: flex; align-items: baseline; gap: 20px; }
+  .page-sep-route { font-family: var(--font-mono); font-size: 13px; color: var(--color-amber); }
+  .page-sep-name { font-family: var(--font-condensed); font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-on-dark); }
+  .placeholder-img {
+    background: var(--color-surface); border: 1px dashed var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; color: var(--color-light);
+    letter-spacing: 0.08em;
+  }
+  .dash { display: grid; grid-template-columns: 240px 1fr; min-height: 720px; background: var(--color-bg); }
+  .dash-side { background: var(--color-bg); border-right: 1px solid var(--color-border); padding: 24px 16px; }
+  .dash-side-logo {
+    font-family: var(--font-condensed); font-size: 22px; font-weight: 900;
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-slate);
+    text-decoration: none; display: block; padding: 0 8px 24px;
+  }
+  .dash-side-logo span { color: var(--color-amber); }
+  .dash-nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; font-size: 14px; color: var(--color-slate); text-decoration: none; border-radius: 3px; margin-bottom: 2px; }
+  .dash-nav-item:hover { background: var(--color-surface); }
+  .dash-nav-item.active { background: var(--color-olive-pale); color: var(--color-olive); font-weight: 600; }
+  .dash-nav-icon { width: 16px; height: 16px; border: 1px solid var(--color-border); border-radius: 2px; flex-shrink: 0; }
+  .dash-nav-section { font-family: var(--font-condensed); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-light); padding: 18px 12px 8px; }
+  .dash-main { padding: 32px 40px 60px; min-width: 0; }
+
+  /* Wizard helpers */
+  .wizard-shell {
+    max-width: 760px;
+    margin-inline: auto;
+  }
+  .wizard-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; margin-bottom: 8px;
+  }
+  .draft-saved {
+    font-family: var(--font-mono); font-size: 12px; color: var(--color-muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .draft-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-olive); }
+  .step-counter {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .cat-card {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 22px 20px;
+    cursor: pointer;
+    background: var(--color-bg);
+  }
+  .cat-card.selected { border-color: var(--color-olive); background: var(--color-olive-pale); }
+  .cat-icon {
+    width: 40px; height: 40px;
+    border: 1px dashed var(--color-border);
+    background: var(--color-surface);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--color-muted);
+    margin-bottom: 14px;
+  }
+  .cat-name { font-family: var(--font-condensed); font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-slate); margin-bottom: 4px; }
+  .cat-body { font-size: 13px; color: var(--color-muted); line-height: 1.55; }
+
+  .upload-grid {
+    border: 2px dashed var(--color-border);
+    border-radius: 4px;
+    padding: 36px 24px;
+    text-align: center;
+    background: var(--color-surface);
+    margin-bottom: 18px;
+  }
+
+  /* Listings table cell variant */
+  .gear-cell { display: flex; align-items: center; gap: 12px; }
+  .gear-cell-img { width: 44px; height: 32px; flex-shrink: 0; }
+
+  /* Calendar legend */
+  .legend-row { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; padding: 12px 14px; background: var(--color-surface); border-radius: 3px; font-size: 12px; }
+  .legend-row > div { display: flex; align-items: center; gap: 6px; color: var(--color-muted); }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+
+<!-- ================================================================
+     PAGE 6.1 — My Listings  /dashboard/listings
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/listings</span>
+  <span class="page-sep-name">6.1 My Listings</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Home</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Bookings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Messages</a>
+    <div class="dash-nav-section">Listing</div>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> My Listings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Earnings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">My Listings</h1>
+        <p class="page-subtitle">5 listings · 3 active · $1,842 earned this season</p>
+      </div>
+      <div class="page-header-actions">
+        <a href="#" class="btn btn-ghost">Create bundle</a>
+        <a href="#" class="btn btn-secondary">+ Add listing</a>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <a href="#" class="tab active">All <span class="tab-count">5</span></a>
+      <a href="#" class="tab">Active <span class="tab-count">3</span></a>
+      <a href="#" class="tab">Paused <span class="tab-count">1</span></a>
+      <a href="#" class="tab">Pending <span class="tab-count">1</span></a>
+      <a href="#" class="tab">Archived</a>
+    </div>
+
+    <table class="data-table" style="margin-top:24px;">
+      <thead>
+        <tr>
+          <th>Gear</th>
+          <th>Type</th>
+          <th>Condition</th>
+          <th>Status</th>
+          <th>Rate / day</th>
+          <th>Bookings</th>
+          <th>Rating</th>
+          <th>Earnings</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="gear-cell">
+              <div class="gear-cell-img placeholder-img">IMG</div>
+              <div>
+                <div style="font-weight:600;font-size:14px;">Pulsar Helion 2 XP50 Pro</div>
+                <div style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">PUL-HEL-2-2023</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-type">Thermal</span></td>
+          <td><span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span></td>
+          <td><span class="status-badge status-active"><span class="status-dot dot-active"></span> Active</span></td>
+          <td class="text-mono">$85</td>
+          <td>14</td>
+          <td>★ 4.9</td>
+          <td class="text-mono">$1,142</td>
+          <td>
+            <div style="display:flex;gap:4px;">
+              <button class="btn btn-ghost btn-sm">Edit</button>
+              <button class="btn btn-ghost btn-sm">Calendar</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="gear-cell">
+              <div class="gear-cell-img placeholder-img">IMG</div>
+              <div>
+                <div style="font-weight:600;font-size:14px;">FLIR Breach PTQ136</div>
+                <div style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">FLR-BRC-2022</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-type">Thermal</span></td>
+          <td><span class="badge badge-condition" style="background:var(--color-olive-pale);color:var(--color-olive);">Field-Ready</span></td>
+          <td><span class="status-badge status-active"><span class="status-dot dot-active"></span> Active</span></td>
+          <td class="text-mono">$65</td>
+          <td>9</td>
+          <td>★ 4.7</td>
+          <td class="text-mono">$528</td>
+          <td>
+            <div style="display:flex;gap:4px;">
+              <button class="btn btn-ghost btn-sm">Edit</button>
+              <button class="btn btn-ghost btn-sm">Calendar</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="gear-cell">
+              <div class="gear-cell-img placeholder-img">IMG</div>
+              <div>
+                <div style="font-weight:600;font-size:14px;">Elk Season Bundle</div>
+                <div style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">BNDL-ELK-2026</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-type">Bundle</span></td>
+          <td>—</td>
+          <td><span class="status-badge status-active"><span class="status-dot dot-active"></span> Active</span></td>
+          <td class="text-mono">$130</td>
+          <td>8</td>
+          <td>★ 4.8</td>
+          <td class="text-mono">$172</td>
+          <td>
+            <div style="display:flex;gap:4px;">
+              <button class="btn btn-ghost btn-sm">Edit</button>
+              <button class="btn btn-ghost btn-sm">Calendar</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="gear-cell">
+              <div class="gear-cell-img placeholder-img">IMG</div>
+              <div>
+                <div style="font-weight:600;font-size:14px;">InfiRay RICO G 384</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-type">Thermal</span></td>
+          <td><span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span></td>
+          <td><span class="status-badge status-pending">Pending review</span></td>
+          <td class="text-mono">$95</td>
+          <td>—</td>
+          <td>—</td>
+          <td class="text-mono">—</td>
+          <td>
+            <div style="display:flex;gap:4px;">
+              <button class="btn btn-ghost btn-sm">Edit</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="gear-cell">
+              <div class="gear-cell-img placeholder-img">IMG</div>
+              <div>
+                <div style="font-weight:600;font-size:14px;">ATN Thor 4 384</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-type">Night Vision</span></td>
+          <td><span class="badge badge-condition" style="background:var(--color-olive-pale);color:var(--color-olive);">Field-Ready</span></td>
+          <td><span class="status-badge status-paused"><span class="status-dot dot-paused"></span> Paused</span></td>
+          <td class="text-mono">$55</td>
+          <td>6</td>
+          <td>★ 4.5</td>
+          <td class="text-mono">$324</td>
+          <td>
+            <div style="display:flex;gap:4px;">
+              <button class="btn btn-ghost btn-sm">Edit</button>
+              <button class="btn btn-ghost btn-sm">Activate</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 6.2a — Create Listing — Step 1: Category
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/listings/new</span>
+  <span class="page-sep-name">6.2a Create Listing — Step 1: Category</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> My Listings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="wizard-shell">
+      <div class="wizard-header">
+        <a href="#" style="font-size:13px;color:var(--color-muted);text-decoration:underline;">← Save and exit</a>
+        <div class="draft-saved"><span class="draft-dot"></span> Draft saved 12s ago</div>
+      </div>
+
+      <div class="progress-bar-wrap" style="margin-bottom:6px;">
+        <div class="progress-bar-fill" style="width:10%;"></div>
+      </div>
+      <p class="step-counter">Step 1 of 10 · Category</p>
+
+      <h1 style="font-family:var(--font-condensed);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin:24px 0 8px;">What kind of gear?</h1>
+      <p style="font-size:15px;color:var(--color-muted);line-height:1.6;margin-bottom:28px;">Pick the closest fit. We'll ask the right specs based on your choice.</p>
+
+      <div class="grid-2" style="gap:14px;">
+        <div class="cat-card selected">
+          <div class="cat-icon">TH</div>
+          <div class="cat-name">Thermal</div>
+          <p class="cat-body">Thermal scopes, monoculars, clip-ons. Detection range, NETD, sensor resolution.</p>
+        </div>
+        <div class="cat-card">
+          <div class="cat-icon">NV</div>
+          <div class="cat-name">Night Vision</div>
+          <p class="cat-body">NV scopes, goggles, monoculars. Generation, tube spec, IR illuminator.</p>
+        </div>
+        <div class="cat-card">
+          <div class="cat-icon">BD</div>
+          <div class="cat-name">Bundle</div>
+          <p class="cat-body">Two or more existing listings packaged together (e.g. thermal + NV).</p>
+        </div>
+        <div class="cat-card">
+          <div class="cat-icon">CS</div>
+          <div class="cat-name">Camp &amp; Support</div>
+          <p class="cat-body">Tripods, batteries, chargers, cases, range finders, ballistic gear.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:36px;">
+        <button class="btn btn-ghost" disabled>Back</button>
+        <button class="btn btn-primary" style="margin-left:auto;padding:13px 28px;">Continue</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 6.2b — Create Listing — Step 5: Photos
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/listings/new</span>
+  <span class="page-sep-name">6.2b Create Listing — Step 5: Photos</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> My Listings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="wizard-shell">
+      <div class="wizard-header">
+        <a href="#" style="font-size:13px;color:var(--color-muted);text-decoration:underline;">← Save and exit</a>
+        <div class="draft-saved"><span class="draft-dot"></span> Draft saved 4s ago</div>
+      </div>
+
+      <div class="progress-bar-wrap" style="margin-bottom:6px;">
+        <div class="progress-bar-fill" style="width:50%;"></div>
+      </div>
+      <p class="step-counter">Step 5 of 10 · Photos</p>
+
+      <h1 style="font-family:var(--font-condensed);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin:24px 0 8px;">Show off the gear</h1>
+      <p style="font-size:15px;color:var(--color-muted);line-height:1.6;margin-bottom:24px;">Minimum 3 photos. Listings with 5+ photos get booked 2.4× more often.</p>
+
+      <div class="upload-grid">
+        <div class="placeholder-img" style="width:48px;height:48px;border-radius:50%;margin:0 auto 14px;">⬆</div>
+        <p style="font-family:var(--font-condensed);font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;color:var(--color-slate);margin-bottom:6px;">Drop photos here, or browse</p>
+        <p style="font-size:13px;color:var(--color-muted);margin-bottom:14px;">JPG, PNG, HEIC up to 12MB each. Up to 12 photos.</p>
+        <button class="btn btn-secondary btn-sm">Choose files</button>
+      </div>
+
+      <!-- Uploaded photo grid -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;">
+        <div style="position:relative;">
+          <div class="placeholder-img" style="height:120px;">PHOTO 1</div>
+          <span style="position:absolute;top:6px;left:6px;background:var(--color-amber);color:var(--color-slate);font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px;">HERO</span>
+        </div>
+        <div class="placeholder-img" style="height:120px;">PHOTO 2</div>
+        <div class="placeholder-img" style="height:120px;">PHOTO 3</div>
+        <div class="placeholder-img" style="height:120px;">PHOTO 4</div>
+      </div>
+
+      <div class="alert alert-info">
+        <div>
+          <span class="alert-label">Photo tips</span>
+          1) Hero photo: clean shot of the unit. 2) Show every angle. 3) Include accessories. 4) Show the case it ships in. Drag to reorder.
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:36px;">
+        <button class="btn btn-ghost">Back</button>
+        <button class="btn btn-primary" style="margin-left:auto;padding:13px 28px;">Continue to pricing</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 6.2c — Create Listing — Step 6: Pricing
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/listings/new</span>
+  <span class="page-sep-name">6.2c Create Listing — Step 6: Pricing</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> My Listings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="wizard-shell">
+      <div class="wizard-header">
+        <a href="#" style="font-size:13px;color:var(--color-muted);text-decoration:underline;">← Save and exit</a>
+        <div class="draft-saved"><span class="draft-dot"></span> Draft saved</div>
+      </div>
+
+      <div class="progress-bar-wrap" style="margin-bottom:6px;">
+        <div class="progress-bar-fill" style="width:60%;"></div>
+      </div>
+      <p class="step-counter">Step 6 of 10 · Pricing</p>
+
+      <h1 style="font-family:var(--font-condensed);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin:24px 0 8px;">Set your daily rate</h1>
+      <p style="font-size:15px;color:var(--color-muted);line-height:1.6;margin-bottom:24px;">You set the price, you keep 85%. Service fee comes from the renter.</p>
+
+      <div class="form-group" style="max-width:280px;">
+        <label class="input-label">Daily rate</label>
+        <div style="position:relative;">
+          <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--color-muted);font-family:var(--font-mono);font-size:18px;">$</span>
+          <input class="input" type="number" value="85" style="font-family:var(--font-mono);font-size:22px;padding:18px 18px 18px 36px;font-weight:600;">
+          <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--color-muted);font-size:13px;">/ day</span>
+        </div>
+      </div>
+
+      <!-- Take-home preview -->
+      <div style="border:1px solid var(--color-border);border-radius:3px;padding:18px 20px;background:var(--color-surface);margin:24px 0;">
+        <div style="font-family:var(--font-condensed);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-slate);margin-bottom:12px;">What you keep, per day</div>
+        <table class="cost-table">
+          <tr class="cost-row"><td class="cost-label">Daily rate</td><td class="cost-value">$85.00</td></tr>
+          <tr class="cost-row"><td class="cost-label">Kitlo fee (15%)</td><td class="cost-value" style="color:var(--color-battle);">−$12.75</td></tr>
+          <tr class="cost-row cost-total"><td class="cost-label">Your earnings</td><td class="cost-value" style="color:var(--color-olive);">$72.25</td></tr>
+        </table>
+      </div>
+
+      <!-- Market reference -->
+      <div style="border:1px solid var(--color-border);border-radius:3px;padding:18px 20px;background:var(--color-bg);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-family:var(--font-condensed);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-slate);">Pricing reference — Pulsar Helion 2 XP50 Pro</div>
+          <span style="font-size:11px;color:var(--color-light);font-family:var(--font-mono);">Last 90 days</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+          <div><div style="font-size:11px;color:var(--color-muted);text-transform:uppercase;letter-spacing:0.06em;">Low</div><div class="text-mono" style="font-size:18px;font-weight:600;">$55</div></div>
+          <div><div style="font-size:11px;color:var(--color-muted);text-transform:uppercase;letter-spacing:0.06em;">Median</div><div class="text-mono" style="font-size:18px;font-weight:600;">$80</div></div>
+          <div><div style="font-size:11px;color:var(--color-muted);text-transform:uppercase;letter-spacing:0.06em;">High</div><div class="text-mono" style="font-size:18px;font-weight:600;">$120</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--color-muted);margin-top:10px;">Your $85 rate is in the upper-middle range. Mint condition and Verified badge typically book at the median or above.</p>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:36px;">
+        <button class="btn btn-ghost">Back</button>
+        <button class="btn btn-primary" style="margin-left:auto;padding:13px 28px;">Continue</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 6.2d — Create Listing — Step 10: Review & Publish
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/listings/new</span>
+  <span class="page-sep-name">6.2d Create Listing — Step 10: Review &amp; Publish</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> My Listings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="wizard-shell">
+      <div class="wizard-header">
+        <a href="#" style="font-size:13px;color:var(--color-muted);text-decoration:underline;">← Save and exit</a>
+        <div class="draft-saved"><span class="draft-dot"></span> Draft saved</div>
+      </div>
+
+      <div class="progress-bar-wrap" style="margin-bottom:6px;">
+        <div class="progress-bar-fill" style="width:100%;"></div>
+      </div>
+      <p class="step-counter">Step 10 of 10 · Review &amp; Publish</p>
+
+      <h1 style="font-family:var(--font-condensed);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin:24px 0 8px;">One last look</h1>
+      <p style="font-size:15px;color:var(--color-muted);line-height:1.6;margin-bottom:28px;">Check the preview, then publish. You can edit anything later.</p>
+
+      <!-- Preview as listing card -->
+      <p style="font-family:var(--font-condensed);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-light);margin-bottom:10px;">As shown in search</p>
+      <div class="listing-card" style="max-width:320px;margin-bottom:32px;">
+        <div class="placeholder-img" style="height:160px;">HERO PHOTO</div>
+        <div class="listing-card-body">
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span>
+            <span class="badge badge-type">Thermal</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <h3 class="listing-card-title">Pulsar Helion 2 XP50 Pro</h3>
+          <p class="listing-card-location">Bozeman, MT</p>
+          <div class="listing-card-footer"><span class="listing-card-price">$85<span style="font-weight:400;font-size:12px;">/day</span></span></div>
+        </div>
+      </div>
+
+      <!-- Summary checklist -->
+      <p style="font-family:var(--font-condensed);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-light);margin-bottom:10px;">Listing summary</p>
+      <table class="spec-table" style="margin-bottom:24px;">
+        <tr class="spec-row"><td class="spec-key">Category</td><td class="spec-value">Thermal</td></tr>
+        <tr class="spec-row"><td class="spec-key">Make &amp; model</td><td class="spec-value">Pulsar Helion 2 XP50 Pro</td></tr>
+        <tr class="spec-row"><td class="spec-key">Year · MSRP</td><td class="spec-value">2023 · $3,499</td></tr>
+        <tr class="spec-row"><td class="spec-key">Condition</td><td class="spec-value">Mint</td></tr>
+        <tr class="spec-row"><td class="spec-key">Photos</td><td class="spec-value">8 uploaded</td></tr>
+        <tr class="spec-row"><td class="spec-key">Daily rate</td><td class="spec-value">$85</td></tr>
+        <tr class="spec-row"><td class="spec-key">Deposit</td><td class="spec-value">$250 (suggested)</td></tr>
+        <tr class="spec-row"><td class="spec-key">Pickup</td><td class="spec-value">Bozeman, MT 59715</td></tr>
+        <tr class="spec-row"><td class="spec-key">Available</td><td class="spec-value">From Oct 14, 2026</td></tr>
+      </table>
+
+      <div class="alert alert-info">
+        <div>
+          <span class="alert-label">High-value listing</span>
+          MSRP over $2,000 — your listing goes to admin review before going live. Average review time: 4 hours.
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:36px;">
+        <button class="btn btn-ghost">Back</button>
+        <button class="btn btn-primary" style="margin-left:auto;padding:13px 32px;">Publish listing</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 6.3 — Edit Listing  /dashboard/listings/[id]/edit
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/listings/[id]/edit</span>
+  <span class="page-sep-name">6.3 Edit Listing</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> My Listings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="wizard-shell" style="max-width:880px;">
+      <div class="page-breadcrumb" style="margin-bottom:12px;">
+        <span class="breadcrumb-item"><a href="#">My Listings</a></span>
+        <span class="breadcrumb-item">Edit</span>
+      </div>
+
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1 class="page-title">Pulsar Helion 2 XP50 Pro</h1>
+          <p class="page-subtitle">Last updated 12 days ago · 14 reviews · ★ 4.9</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="#" class="btn btn-ghost btn-sm">View public listing</a>
+        </div>
+      </div>
+
+      <div class="alert alert-warning" style="margin:18px 0 24px;">
+        <div>
+          <span class="alert-label">Active booking</span>
+          Some fields are locked because Sam W. has this gear out until Oct 19. They'll unlock automatically after return.
+        </div>
+      </div>
+
+      <!-- Section anchors -->
+      <div style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:start;">
+        <div style="position:sticky;top:32px;">
+          <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-light);margin-bottom:10px;">Sections</p>
+          <a href="#" class="dash-nav-item active" style="font-size:13px;padding:6px 10px;">Identity</a>
+          <a href="#" class="dash-nav-item" style="font-size:13px;padding:6px 10px;">Specs <span style="margin-left:auto;font-size:10px;color:var(--color-light);">🔒</span></a>
+          <a href="#" class="dash-nav-item" style="font-size:13px;padding:6px 10px;">Condition <span style="margin-left:auto;font-size:10px;color:var(--color-light);">🔒</span></a>
+          <a href="#" class="dash-nav-item" style="font-size:13px;padding:6px 10px;">Photos</a>
+          <a href="#" class="dash-nav-item" style="font-size:13px;padding:6px 10px;">Pricing</a>
+          <a href="#" class="dash-nav-item" style="font-size:13px;padding:6px 10px;">Deposit</a>
+          <a href="#" class="dash-nav-item" style="font-size:13px;padding:6px 10px;">Availability</a>
+          <a href="#" class="dash-nav-item" style="font-size:13px;padding:6px 10px;">Location</a>
+        </div>
+
+        <div>
+          <h3 style="font-family:var(--font-condensed);font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px;">Identity</h3>
+          <div class="grid-2" style="gap:14px;">
+            <div class="form-group"><label class="input-label">Make</label><input class="input" value="Pulsar"></div>
+            <div class="form-group"><label class="input-label">Model</label><input class="input" value="Helion 2 XP50 Pro"></div>
+            <div class="form-group"><label class="input-label">Year</label><input class="input" value="2023"></div>
+            <div class="form-group"><label class="input-label">MSRP</label><input class="input" value="$3,499"></div>
+          </div>
+          <div class="form-group">
+            <label class="input-label">Description</label>
+            <textarea class="input" rows="5">This Pulsar Helion 2 XP50 Pro is in pristine condition — purchased Nov 2023 and used for one elk season. All original accessories included.</textarea>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid var(--color-border);">
+            <button class="btn btn-primary">Save changes</button>
+            <button class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 6.4 — Availability Calendar  /dashboard/listings/[id]/calendar
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/listings/[id]/calendar</span>
+  <span class="page-sep-name">6.4 Availability Calendar</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> My Listings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-breadcrumb" style="margin-bottom:12px;">
+      <span class="breadcrumb-item"><a href="#">My Listings</a></span>
+      <span class="breadcrumb-item"><a href="#">Pulsar Helion 2 XP50 Pro</a></span>
+      <span class="breadcrumb-item">Availability</span>
+    </div>
+
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Availability — Pulsar Helion 2 XP50 Pro</h1>
+        <p class="page-subtitle">Click and drag to block dates. Confirmed bookings are read-only.</p>
+      </div>
+      <div class="page-header-actions">
+        <button class="btn btn-ghost">Add recurring block</button>
+        <button class="btn btn-secondary">Save changes</button>
+      </div>
+    </div>
+
+    <!-- Two-month calendar -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;">
+      <div class="calendar">
+        <div class="cal-header">
+          <button class="cal-nav-btn">←</button>
+          <span class="cal-month">October 2026</span>
+          <button class="cal-nav-btn"></button>
+        </div>
+        <div class="cal-weekdays">
+          <div class="cal-weekday">Su</div><div class="cal-weekday">Mo</div><div class="cal-weekday">Tu</div>
+          <div class="cal-weekday">We</div><div class="cal-weekday">Th</div><div class="cal-weekday">Fr</div><div class="cal-weekday">Sa</div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day other-month">28</div><div class="cal-day other-month">29</div><div class="cal-day other-month">30</div>
+          <div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div>
+          <div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div>
+          <div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day">11</div>
+          <div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div>
+          <div class="cal-day booked">15</div><div class="cal-day booked">16</div><div class="cal-day booked">17</div><div class="cal-day booked">18</div>
+          <div class="cal-day booked">19</div><div class="cal-day">20</div><div class="cal-day">21</div>
+          <div class="cal-day">22</div><div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div>
+          <div class="cal-day blocked">26</div><div class="cal-day blocked">27</div><div class="cal-day">28</div>
+          <div class="cal-day today">29</div><div class="cal-day">30</div><div class="cal-day">31</div><div class="cal-day other-month">1</div>
+        </div>
+      </div>
+
+      <div class="calendar">
+        <div class="cal-header">
+          <button class="cal-nav-btn"></button>
+          <span class="cal-month">November 2026</span>
+          <button class="cal-nav-btn">→</button>
+        </div>
+        <div class="cal-weekdays">
+          <div class="cal-weekday">Su</div><div class="cal-weekday">Mo</div><div class="cal-weekday">Tu</div>
+          <div class="cal-weekday">We</div><div class="cal-weekday">Th</div><div class="cal-weekday">Fr</div><div class="cal-weekday">Sa</div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div>
+          <div class="cal-day pending">5</div><div class="cal-day pending">6</div><div class="cal-day pending">7</div><div class="cal-day pending">8</div>
+          <div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day">11</div>
+          <div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day">15</div>
+          <div class="cal-day">16</div><div class="cal-day">17</div><div class="cal-day">18</div>
+          <div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
+          <div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div>
+          <div class="cal-day blocked">26</div><div class="cal-day blocked">27</div><div class="cal-day">28</div>
+          <div class="cal-day">29</div><div class="cal-day">30</div>
+          <div class="cal-day other-month">1</div><div class="cal-day other-month">2</div><div class="cal-day other-month">3</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend-row">
+      <div><span class="legend-swatch" style="background:var(--color-bg);border:1px solid var(--color-border);"></span> Available</div>
+      <div><span class="legend-swatch" style="background:var(--color-border);"></span> Booked (confirmed)</div>
+      <div><span class="legend-swatch" style="background:rgba(242,153,74,0.2);"></span> Pending</div>
+      <div><span class="legend-swatch" style="background:var(--color-surface);border:1px dashed var(--color-border);"></span> Blocked by you</div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 6.5 — Create Bundle  /dashboard/listings/bundle/new
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/listings/bundle/new</span>
+  <span class="page-sep-name">6.5 Create Bundle — Step 1: Select listings</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> My Listings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="wizard-shell">
+      <div class="wizard-header">
+        <a href="#" style="font-size:13px;color:var(--color-muted);text-decoration:underline;">← Back to listings</a>
+      </div>
+
+      <div class="progress-bar-wrap" style="margin-bottom:6px;">
+        <div class="progress-bar-fill" style="width:20%;"></div>
+      </div>
+      <p class="step-counter">Step 1 of 5 · Pick listings to bundle</p>
+
+      <h1 style="font-family:var(--font-condensed);font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin:24px 0 8px;">Build a bundle</h1>
+      <p style="font-size:15px;color:var(--color-muted);line-height:1.6;margin-bottom:24px;">Bundles let you offer two or more pieces of gear together — like thermal + NV — at a combined daily rate. Renters love the simplicity.</p>
+
+      <p style="font-family:var(--font-condensed);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-light);margin-bottom:10px;">Eligible listings</p>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--color-olive);background:var(--color-olive-pale);border-radius:3px;cursor:pointer;">
+          <input type="checkbox" checked style="accent-color:var(--color-olive);">
+          <div class="placeholder-img" style="width:48px;height:36px;flex-shrink:0;">IMG</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Pulsar Helion 2 XP50 Pro</div>
+            <div style="font-size:12px;color:var(--color-muted);">Thermal · Mint · $85/day</div>
+          </div>
+          <span class="badge badge-verified" style="font-size:10px;">Recommended</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--color-olive);background:var(--color-olive-pale);border-radius:3px;cursor:pointer;">
+          <input type="checkbox" checked style="accent-color:var(--color-olive);">
+          <div class="placeholder-img" style="width:48px;height:36px;flex-shrink:0;">IMG</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">ATN Thor 4 384 2.5-10x</div>
+            <div style="font-size:12px;color:var(--color-muted);">Night Vision · Field-Ready · $55/day</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--color-border);border-radius:3px;cursor:pointer;">
+          <input type="checkbox" style="accent-color:var(--color-olive);">
+          <div class="placeholder-img" style="width:48px;height:36px;flex-shrink:0;">IMG</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">FLIR Breach PTQ136</div>
+            <div style="font-size:12px;color:var(--color-muted);">Thermal · Field-Ready · $65/day</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="alert alert-info" style="margin-top:18px;">
+        <div>
+          <span class="alert-label">Combined rate</span>
+          Selected: 2 listings · $140 individually. Suggested bundle rate: <strong>$130/day</strong> (saves renters 7%).
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:36px;">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-primary" style="margin-left:auto;padding:13px 28px;">Continue</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 6.6 — Earnings  /dashboard/earnings
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/earnings</span>
+  <span class="page-sep-name">6.6 Earnings Dashboard</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Home</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Bookings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Messages</a>
+    <div class="dash-nav-section">Listing</div>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> My Listings</a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Earnings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Earnings</h1>
+        <p class="page-subtitle">Payouts deposit to your bank within 24 hours of booking completion.</p>
+      </div>
+      <div class="page-header-actions">
+        <button class="btn btn-ghost">Export CSV</button>
+        <button class="btn btn-secondary">Manage payout method</button>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-overline">Total earned</div>
+        <div class="stat-value">$3,142</div>
+        <div class="stat-sublabel">YTD 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-overline">Pending</div>
+        <div class="stat-value">$224.50</div>
+        <div class="stat-sublabel">2 active rentals</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-overline">Next payout</div>
+        <div class="stat-value">$224.50</div>
+        <div class="stat-sublabel">Tue, Oct 21 · Chase ··4242</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-overline">Lifetime</div>
+        <div class="stat-value">$8,914</div>
+        <div class="stat-sublabel">42 rentals all-time</div>
+      </div>
+    </div>
+
+    <h2 style="font-family:var(--font-condensed);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-slate);margin:32px 0 14px;">Payout history</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Booking</th>
+          <th>Gear</th>
+          <th>Dates</th>
+          <th>Gross</th>
+          <th>Kitlo fee</th>
+          <th>Net</th>
+          <th>Status</th>
+          <th>Paid out</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-mono" style="font-size:12px;">KTL-2026-00847</td>
+          <td><a href="#" style="color:var(--color-slate);">Pulsar Helion 2 XP50 Pro</a></td>
+          <td>Oct 15 → Oct 19</td>
+          <td class="text-mono">$340.00</td>
+          <td class="text-mono" style="color:var(--color-battle);">−$51.00</td>
+          <td class="text-mono" style="font-weight:600;">$289.00</td>
+          <td><span class="status-badge status-pending">Pending</span></td>
+          <td style="color:var(--color-muted);font-size:13px;">— in progress</td>
+        </tr>
+        <tr>
+          <td class="text-mono" style="font-size:12px;">KTL-2026-00712</td>
+          <td><a href="#" style="color:var(--color-slate);">ATN Thor 4 384</a></td>
+          <td>Sep 22 → Sep 25</td>
+          <td class="text-mono">$165.00</td>
+          <td class="text-mono" style="color:var(--color-battle);">−$24.75</td>
+          <td class="text-mono" style="font-weight:600;">$140.25</td>
+          <td><span class="status-badge status-completed">Paid</span></td>
+          <td style="color:var(--color-muted);font-size:13px;">Sep 27</td>
+        </tr>
+        <tr>
+          <td class="text-mono" style="font-size:12px;">KTL-2026-00683</td>
+          <td><a href="#" style="color:var(--color-slate);">FLIR Scout III-320</a></td>
+          <td>Sep 14 → Sep 16</td>
+          <td class="text-mono">$76.00</td>
+          <td class="text-mono">—</td>
+          <td class="text-mono" style="font-weight:600;">—</td>
+          <td><span class="status-badge status-disputed">Disputed</span></td>
+          <td style="color:var(--color-muted);font-size:13px;">Held</td>
+        </tr>
+        <tr>
+          <td class="text-mono" style="font-size:12px;">KTL-2026-00641</td>
+          <td><a href="#" style="color:var(--color-slate);">Elk Season Bundle</a></td>
+          <td>Aug 28 → Aug 31</td>
+          <td class="text-mono">$390.00</td>
+          <td class="text-mono" style="color:var(--color-battle);">−$58.50</td>
+          <td class="text-mono" style="font-weight:600;">$331.50</td>
+          <td><span class="status-badge status-completed">Paid</span></td>
+          <td style="color:var(--color-muted);font-size:13px;">Sep 2</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info" style="margin-top:20px;">
+      <div>
+        <span class="alert-label">Tax notice</span>
+        Once you cross $20K + 200 transactions in a calendar year, Kitlo will issue a 1099-K. You're at $3,142 / 12 transactions YTD.
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Layout: Auth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .page-sep {
+    background: var(--color-slate);
+    color: var(--color-on-dark);
+    padding: 16px 52px;
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .page-sep-route {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-amber);
+  }
+  .page-sep-name {
+    font-family: var(--font-condensed);
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-on-dark);
+  }
+  .placeholder-img {
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-light);
+    letter-spacing: 0.08em;
+  }
+  /* Auth shell — narrow centered column, minimal nav */
+  .auth-shell {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 24px 80px;
+    background: var(--color-bg);
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 36px 32px;
+  }
+  .auth-card-wide { max-width: 540px; }
+  .auth-logo {
+    font-family: var(--font-condensed);
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-slate);
+    margin-bottom: 28px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+  .auth-logo span { color: var(--color-amber); }
+  .auth-title {
+    font-family: var(--font-condensed);
+    font-size: 24px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-slate);
+    margin-bottom: 6px;
+  }
+  .auth-sub {
+    font-size: 14px;
+    color: var(--color-muted);
+    margin-bottom: 28px;
+  }
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0;
+    font-size: 12px;
+    color: var(--color-light);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .auth-divider::before,
+  .auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+  }
+  .oauth-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 11px 16px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    border-radius: 3px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--color-slate);
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  .oauth-icon {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--color-muted);
+  }
+  .auth-foot {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+  .auth-foot a { color: var(--color-olive); text-decoration: underline; font-weight: 500; }
+  .intent-card {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 22px 20px;
+    cursor: pointer;
+    background: var(--color-bg);
+    transition: border-color 0.15s;
+  }
+  .intent-card:hover { border-color: var(--color-olive); }
+  .intent-card.selected {
+    border-color: var(--color-olive);
+    background: var(--color-olive-pale);
+  }
+  .intent-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    color: var(--color-olive);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  .intent-title {
+    font-family: var(--font-condensed);
+    font-size: 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-slate);
+    margin-bottom: 4px;
+  }
+  .intent-body { font-size: 13px; color: var(--color-muted); line-height: 1.55; }
+  .photo-upload-circle {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 1px dashed var(--color-border);
+    background: var(--color-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-light);
+    margin: 0 auto 12px;
+  }
+</style>
+</head>
+<body>
+
+
+<!-- ================================================================
+     PAGE 2.1 — Sign In  /sign-in
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/sign-in</span>
+  <span class="page-sep-name">2.1 Sign In</span>
+</div>
+
+<!-- Minimal nav -->
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <div class="nav-right">
+    <span style="font-size:13px;color:var(--color-muted);">New to Kitlo?</span>
+    <a href="#" class="btn btn-ghost btn-sm">Create account</a>
+  </div>
+</nav>
+
+<div class="auth-shell">
+  <div class="auth-card">
+    <h1 class="auth-title">Sign in</h1>
+    <p class="auth-sub">Welcome back. Pick up where you left off.</p>
+
+    <button class="oauth-btn"><span class="oauth-icon">G</span> Continue with Google</button>
+    <button class="oauth-btn"><span class="oauth-icon">A</span> Continue with Apple</button>
+
+    <div class="auth-divider">or</div>
+
+    <div class="form-group">
+      <label class="input-label" for="signin-email">Email</label>
+      <input class="input" id="signin-email" type="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <label class="input-label" for="signin-pass">Password</label>
+        <a href="#" style="font-size:12px;color:var(--color-olive);text-decoration:underline;">Forgot password?</a>
+      </div>
+      <input class="input" id="signin-pass" type="password" placeholder="••••••••••">
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;">Sign in</button>
+
+    <div class="auth-foot">
+      Don't have an account? <a href="#">Create one</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 2.2a — Sign Up — Step 1: Account
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/sign-up</span>
+  <span class="page-sep-name">2.2a Sign Up — Step 1: Account</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <div class="nav-right">
+    <span style="font-size:13px;color:var(--color-muted);">Already have an account?</span>
+    <a href="#" class="btn btn-ghost btn-sm">Sign in</a>
+  </div>
+</nav>
+
+<div class="auth-shell">
+  <div class="auth-card auth-card-wide">
+    <!-- Stepper -->
+    <div class="stepper" style="margin-bottom:32px;">
+      <div class="stepper-step is-active">
+        <div class="stepper-num">1</div>
+        <div class="stepper-label">Account</div>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">2</div>
+        <div class="stepper-label">Profile</div>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">3</div>
+        <div class="stepper-label">Intent</div>
+      </div>
+    </div>
+
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-sub">It takes about a minute. We'll never share your email.</p>
+
+    <button class="oauth-btn"><span class="oauth-icon">G</span> Continue with Google</button>
+    <button class="oauth-btn"><span class="oauth-icon">A</span> Continue with Apple</button>
+
+    <div class="auth-divider">or sign up with email</div>
+
+    <div class="form-group">
+      <label class="input-label" for="su-email">Email</label>
+      <input class="input" id="su-email" type="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label class="input-label" for="su-pass">Create a password</label>
+      <input class="input" id="su-pass" type="password" placeholder="At least 8 characters">
+      <p style="font-size:12px;color:var(--color-muted);margin-top:6px;">Must include a number and a symbol.</p>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;">Continue</button>
+
+    <p style="font-size:12px;color:var(--color-muted);text-align:center;margin-top:18px;line-height:1.6;">
+      By creating an account, you agree to our <a href="#" style="color:var(--color-olive);text-decoration:underline;">Terms</a> and <a href="#" style="color:var(--color-olive);text-decoration:underline;">Privacy Policy</a>.
+    </p>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 2.2b — Sign Up — Step 2: Profile
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/sign-up</span>
+  <span class="page-sep-name">2.2b Sign Up — Step 2: Profile</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+</nav>
+
+<div class="auth-shell">
+  <div class="auth-card auth-card-wide">
+    <div class="stepper" style="margin-bottom:32px;">
+      <div class="stepper-step is-complete">
+        <div class="stepper-num">✓</div>
+        <div class="stepper-label">Account</div>
+      </div>
+      <div class="stepper-step is-active">
+        <div class="stepper-num">2</div>
+        <div class="stepper-label">Profile</div>
+      </div>
+      <div class="stepper-step">
+        <div class="stepper-num">3</div>
+        <div class="stepper-label">Intent</div>
+      </div>
+    </div>
+
+    <h1 class="auth-title">Tell us about yourself</h1>
+    <p class="auth-sub">Hunters trust real people. A photo and a city help build that trust.</p>
+
+    <!-- Profile photo -->
+    <div style="text-align:center;margin-bottom:24px;">
+      <div class="photo-upload-circle">UPLOAD</div>
+      <button class="btn btn-ghost btn-sm">Upload photo</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--color-muted);">Skip</button>
+    </div>
+
+    <div class="grid-2" style="gap:14px;">
+      <div class="form-group">
+        <label class="input-label">First name</label>
+        <input class="input" type="text">
+      </div>
+      <div class="form-group">
+        <label class="input-label">Last name</label>
+        <input class="input" type="text">
+      </div>
+    </div>
+    <div class="form-group">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <label class="input-label">City &amp; state</label>
+        <a href="#" style="font-size:11px;color:var(--color-muted);text-decoration:underline;">Why do we need this?</a>
+      </div>
+      <input class="input" type="text" placeholder="Bozeman, MT">
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button class="btn btn-ghost" style="flex:0 0 auto;">Back</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:13px;">Continue</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 2.2c — Sign Up — Step 3: Intent
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/sign-up</span>
+  <span class="page-sep-name">2.2c Sign Up — Step 3: Intent</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+</nav>
+
+<div class="auth-shell">
+  <div class="auth-card auth-card-wide" style="max-width:680px;">
+    <div class="stepper" style="margin-bottom:32px;">
+      <div class="stepper-step is-complete">
+        <div class="stepper-num">✓</div>
+        <div class="stepper-label">Account</div>
+      </div>
+      <div class="stepper-step is-complete">
+        <div class="stepper-num">✓</div>
+        <div class="stepper-label">Profile</div>
+      </div>
+      <div class="stepper-step is-active">
+        <div class="stepper-num">3</div>
+        <div class="stepper-label">Intent</div>
+      </div>
+    </div>
+
+    <h1 class="auth-title">What brings you to Kitlo?</h1>
+    <p class="auth-sub">You can change this any time — we just want to point you at the right starting screen.</p>
+
+    <div class="grid-3" style="gap:14px;margin-top:24px;">
+      <div class="intent-card">
+        <div class="intent-icon">↓</div>
+        <div class="intent-title">Rent gear</div>
+        <p class="intent-body">Find thermal, NV, and high-value gear from verified hunters near you.</p>
+      </div>
+      <div class="intent-card selected">
+        <div class="intent-icon">↑</div>
+        <div class="intent-title">List gear</div>
+        <p class="intent-body">Earn income from gear sitting in your safe between seasons.</p>
+      </div>
+      <div class="intent-card">
+        <div class="intent-icon">↕</div>
+        <div class="intent-title">Both</div>
+        <p class="intent-body">Rent when you need extras, list what you've got. Most hunters pick this.</p>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:28px;">
+      <button class="btn btn-ghost" style="flex:0 0 auto;">Back</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:13px;">Continue to lister setup</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

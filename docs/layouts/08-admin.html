@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Layout: Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .page-sep { background: #1A1F1A; color: var(--color-on-dark); padding: 16px 52px; display: flex; align-items: baseline; gap: 20px; border-bottom: 2px solid var(--color-amber); }
+  .page-sep-route { font-family: var(--font-mono); font-size: 13px; color: var(--color-amber); }
+  .page-sep-name { font-family: var(--font-condensed); font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-on-dark); }
+  .placeholder-img {
+    background: var(--color-surface); border: 1px dashed var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; color: var(--color-light); letter-spacing: 0.08em;
+  }
+  /* Admin uses darker sidebar accent to differentiate */
+  .dash { display: grid; grid-template-columns: 240px 1fr; min-height: 720px; background: var(--color-bg); }
+  .dash-side {
+    background: #1A1F1A; color: var(--color-on-dark);
+    padding: 24px 16px;
+    border-right: 1px solid var(--color-border);
+  }
+  .dash-side-logo {
+    font-family: var(--font-condensed); font-size: 22px; font-weight: 900;
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-on-dark);
+    text-decoration: none; display: block; padding: 0 8px 8px;
+  }
+  .dash-side-logo span { color: var(--color-amber); }
+  .admin-tag {
+    display: inline-block;
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    color: var(--color-amber); letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0 8px 24px;
+  }
+  .dash-nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; font-size: 14px;
+    color: var(--color-on-dark-muted); text-decoration: none;
+    border-radius: 3px; margin-bottom: 2px;
+  }
+  .dash-nav-item:hover { background: rgba(255,255,255,0.05); color: var(--color-on-dark); }
+  .dash-nav-item.active {
+    background: rgba(242,153,74,0.15);
+    color: var(--color-amber); font-weight: 600;
+  }
+  .dash-nav-icon {
+    width: 16px; height: 16px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 2px; flex-shrink: 0;
+  }
+  .dash-nav-section {
+    font-family: var(--font-condensed); font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--color-on-dark-muted);
+    padding: 18px 12px 8px; opacity: 0.6;
+  }
+  .dash-main { padding: 32px 40px 60px; min-width: 0; }
+
+  /* Queue items */
+  .q-item {
+    display: grid;
+    grid-template-columns: 64px 1fr auto auto;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    background: var(--color-bg);
+    margin-bottom: 8px;
+    align-items: center;
+    cursor: pointer;
+  }
+  .q-item:hover { border-color: var(--color-olive); }
+  .q-img { width: 64px; height: 48px; }
+  .q-name { font-weight: 600; font-size: 14px; color: var(--color-slate); margin-bottom: 4px; }
+  .q-meta { font-size: 12px; color: var(--color-muted); font-family: var(--font-mono); }
+  .q-reason { padding: 3px 9px; border-radius: 2px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .q-reason-high { background: rgba(242,153,74,0.15); color: #7B5200; }
+  .q-reason-flag { background: rgba(139,0,0,0.10); color: #8B0000; }
+  .q-reason-disp { background: rgba(212,120,30,0.10); color: var(--color-battle); }
+  .sla-tag {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    padding: 3px 8px; border-radius: 2px;
+  }
+  .sla-ok { color: var(--color-olive); background: var(--color-olive-pale); }
+  .sla-warn { color: #7B5200; background: rgba(242,153,74,0.10); }
+  .sla-breach { color: #8B0000; background: rgba(139,0,0,0.07); }
+
+  /* Photo compare */
+  .compare-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .compare-pane {
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .compare-pane-head {
+    padding: 8px 12px;
+    background: var(--color-surface);
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--color-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    display: flex; justify-content: space-between;
+  }
+  .compare-pane-img {
+    height: 220px;
+  }
+
+  /* Action panel right column */
+  .panel-block {
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    padding: 18px;
+    margin-bottom: 14px;
+    background: var(--color-bg);
+  }
+  .panel-head {
+    font-family: var(--font-condensed);
+    font-size: 13px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--color-slate);
+    margin-bottom: 12px;
+  }
+  .red-flag {
+    display: flex; gap: 10px;
+    padding: 8px;
+    background: rgba(139,0,0,0.05);
+    border-left: 3px solid #8B0000;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--color-slate);
+  }
+</style>
+</head>
+<body>
+
+
+<!-- ================================================================
+     PAGE 8.1 — Admin Dashboard  /admin
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/admin</span>
+  <span class="page-sep-name">8.1 Admin Dashboard</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <span class="admin-tag">ADMIN</span>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Dashboard</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Listing queue <span style="margin-left:auto;background:rgba(242,153,74,0.20);color:var(--color-amber);font-size:11px;padding:1px 6px;border-radius:9px;">7</span></a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Disputes <span style="margin-left:auto;background:rgba(139,0,0,0.25);color:#fff;font-size:11px;padding:1px 6px;border-radius:9px;">3</span></a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Users</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Reports</a>
+    <div class="dash-nav-section">Tools</div>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Audit log</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Switch to user view</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Admin overview</h1>
+        <p class="page-subtitle">Tuesday, October 28 · 3 SLA breaches · 7 listings to review</p>
+      </div>
+    </div>
+
+    <!-- SLA breach alerts -->
+    <div class="alert alert-danger" style="margin-bottom:18px;">
+      <div>
+        <span class="alert-label">SLA breach</span>
+        Dispute KTL-2026-00683 has been open 5d 22h — past 5-day target. <a href="#" style="color:var(--color-olive);text-decoration:underline;">Review now →</a>
+      </div>
+    </div>
+    <div class="alert alert-warning" style="margin-bottom:24px;">
+      <div>
+        <span class="alert-label">SLA risk</span>
+        2 high-value listings approaching 24h queue limit. <a href="#" style="color:var(--color-olive);text-decoration:underline;">View queue →</a>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-overline">Listings pending</div>
+        <div class="stat-value">7</div>
+        <div class="stat-sublabel">2 high-value · 1 flagged</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-overline">Disputes open</div>
+        <div class="stat-value">3</div>
+        <div class="stat-sublabel">1 SLA breach</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-overline">Flagged users</div>
+        <div class="stat-value">2</div>
+        <div class="stat-sublabel">Awaiting review</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-overline">Active rentals</div>
+        <div class="stat-value">142</div>
+        <div class="stat-sublabel">$48K in escrow</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;">
+      <div class="panel-block">
+        <div class="panel-head">Listings queue — top 3</div>
+        <div class="q-item">
+          <div class="q-img placeholder-img">IMG</div>
+          <div>
+            <div class="q-name">InfiRay RICO G 384</div>
+            <div class="q-meta">Marcus T. · MSRP $4,899 · 2h queue</div>
+          </div>
+          <span class="q-reason q-reason-high">High-value</span>
+          <span class="sla-tag sla-ok">22h left</span>
+        </div>
+        <div class="q-item">
+          <div class="q-img placeholder-img">IMG</div>
+          <div>
+            <div class="q-name">N-Vision Halo-XRF</div>
+            <div class="q-meta">First-time lister · MSRP $7,299 · 8h queue</div>
+          </div>
+          <span class="q-reason q-reason-flag">New + High</span>
+          <span class="sla-tag sla-warn">16h left</span>
+        </div>
+        <a href="#" class="btn btn-ghost btn-sm" style="margin-top:10px;">View all 7 →</a>
+      </div>
+
+      <div class="panel-block">
+        <div class="panel-head">Disputes — open</div>
+        <div class="q-item">
+          <div class="q-img placeholder-img">IMG</div>
+          <div>
+            <div class="q-name">FLIR Scout III-320</div>
+            <div class="q-meta">Riley P. ↔ Sam W. · $250 deposit at stake</div>
+          </div>
+          <span class="q-reason q-reason-disp">Damage</span>
+          <span class="sla-tag sla-breach">−22h SLA</span>
+        </div>
+        <div class="q-item">
+          <div class="q-img placeholder-img">IMG</div>
+          <div>
+            <div class="q-name">ATN X-Sight 4K</div>
+            <div class="q-meta">Casey R. ↔ Devin H. · Late return</div>
+          </div>
+          <span class="q-reason q-reason-disp">Late</span>
+          <span class="sla-tag sla-warn">14h left</span>
+        </div>
+        <a href="#" class="btn btn-ghost btn-sm" style="margin-top:10px;">View all 3 →</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 8.2 — Listing Review Queue  /admin/listings
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/admin/listings</span>
+  <span class="page-sep-name">8.2 Listing Review Queue</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <span class="admin-tag">ADMIN</span>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Dashboard</a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Listing queue</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Disputes</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Users</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Listing review queue</h1>
+        <p class="page-subtitle">7 listings pending · sorted by SLA deadline</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <a href="#" class="tab active">All <span class="tab-count">7</span></a>
+      <a href="#" class="tab">High-value <span class="tab-count">5</span></a>
+      <a href="#" class="tab">Flagged <span class="tab-count">2</span></a>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;margin:18px 0;">
+      <select class="input" style="width:200px;">
+        <option>Sort: SLA deadline</option>
+        <option>Sort: Submitted (oldest)</option>
+        <option>Sort: MSRP (high to low)</option>
+      </select>
+      <span style="margin-left:auto;font-size:13px;color:var(--color-muted);">7 of 7 shown</span>
+    </div>
+
+    <div class="q-item">
+      <div class="q-img placeholder-img">IMG</div>
+      <div>
+        <div class="q-name">InfiRay RICO G 384</div>
+        <div class="q-meta">Marcus T. · Verified · Member 14mo · MSRP $4,899 · Submitted 2h ago</div>
+      </div>
+      <span class="q-reason q-reason-high">High-value</span>
+      <span class="sla-tag sla-ok">22h left</span>
+    </div>
+    <div class="q-item">
+      <div class="q-img placeholder-img">IMG</div>
+      <div>
+        <div class="q-name">N-Vision Halo-XRF Thermal</div>
+        <div class="q-meta">Devin H. · Unverified · Member 4d · MSRP $7,299 · Submitted 8h ago</div>
+      </div>
+      <span class="q-reason q-reason-flag">New + High</span>
+      <span class="sla-tag sla-warn">16h left</span>
+    </div>
+    <div class="q-item">
+      <div class="q-img placeholder-img">IMG</div>
+      <div>
+        <div class="q-name">Pulsar Trail 2 LRF XQ50</div>
+        <div class="q-meta">Casey R. · Verified · Member 8mo · MSRP $3,899 · Submitted 11h ago</div>
+      </div>
+      <span class="q-reason q-reason-high">High-value</span>
+      <span class="sla-tag sla-warn">13h left</span>
+    </div>
+    <div class="q-item">
+      <div class="q-img placeholder-img">IMG</div>
+      <div>
+        <div class="q-name">Steiner GS22 NV Goggles</div>
+        <div class="q-meta">Reported by 2 users · Photos may not match · Submitted 16h ago</div>
+      </div>
+      <span class="q-reason q-reason-flag">User flagged</span>
+      <span class="sla-tag sla-warn">8h left</span>
+    </div>
+    <div class="q-item">
+      <div class="q-img placeholder-img">IMG</div>
+      <div>
+        <div class="q-name">Trijicon REAP-IR Mini</div>
+        <div class="q-meta">Jamie K. · Verified · Member 22mo · MSRP $5,499 · Submitted 18h ago</div>
+      </div>
+      <span class="q-reason q-reason-high">High-value</span>
+      <span class="sla-tag sla-warn">6h left</span>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 8.3 — Listing Review Detail  /admin/listings/[id]
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/admin/listings/[id]</span>
+  <span class="page-sep-name">8.3 Listing Review Detail</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <span class="admin-tag">ADMIN</span>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Listing queue</a>
+  </aside>
+
+  <main class="dash-main" style="padding:24px 32px;">
+    <div class="page-breadcrumb" style="margin-bottom:8px;">
+      <span class="breadcrumb-item"><a href="#">Listing queue</a></span>
+      <span class="breadcrumb-item">InfiRay RICO G 384</span>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+      <div>
+        <h1 class="page-title" style="margin-bottom:4px;">InfiRay RICO G 384</h1>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="q-reason q-reason-high">High-value review</span>
+          <span class="sla-tag sla-ok">22h until SLA</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm">← Prev</button>
+        <button class="btn btn-ghost btn-sm">Next →</button>
+      </div>
+    </div>
+
+    <!-- Split layout -->
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:24px;align-items:start;">
+      <!-- LEFT: listing preview -->
+      <div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;">
+          <div class="placeholder-img" style="height:100px;grid-column:span 2;grid-row:span 2;height:208px;">HERO PHOTO</div>
+          <div class="placeholder-img" style="height:100px;">P2</div>
+          <div class="placeholder-img" style="height:100px;">P3</div>
+          <div class="placeholder-img" style="height:100px;">P4</div>
+          <div class="placeholder-img" style="height:100px;">P5</div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span>
+          <span class="badge badge-type">Thermal</span>
+          <span class="badge badge-verified">Verified Lister</span>
+        </div>
+
+        <h2 style="font-family:var(--font-condensed);font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:8px;">InfiRay RICO G 384</h2>
+        <p style="font-size:14px;color:var(--color-muted);line-height:1.6;margin-bottom:18px;">Field-tested for one season. Comes with original case, dual battery pack, and ARCA mount. Hunter-owned, not store-stock.</p>
+
+        <table class="spec-table">
+          <tr class="spec-row"><td class="spec-key">Detection range</td><td class="spec-value">2,500 m</td></tr>
+          <tr class="spec-row"><td class="spec-key">Sensor</td><td class="spec-value">384 × 288</td></tr>
+          <tr class="spec-row"><td class="spec-key">NETD</td><td class="spec-value">&lt;25 mK</td></tr>
+          <tr class="spec-row"><td class="spec-key">MSRP</td><td class="spec-value">$4,899</td></tr>
+          <tr class="spec-row"><td class="spec-key">Daily rate</td><td class="spec-value">$95</td></tr>
+          <tr class="spec-row"><td class="spec-key">Deposit</td><td class="spec-value">$400</td></tr>
+        </table>
+      </div>
+
+      <!-- RIGHT: action panel -->
+      <div>
+        <!-- Lister context -->
+        <div class="panel-block">
+          <div class="panel-head">Lister</div>
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+            <div class="avatar avatar-md placeholder-img" style="width:48px;height:48px;flex-shrink:0;">M</div>
+            <div>
+              <div style="font-weight:600;font-size:15px;">Marcus T. <span class="badge badge-verified" style="font-size:10px;padding:1px 5px;">Verified</span></div>
+              <div style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">Member 14mo · 3 listings · 34 rentals</div>
+            </div>
+          </div>
+          <table class="spec-table" style="font-size:12px;">
+            <tr class="spec-row"><td class="spec-key">Avg rating</td><td class="spec-value">★ 4.9</td></tr>
+            <tr class="spec-row"><td class="spec-key">Disputes filed</td><td class="spec-value">0</td></tr>
+            <tr class="spec-row"><td class="spec-key">Disputes against</td><td class="spec-value">0</td></tr>
+            <tr class="spec-row"><td class="spec-key">Account warnings</td><td class="spec-value">0</td></tr>
+          </table>
+        </div>
+
+        <!-- Actions -->
+        <div class="panel-block">
+          <div class="panel-head">Decision</div>
+          <button class="btn btn-olive" style="width:100%;justify-content:center;margin-bottom:8px;">✓ Approve listing</button>
+          <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-bottom:8px;">Request changes</button>
+          <button class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:8px;">Reject</button>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;color:var(--color-muted);">Escalate to senior admin</button>
+        </div>
+
+        <!-- Notes -->
+        <div class="panel-block">
+          <div class="panel-head">Internal notes</div>
+          <textarea class="input" rows="4" placeholder="Notes are visible to other admins only — not to the lister."></textarea>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 8.4 — Dispute Queue  /admin/disputes
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/admin/disputes</span>
+  <span class="page-sep-name">8.4 Dispute Queue</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <span class="admin-tag">ADMIN</span>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Disputes</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Disputes</h1>
+        <p class="page-subtitle">3 open · 1 SLA breach · sorted by priority</p>
+      </div>
+    </div>
+
+    <div class="q-item" style="border-color:#8B0000;">
+      <div class="q-img placeholder-img">IMG</div>
+      <div>
+        <div class="q-name">FLIR Scout III-320 — Damage</div>
+        <div class="q-meta" style="margin-top:4px;">
+          <span style="display:inline-block;margin-right:14px;">Riley P. (lister) ↔ Sam W. (renter)</span>
+          <span style="display:inline-block;">$250 deposit · $76 payout in escrow</span>
+        </div>
+        <div class="q-meta" style="margin-top:2px;">KTL-2026-00683 · Filed 6d 4h ago · Renter responded</div>
+      </div>
+      <span class="q-reason q-reason-disp">Damage</span>
+      <span class="sla-tag sla-breach">−22h breach</span>
+    </div>
+
+    <div class="q-item">
+      <div class="q-img placeholder-img">IMG</div>
+      <div>
+        <div class="q-name">ATN X-Sight 4K — Late return</div>
+        <div class="q-meta" style="margin-top:4px;">Casey R. (lister) ↔ Devin H. (renter) · $40/day late fee disputed</div>
+        <div class="q-meta" style="margin-top:2px;">KTL-2026-00821 · Filed 3d 2h ago</div>
+      </div>
+      <span class="q-reason q-reason-disp">Late</span>
+      <span class="sla-tag sla-warn">14h left</span>
+    </div>
+
+    <div class="q-item">
+      <div class="q-img placeholder-img">IMG</div>
+      <div>
+        <div class="q-name">Pulsar Trail 2 LRF — Pre-rental cancel</div>
+        <div class="q-meta" style="margin-top:4px;">Jamie K. (lister) ↔ Ari B. (renter) · Disagreement over 50% cancellation fee</div>
+        <div class="q-meta" style="margin-top:2px;">KTL-2026-00795 · Filed 2d 1h ago</div>
+      </div>
+      <span class="q-reason q-reason-disp">Pre-rental</span>
+      <span class="sla-tag sla-ok">2d 23h left</span>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 8.5 — Dispute Detail  /admin/disputes/[id]
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/admin/disputes/[id]</span>
+  <span class="page-sep-name">8.5 Dispute Detail &amp; Ruling</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <span class="admin-tag">ADMIN</span>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Disputes</a>
+  </aside>
+
+  <main class="dash-main" style="padding:24px 32px;">
+    <div class="page-breadcrumb" style="margin-bottom:8px;">
+      <span class="breadcrumb-item"><a href="#">Disputes</a></span>
+      <span class="breadcrumb-item">KTL-2026-00683</span>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+      <div>
+        <h1 class="page-title" style="margin-bottom:4px;">FLIR Scout III-320 — Damage dispute</h1>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="q-reason q-reason-disp">Damage</span>
+          <span class="sla-tag sla-breach">−22h SLA breach</span>
+          <span style="font-size:13px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00683</span>
+        </div>
+      </div>
+      <button class="btn btn-secondary">Submit ruling</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:24px;align-items:start;">
+      <!-- LEFT: evidence -->
+      <div>
+        <h3 style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Photo comparison</h3>
+        <div class="compare-row">
+          <div class="compare-pane">
+            <div class="compare-pane-head">
+              <span>Pickup · Sep 14, 6:32 PM</span>
+              <span style="color:var(--color-olive);">Renter photo</span>
+            </div>
+            <div class="compare-pane-img placeholder-img">PRE-RENTAL PHOTO</div>
+          </div>
+          <div class="compare-pane">
+            <div class="compare-pane-head">
+              <span>Return · Sep 16, 8:14 PM</span>
+              <span style="color:var(--color-battle);">Lister photo</span>
+            </div>
+            <div class="compare-pane-img placeholder-img">RETURN PHOTO — DAMAGE</div>
+          </div>
+        </div>
+
+        <h3 style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin:24px 0 12px;">Statements</h3>
+        <div class="panel-block">
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+            <div class="avatar avatar-sm placeholder-img" style="width:32px;height:32px;">R</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:13px;">Riley P. (Lister)</div>
+              <div style="font-size:11px;color:var(--color-muted);font-family:var(--font-mono);">Filed Sep 17, 9:14 AM</div>
+            </div>
+            <span style="font-size:13px;font-weight:600;color:var(--color-battle);">Claims $185 damage</span>
+          </div>
+          <p style="font-size:13px;line-height:1.6;color:var(--color-slate);">Lens housing has a clear crack on the left side that wasn't there at pickup. Sam acknowledged hitting it on a tree branch. Replacement lens housing is $185 from FLIR.</p>
+        </div>
+        <div class="panel-block">
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+            <div class="avatar avatar-sm placeholder-img" style="width:32px;height:32px;">S</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:13px;">Sam W. (Renter)</div>
+              <div style="font-size:11px;color:var(--color-muted);font-family:var(--font-mono);">Responded Sep 18, 11:42 AM</div>
+            </div>
+            <span style="font-size:13px;font-weight:600;color:var(--color-olive);">Disputes $185, willing to pay $80</span>
+          </div>
+          <p style="font-size:13px;line-height:1.6;color:var(--color-slate);">Yes I clipped a branch — small bump, no functional damage. Optical alignment still works (test photos attached). $185 for a full housing replacement is excessive. Happy to cover repair, FLIR repair quote is ~$80.</p>
+        </div>
+
+        <h3 style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin:24px 0 12px;">Booking timeline</h3>
+        <div style="border:1px solid var(--color-border);border-radius:3px;padding:14px 18px;background:var(--color-surface);font-size:12px;color:var(--color-muted);font-family:var(--font-mono);line-height:1.9;">
+          Sep 11 09:14 — Booking requested<br>
+          Sep 11 11:42 — Lister accepted<br>
+          Sep 14 18:32 — Pickup confirmed (photo) by both parties<br>
+          Sep 16 18:00 — Return scheduled<br>
+          Sep 16 20:14 — Renter confirmed return; lister flagged damage<br>
+          Sep 17 09:14 — Dispute filed by lister<br>
+          Sep 18 11:42 — Renter responded
+        </div>
+      </div>
+
+      <!-- RIGHT: ruling panel -->
+      <div>
+        <div class="panel-block">
+          <div class="panel-head">Amounts at stake</div>
+          <table class="cost-table">
+            <tr class="cost-row"><td class="cost-label">Deposit (held)</td><td class="cost-value">$250.00</td></tr>
+            <tr class="cost-row"><td class="cost-label">Lister payout (held)</td><td class="cost-value">$76.00</td></tr>
+            <tr class="cost-row"><td class="cost-label">Lister claim</td><td class="cost-value" style="color:var(--color-battle);">$185.00</td></tr>
+            <tr class="cost-row"><td class="cost-label">Renter offer</td><td class="cost-value" style="color:var(--color-olive);">$80.00</td></tr>
+          </table>
+        </div>
+
+        <div class="panel-block">
+          <div class="panel-head">Issue ruling</div>
+          <div class="form-group">
+            <label class="input-label">Ruling type</label>
+            <select class="input">
+              <option>Charge renter from deposit</option>
+              <option>Refund renter, release payout</option>
+              <option>Split — partial charge</option>
+              <option>Insurance claim escalation</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="input-label">Charge from deposit</label>
+            <div style="position:relative;">
+              <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--color-muted);font-family:var(--font-mono);">$</span>
+              <input class="input" type="number" value="120" style="padding-left:30px;font-family:var(--font-mono);">
+            </div>
+            <p style="font-size:12px;color:var(--color-muted);margin-top:6px;">Compromise: midway between FLIR repair quote and full housing replacement.</p>
+          </div>
+          <div class="form-group">
+            <label class="input-label">Explanation (shared with both parties)</label>
+            <textarea class="input" rows="4" placeholder="Plain-English reasoning for the ruling. Both parties will see this."></textarea>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;justify-content:center;">Preview ruling →</button>
+        </div>
+
+        <div class="panel-block">
+          <div class="panel-head">Side actions</div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;text-align:left;">Message Riley</button>
+          <button class="btn btn-ghost btn-sm" style="width:100%;text-align:left;">Message Sam</button>
+          <button class="btn btn-ghost btn-sm" style="width:100%;text-align:left;color:var(--color-muted);">Escalate to senior admin</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 8.6 — User Search  /admin/users
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/admin/users</span>
+  <span class="page-sep-name">8.6 User Search</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <span class="admin-tag">ADMIN</span>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Users</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Users</h1>
+        <p class="page-subtitle">Search by email, name, booking ref, or phone.</p>
+      </div>
+    </div>
+
+    <input class="input" type="text" placeholder="Search users…" style="font-size:16px;padding:14px;margin:14px 0 24px;">
+
+    <p style="font-family:var(--font-condensed);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-light);margin-bottom:8px;">Results · 4</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Verified</th>
+          <th>Member since</th>
+          <th>Open disputes</th>
+          <th>Flags</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="avatar avatar-sm placeholder-img" style="width:30px;height:30px;flex-shrink:0;">S</div>
+              <a href="#" style="font-weight:600;color:var(--color-slate);">Sam Walker</a>
+            </div>
+          </td>
+          <td class="text-mono" style="font-size:12px;">sam@example.com</td>
+          <td>Both</td>
+          <td>✓</td>
+          <td>Oct 2024</td>
+          <td>0</td>
+          <td>—</td>
+          <td><span class="status-badge status-active">Active</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="avatar avatar-sm placeholder-img" style="width:30px;height:30px;flex-shrink:0;">D</div>
+              <a href="#" style="font-weight:600;color:var(--color-slate);">Devin Hale</a>
+            </div>
+          </td>
+          <td class="text-mono" style="font-size:12px;">devin.h@example.com</td>
+          <td>Renter</td>
+          <td>✓</td>
+          <td>Jul 2025</td>
+          <td>1</td>
+          <td><span style="font-size:11px;font-weight:600;color:#8B0000;">2 late returns</span></td>
+          <td><span class="status-badge status-flagged">Flagged</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="avatar avatar-sm placeholder-img" style="width:30px;height:30px;flex-shrink:0;">A</div>
+              <a href="#" style="font-weight:600;color:var(--color-slate);">Ari B.</a>
+            </div>
+          </td>
+          <td class="text-mono" style="font-size:12px;">ari.b@example.com</td>
+          <td>Renter</td>
+          <td>—</td>
+          <td>Aug 2026</td>
+          <td>1</td>
+          <td><span style="font-size:11px;font-weight:600;color:#8B0000;">Unverified · disputed</span></td>
+          <td><span class="status-badge status-pending">Restricted</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 8.7 — User Record  /admin/users/[id]
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/admin/users/[id]</span>
+  <span class="page-sep-name">8.7 User Record</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <span class="admin-tag">ADMIN</span>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Users</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-breadcrumb" style="margin-bottom:8px;">
+      <span class="breadcrumb-item"><a href="#">Users</a></span>
+      <span class="breadcrumb-item">Devin Hale</span>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:24px;margin-bottom:24px;">
+      <div class="avatar avatar-lg placeholder-img" style="width:80px;height:80px;border-radius:50%;font-size:24px;flex-shrink:0;">D</div>
+      <div style="flex:1;">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px;">
+          <h1 class="page-title" style="margin-bottom:0;">Devin Hale</h1>
+          <span class="status-badge status-flagged">Flagged</span>
+        </div>
+        <p style="font-size:13px;color:var(--color-muted);font-family:var(--font-mono);">devin.h@example.com · (406) 555-0119 · Member since Jul 2025 · ID verified Sep 2025</p>
+      </div>
+    </div>
+
+    <!-- Red flags panel -->
+    <div class="alert alert-warning" style="margin-bottom:24px;">
+      <div>
+        <span class="alert-label">Red flags</span>
+        <div class="red-flag" style="margin-top:8px;"><strong>2 late returns</strong> in the last 60 days (KTL-2026-00821, KTL-2026-00765)</div>
+        <div class="red-flag"><strong>1 open dispute</strong> as renter (KTL-2026-00821)</div>
+        <div class="red-flag"><strong>Avg lister rating below 3.5</strong> (3.2 ★ across 4 rentals)</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <a href="#" class="tab active">Overview</a>
+      <a href="#" class="tab">Bookings <span class="tab-count">9</span></a>
+      <a href="#" class="tab">Disputes <span class="tab-count">1</span></a>
+      <a href="#" class="tab">Reviews</a>
+      <a href="#" class="tab">Audit log</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:24px;margin-top:24px;align-items:start;">
+      <!-- LEFT: stats + history -->
+      <div>
+        <div class="stat-row" style="margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-overline">Total bookings</div>
+            <div class="stat-value">9</div>
+            <div class="stat-sublabel">7 completed · 1 active · 1 disputed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-overline">Lifetime spend</div>
+            <div class="stat-value">$1,420</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-overline">Avg rating</div>
+            <div class="stat-value">3.2 ★</div>
+            <div class="stat-sublabel">From 4 listers</div>
+          </div>
+        </div>
+
+        <h3 style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Recent bookings</h3>
+        <table class="data-table">
+          <thead>
+            <tr><th>Booking</th><th>Gear</th><th>Lister</th><th>Status</th><th>Outcome</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-mono" style="font-size:12px;">KTL-2026-00821</td>
+              <td>ATN X-Sight 4K</td>
+              <td>Casey R.</td>
+              <td><span class="status-badge status-disputed">Disputed</span></td>
+              <td style="color:var(--color-battle);font-size:13px;">Late by 2 days</td>
+            </tr>
+            <tr>
+              <td class="text-mono" style="font-size:12px;">KTL-2026-00765</td>
+              <td>InfiRay RICO G</td>
+              <td>Marcus T.</td>
+              <td><span class="status-badge status-completed">Completed</span></td>
+              <td style="font-size:13px;">Late by 4hr · ★ 3</td>
+            </tr>
+            <tr>
+              <td class="text-mono" style="font-size:12px;">KTL-2026-00701</td>
+              <td>Pulsar Trail</td>
+              <td>Jamie K.</td>
+              <td><span class="status-badge status-completed">Completed</span></td>
+              <td style="font-size:13px;">On time · ★ 4</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- RIGHT: action panel -->
+      <div>
+        <div class="panel-block">
+          <div class="panel-head">Account actions</div>
+          <button class="btn btn-secondary" style="width:100%;justify-content:flex-start;margin-bottom:8px;">⚠ Issue warning</button>
+          <button class="btn btn-outline" style="width:100%;justify-content:flex-start;margin-bottom:8px;color:#7B5200;border-color:rgba(242,153,74,0.5);">Restrict account</button>
+          <button class="btn btn-outline" style="width:100%;justify-content:flex-start;margin-bottom:8px;color:#8B0000;border-color:rgba(139,0,0,0.4);">Suspend (30 days)</button>
+          <button class="btn btn-outline" style="width:100%;justify-content:flex-start;color:#5A0000;border-color:#5A0000;background:rgba(139,0,0,0.05);">Permanent ban (senior admin)</button>
+          <p style="font-size:12px;color:var(--color-muted);margin-top:10px;line-height:1.55;">Destructive actions require typing the user's full name to confirm.</p>
+        </div>
+
+        <div class="panel-block">
+          <div class="panel-head">Account state</div>
+          <table class="spec-table" style="font-size:12px;">
+            <tr class="spec-row"><td class="spec-key">Stripe Connect</td><td class="spec-value">N/A — renter only</td></tr>
+            <tr class="spec-row"><td class="spec-key">ID verification</td><td class="spec-value" style="color:var(--color-olive);">Verified</td></tr>
+            <tr class="spec-row"><td class="spec-key">Last activity</td><td class="spec-value">2h ago</td></tr>
+            <tr class="spec-row"><td class="spec-key">Warnings issued</td><td class="spec-value">0</td></tr>
+            <tr class="spec-row"><td class="spec-key">IP location</td><td class="spec-value">Bozeman, MT</td></tr>
+          </table>
+        </div>
+
+        <div class="panel-block">
+          <div class="panel-head">Internal notes</div>
+          <textarea class="input" rows="4" placeholder="Internal admin notes — visible to other admins only."></textarea>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px;">+ Add note</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

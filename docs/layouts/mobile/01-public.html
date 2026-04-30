@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo Mobile — Public</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  body { background: #2A2E29; padding: 32px 16px 60px; }
+  .page-sep {
+    background: var(--color-slate); color: var(--color-on-dark);
+    padding: 12px 16px; display: flex; align-items: baseline; gap: 12px;
+    max-width: 390px; margin: 24px auto 0;
+  }
+  .page-sep:first-of-type { margin-top: 0; }
+  .page-sep-route { font-family: var(--font-mono); font-size: 11px; color: var(--color-amber); }
+  .page-sep-name { font-family: var(--font-condensed); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-on-dark); }
+  .phone {
+    width: 390px;
+    margin: 0 auto;
+    background: var(--color-bg);
+    border: 1px solid #1A1F1A;
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+  }
+  .phone-status {
+    background: var(--color-bg);
+    padding: 10px 18px 6px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 11px; color: var(--color-slate);
+  }
+  .phone-body {
+    height: 720px;
+    overflow-y: auto;
+  }
+  .placeholder-img {
+    background: var(--color-surface); border: 1px dashed var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 10px; color: var(--color-light); letter-spacing: 0.08em;
+  }
+
+  /* Mobile nav: hamburger + logo + cta */
+  .m-nav {
+    display: flex; align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+  }
+  .m-nav-logo {
+    font-family: var(--font-condensed);
+    font-size: 18px; font-weight: 900;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--color-slate); text-decoration: none;
+  }
+  .m-nav-logo span { color: var(--color-amber); }
+  .m-burger {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 8px;
+    color: var(--color-slate);
+  }
+  .m-burger span {
+    display: block; width: 18px; height: 2px;
+    background: var(--color-slate);
+    position: relative;
+  }
+  .m-burger span::before,
+  .m-burger span::after {
+    content: ''; position: absolute; left: 0;
+    width: 18px; height: 2px; background: var(--color-slate);
+  }
+  .m-burger span::before { top: -6px; }
+  .m-burger span::after { top: 6px; }
+
+  .m-hero {
+    padding: 24px 18px 28px;
+    background: var(--color-slate);
+    color: var(--color-on-dark);
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(242,153,74,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(242,153,74,0.04) 0%, transparent 40%);
+  }
+  .m-hero-overline {
+    font-family: var(--font-condensed); font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--color-amber);
+    margin-bottom: 10px;
+  }
+  .m-hero-h {
+    font-family: var(--font-condensed);
+    font-size: 32px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.01em;
+    line-height: 1.0; margin-bottom: 12px;
+  }
+  .m-hero-sub {
+    font-size: 14px; color: var(--color-on-dark-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .m-search {
+    background: var(--color-bg);
+    border-radius: 4px;
+    padding: 4px;
+    display: flex; flex-direction: column;
+    gap: 1px;
+  }
+  .m-search-field {
+    padding: 10px 12px;
+    background: var(--color-bg);
+  }
+  .m-search-label {
+    font-family: var(--font-condensed); font-size: 10px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--color-muted);
+    margin-bottom: 2px;
+  }
+  .m-search-value { font-size: 14px; color: var(--color-slate); }
+  .m-search-cta {
+    background: var(--color-amber); color: var(--color-slate);
+    border: none;
+    padding: 14px;
+    font-family: var(--font-condensed); font-weight: 800;
+    font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em;
+    border-radius: 3px;
+    margin-top: 4px;
+  }
+
+  .m-section { padding: 24px 18px; }
+  .m-section-overline {
+    font-family: var(--font-condensed); font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--color-light);
+    margin-bottom: 6px;
+  }
+  .m-section-h {
+    font-family: var(--font-condensed);
+    font-size: 22px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.02em;
+    color: var(--color-slate);
+    margin-bottom: 16px;
+    line-height: 1.05;
+  }
+
+  .m-card-list { display: flex; flex-direction: column; gap: 12px; }
+  .m-card {
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+  .m-card-img { height: 180px; }
+  .m-card-body { padding: 12px 14px; }
+  .m-card-tags { display: flex; gap: 5px; margin-bottom: 6px; flex-wrap: wrap; }
+  .m-card-h { font-family: var(--font-condensed); font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 4px; }
+  .m-card-meta { font-size: 12px; color: var(--color-muted); }
+  .m-card-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-border);
+  }
+  .m-card-price { font-family: var(--font-mono); font-weight: 600; color: var(--color-slate); font-size: 16px; }
+  .m-card-rating { font-size: 12px; color: var(--color-muted); }
+
+  /* Search list */
+  .m-search-bar {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex; gap: 8px; align-items: center;
+    background: var(--color-bg);
+    position: sticky; top: 0; z-index: 5;
+  }
+  .m-search-bar input {
+    flex: 1;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 8px 12px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .m-filter-btn {
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-slate);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .filter-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--color-amber);
+  }
+
+  /* Filter sheet (modal-style) */
+  .m-sheet-overlay {
+    position: relative;
+    background: rgba(45,52,42,0.6);
+    height: 720px;
+  }
+  .m-sheet {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--color-bg);
+    border-radius: 14px 14px 0 0;
+    padding: 8px 0 24px;
+    max-height: 86%;
+    overflow-y: auto;
+  }
+  .m-sheet-grip {
+    width: 40px; height: 4px; border-radius: 2px;
+    background: var(--color-border);
+    margin: 4px auto 12px;
+  }
+  .m-sheet-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 18px 10px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .m-sheet-h { font-family: var(--font-condensed); font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Detail bottom bar */
+  .m-bottom-bar {
+    position: sticky; bottom: 0;
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 -8px 16px rgba(0,0,0,0.04);
+  }
+
+  .badge { font-size: 10px; padding: 2px 6px; }
+  .btn-amber-mobile {
+    flex: 1;
+    background: var(--color-amber);
+    color: var(--color-slate);
+    border: none;
+    padding: 12px;
+    font-family: var(--font-condensed);
+    font-size: 13px; font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+
+
+<!-- ================================================================
+     1.1 — Mobile Homepage
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/</span>
+  <span class="page-sep-name">1.1 Homepage (mobile)</span>
+</div>
+
+<div class="phone">
+  <div class="phone-status">
+    <span>9:41</span>
+    <span>5G ▮▮▮</span>
+  </div>
+  <div class="phone-body">
+    <div class="m-nav">
+      <a href="#" class="m-burger"><span></span></a>
+      <a href="#" class="m-nav-logo">KIT<span>LO</span></a>
+      <a href="#" class="btn btn-secondary btn-sm" style="margin-left:auto;font-size:12px;padding:7px 12px;">Sign in</a>
+    </div>
+
+    <div class="m-hero">
+      <p class="m-hero-overline">P2P hunting equipment</p>
+      <h1 class="m-hero-h">Rent the gear.<br>Own the hunt.</h1>
+      <p class="m-hero-sub">Thermal, NV, and high-value gear from verified hunters near you.</p>
+
+      <div class="m-search">
+        <div class="m-search-field">
+          <div class="m-search-label">Where</div>
+          <div class="m-search-value">Bozeman, MT</div>
+        </div>
+        <div class="m-search-field">
+          <div class="m-search-label">Gear type</div>
+          <div class="m-search-value">All gear</div>
+        </div>
+        <div class="m-search-field">
+          <div class="m-search-label">Dates</div>
+          <div class="m-search-value" style="color:var(--color-muted);">Add dates</div>
+        </div>
+        <button class="m-search-cta">Find gear</button>
+      </div>
+    </div>
+
+    <!-- Olive band -->
+    <div style="background:var(--color-olive);color:var(--color-on-dark);padding:18px;">
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.5;">
+        <div><strong style="color:var(--color-amber);">⟡ Verified hunters only</strong> — gov ID + selfie before listing</div>
+        <div><strong style="color:var(--color-amber);">⟡ Funds in escrow</strong> — released after confirmed return</div>
+        <div><strong style="color:var(--color-amber);">⟡ Photo-documented handoff</strong> — pickup &amp; drop-off</div>
+      </div>
+    </div>
+
+    <div class="m-section">
+      <p class="m-section-overline">Featured near you</p>
+      <h2 class="m-section-h">Popular listings</h2>
+      <div class="m-card-list">
+        <div class="m-card">
+          <div class="m-card-img placeholder-img">GEAR PHOTO</div>
+          <div class="m-card-body">
+            <div class="m-card-tags">
+              <span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span>
+              <span class="badge badge-type">Thermal</span>
+              <span class="badge badge-verified">Verified</span>
+            </div>
+            <div class="m-card-h">Pulsar Helion 2 XP50 Pro</div>
+            <div class="m-card-meta">Bozeman, MT · 12 mi</div>
+            <div class="m-card-foot">
+              <span class="m-card-price">$85<span style="font-size:11px;font-weight:400;">/day</span></span>
+              <span class="m-card-rating">★ 4.9 (14)</span>
+            </div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-card-img placeholder-img">GEAR PHOTO</div>
+          <div class="m-card-body">
+            <div class="m-card-tags">
+              <span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span>
+              <span class="badge badge-type">Bundle</span>
+            </div>
+            <div class="m-card-h">Elk Season Bundle</div>
+            <div class="m-card-meta">Bozeman, MT · 5 mi</div>
+            <div class="m-card-foot">
+              <span class="m-card-price">$130<span style="font-size:11px;font-weight:400;">/day</span></span>
+              <span class="m-card-rating">★ 4.8 (22)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="#" class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:18px;">Browse all gear</a>
+    </div>
+
+    <!-- How it works -->
+    <div class="m-section" style="background:var(--color-surface);">
+      <p class="m-section-overline">How it works</p>
+      <h2 class="m-section-h">Rent in three steps</h2>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="border:1px solid var(--color-border);background:var(--color-bg);padding:14px;border-radius:3px;">
+          <div style="font-family:var(--font-mono);font-size:12px;color:var(--color-amber);margin-bottom:4px;">01</div>
+          <div style="font-weight:700;margin-bottom:4px;">Find the gear</div>
+          <p style="font-size:13px;color:var(--color-muted);line-height:1.55;">Search by location, gear type, and dates.</p>
+        </div>
+        <div style="border:1px solid var(--color-border);background:var(--color-bg);padding:14px;border-radius:3px;">
+          <div style="font-family:var(--font-mono);font-size:12px;color:var(--color-amber);margin-bottom:4px;">02</div>
+          <div style="font-weight:700;margin-bottom:4px;">Book &amp; pay</div>
+          <p style="font-size:13px;color:var(--color-muted);line-height:1.55;">Funds held in escrow. Lister accepts within 24 hours.</p>
+        </div>
+        <div style="border:1px solid var(--color-border);background:var(--color-bg);padding:14px;border-radius:3px;">
+          <div style="font-family:var(--font-mono);font-size:12px;color:var(--color-amber);margin-bottom:4px;">03</div>
+          <div style="font-weight:700;margin-bottom:4px;">Hunt &amp; return</div>
+          <p style="font-size:13px;color:var(--color-muted);line-height:1.55;">Confirm pickup, hunt, return on time. Deposit released.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer (compact) -->
+    <div style="background:#1A1F1A;color:var(--color-on-dark-muted);padding:24px 18px;">
+      <div style="font-family:var(--font-condensed);font-size:18px;font-weight:900;letter-spacing:0.04em;color:var(--color-on-dark);margin-bottom:14px;">KIT<span style="color:var(--color-amber);">LO</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px;line-height:1.9;">
+        <div><strong style="color:var(--color-on-dark);">Marketplace</strong><br>Browse · How it works</div>
+        <div><strong style="color:var(--color-on-dark);">Company</strong><br>Terms · Privacy</div>
+      </div>
+      <div style="font-size:11px;color:var(--color-on-dark-muted);margin-top:18px;font-family:var(--font-mono);">© 2026 Kitlo</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     1.2 — Mobile How It Works (compressed)
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/how-it-works</span>
+  <span class="page-sep-name">1.2 How It Works (mobile)</span>
+</div>
+
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body">
+    <div class="m-nav">
+      <a href="#" class="m-burger"><span></span></a>
+      <a href="#" class="m-nav-logo">KIT<span>LO</span></a>
+    </div>
+
+    <div class="m-section">
+      <p class="m-section-overline">For renters</p>
+      <h2 class="m-section-h">From search to hunt</h2>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="border-left:3px solid var(--color-amber);padding:10px 14px;background:var(--color-surface);">
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--color-muted);margin-bottom:3px;">STEP 1</div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Search by location &amp; dates</div>
+          <p style="font-size:13px;color:var(--color-muted);line-height:1.55;">Filter by gear type, condition, price, verified-only.</p>
+        </div>
+        <div style="border-left:3px solid var(--color-amber);padding:10px 14px;background:var(--color-surface);">
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--color-muted);margin-bottom:3px;">STEP 2</div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Request &amp; pay</div>
+          <p style="font-size:13px;color:var(--color-muted);line-height:1.55;">Card charged on lister acceptance. Deposit held separately.</p>
+        </div>
+        <div style="border-left:3px solid var(--color-amber);padding:10px 14px;background:var(--color-surface);">
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--color-muted);margin-bottom:3px;">STEP 3</div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Inspect at pickup</div>
+          <p style="font-size:13px;color:var(--color-muted);line-height:1.55;">Confirm condition in-app — protects you and the lister.</p>
+        </div>
+        <div style="border-left:3px solid var(--color-amber);padding:10px 14px;background:var(--color-surface);">
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--color-muted);margin-bottom:3px;">STEP 4</div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Hunt &amp; return</div>
+          <p style="font-size:13px;color:var(--color-muted);line-height:1.55;">Return on time. Deposit released within 48 hours.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:0 18px 32px;">
+      <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;">Find gear</a>
+      <a href="#" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px;">List your gear</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     1.3 — Mobile Search & Discovery
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/gear</span>
+  <span class="page-sep-name">1.3 Search &amp; Discovery (mobile)</span>
+</div>
+
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body">
+    <!-- Sticky search bar -->
+    <div class="m-search-bar">
+      <input type="text" placeholder="Bozeman, MT · Oct 15–19" value="Bozeman, MT · Oct 15–19">
+      <button class="m-filter-btn">Filters <span class="filter-dot"></span></button>
+    </div>
+
+    <!-- Results count + sort -->
+    <div style="padding:10px 16px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--color-muted);border-bottom:1px solid var(--color-border);">
+      <span>47 results · 25 mi radius</span>
+      <a href="#" style="color:var(--color-olive);text-decoration:underline;">Map</a>
+    </div>
+
+    <!-- Result cards -->
+    <div style="padding:14px 14px 24px;display:flex;flex-direction:column;gap:12px;">
+      <div class="m-card">
+        <div class="m-card-img placeholder-img">GEAR PHOTO</div>
+        <div class="m-card-body">
+          <div class="m-card-tags">
+            <span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span>
+            <span class="badge badge-type">Thermal</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="m-card-h">Pulsar Helion 2 XP50 Pro</div>
+          <div class="m-card-meta">Bozeman, MT · 5 mi</div>
+          <div class="m-card-foot">
+            <span class="m-card-price">$85<span style="font-size:11px;font-weight:400;">/day</span></span>
+            <span class="m-card-rating">★ 4.9 (14)</span>
+          </div>
+        </div>
+      </div>
+      <div class="m-card">
+        <div class="m-card-img placeholder-img">GEAR PHOTO</div>
+        <div class="m-card-body">
+          <div class="m-card-tags">
+            <span class="badge badge-condition" style="background:var(--color-olive-pale);color:var(--color-olive);">Field-Ready</span>
+            <span class="badge badge-type">Thermal</span>
+          </div>
+          <div class="m-card-h">FLIR Breach PTQ136</div>
+          <div class="m-card-meta">Bozeman, MT · 8 mi</div>
+          <div class="m-card-foot">
+            <span class="m-card-price">$65<span style="font-size:11px;font-weight:400;">/day</span></span>
+            <span class="m-card-rating">★ 4.7 (6)</span>
+          </div>
+        </div>
+      </div>
+      <div class="m-card">
+        <div class="m-card-img placeholder-img">GEAR PHOTO</div>
+        <div class="m-card-body">
+          <div class="m-card-tags">
+            <span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span>
+            <span class="badge badge-type">Bundle</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="m-card-h">Elk Season Bundle</div>
+          <div class="m-card-meta">Belgrade, MT · 12 mi</div>
+          <div class="m-card-foot">
+            <span class="m-card-price">$130<span style="font-size:11px;font-weight:400;">/day</span></span>
+            <span class="m-card-rating">★ 4.8 (22)</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px;">Load 41 more</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     1.3b — Mobile Filter Sheet
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/gear (filter sheet)</span>
+  <span class="page-sep-name">1.3b Filters bottom sheet</span>
+</div>
+
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="m-sheet-overlay">
+    <!-- Dimmed bg shows search underneath -->
+    <div style="padding:14px 16px;color:var(--color-on-dark-muted);font-size:12px;">Behind sheet · search results dimmed</div>
+
+    <div class="m-sheet">
+      <div class="m-sheet-grip"></div>
+      <div class="m-sheet-head">
+        <span class="m-sheet-h">Filters</span>
+        <a href="#" style="font-size:13px;color:var(--color-muted);text-decoration:underline;">Reset</a>
+      </div>
+
+      <div style="padding:18px;display:flex;flex-direction:column;gap:18px;">
+        <div>
+          <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:8px;">Gear type</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="tag-pill selected" style="padding:7px 13px;border:1px solid var(--color-olive);background:var(--color-olive-pale);color:var(--color-olive);border-radius:999px;font-size:13px;font-weight:500;">Thermal</span>
+            <span class="tag-pill" style="padding:7px 13px;border:1px solid var(--color-border);border-radius:999px;font-size:13px;color:var(--color-slate);">Night Vision</span>
+            <span class="tag-pill" style="padding:7px 13px;border:1px solid var(--color-border);border-radius:999px;font-size:13px;color:var(--color-slate);">Bundle</span>
+            <span class="tag-pill" style="padding:7px 13px;border:1px solid var(--color-border);border-radius:999px;font-size:13px;color:var(--color-slate);">Camp &amp; Support</span>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:8px;">Condition</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="padding:7px 13px;border:1px solid var(--color-olive);background:var(--color-olive-pale);color:var(--color-olive);border-radius:999px;font-size:13px;">Mint</span>
+            <span style="padding:7px 13px;border:1px solid var(--color-olive);background:var(--color-olive-pale);color:var(--color-olive);border-radius:999px;font-size:13px;">Field-Ready</span>
+            <span style="padding:7px 13px;border:1px solid var(--color-border);border-radius:999px;font-size:13px;color:var(--color-slate);">Battle-Scarred</span>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:8px;">Price per day</p>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input class="input" type="text" placeholder="$0" style="flex:1;">
+            <span style="color:var(--color-muted);">–</span>
+            <input class="input" type="text" placeholder="$200" style="flex:1;">
+          </div>
+        </div>
+        <div>
+          <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:8px;">Radius</p>
+          <select class="input" style="width:100%;">
+            <option>25 mi</option><option>50 mi</option><option>100 mi</option>
+          </select>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--color-border);">
+          <span style="font-size:14px;">Verified listers only</span>
+          <div class="toggle is-on"><div class="toggle-track"></div></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;">Show 47 results</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     1.4 — Mobile Listing Detail (sticky CTA)
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/gear/[id]</span>
+  <span class="page-sep-name">1.4 Listing Detail (mobile)</span>
+</div>
+
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body" style="display:flex;flex-direction:column;height:720px;padding:0;">
+    <!-- top back bar -->
+    <div style="padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--color-border);background:var(--color-bg);position:sticky;top:0;z-index:5;">
+      <a href="#" style="color:var(--color-slate);font-size:18px;">←</a>
+      <a href="#" class="m-nav-logo" style="font-size:16px;">KIT<span>LO</span></a>
+      <a href="#" style="color:var(--color-slate);font-size:18px;">⋯</a>
+    </div>
+
+    <!-- scroll content -->
+    <div style="flex:1;overflow-y:auto;">
+      <!-- Hero photo + thumbs -->
+      <div class="placeholder-img" style="height:240px;border-radius:0;">HERO PHOTO 1/8</div>
+      <div style="display:flex;gap:6px;padding:8px 14px;overflow-x:auto;">
+        <div class="placeholder-img" style="width:64px;height:48px;flex-shrink:0;border:2px solid var(--color-amber);">1</div>
+        <div class="placeholder-img" style="width:64px;height:48px;flex-shrink:0;">2</div>
+        <div class="placeholder-img" style="width:64px;height:48px;flex-shrink:0;">3</div>
+        <div class="placeholder-img" style="width:64px;height:48px;flex-shrink:0;">4</div>
+        <div class="placeholder-img" style="width:64px;height:48px;flex-shrink:0;">5</div>
+      </div>
+
+      <!-- Title -->
+      <div style="padding:16px 18px 0;">
+        <div class="m-card-tags">
+          <span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span>
+          <span class="badge badge-type">Thermal</span>
+          <span class="badge badge-verified">Verified Hunter</span>
+        </div>
+        <h1 style="font-family:var(--font-condensed);font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;line-height:1.05;margin-bottom:6px;">Pulsar Helion 2 XP50 Pro</h1>
+        <p style="font-size:12px;color:var(--color-muted);">★ 4.9 (14) · Bozeman, MT · 34 rentals</p>
+      </div>
+
+      <!-- Lister block -->
+      <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border);margin-top:14px;">
+        <div class="placeholder-img" style="width:36px;height:36px;border-radius:50%;flex-shrink:0;">M</div>
+        <div style="flex:1;">
+          <div style="font-size:11px;color:var(--color-muted);">Listed by</div>
+          <div style="font-weight:600;font-size:14px;">Marcus T.</div>
+        </div>
+        <a href="#" style="font-size:12px;color:var(--color-olive);text-decoration:underline;">Profile</a>
+      </div>
+
+      <!-- Description -->
+      <div style="padding:16px 18px;font-size:14px;line-height:1.6;color:var(--color-muted);">
+        Pristine condition — purchased Nov 2023, used for one elk season. All original accessories included.
+      </div>
+
+      <!-- Specs -->
+      <div style="padding:0 18px 16px;">
+        <h3 style="font-family:var(--font-condensed);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Specifications</h3>
+        <table class="spec-table" style="width:100%;font-size:13px;">
+          <tr class="spec-row"><td class="spec-key">Detection</td><td class="spec-value">1,800 m</td></tr>
+          <tr class="spec-row"><td class="spec-key">Mag</td><td class="spec-value">2.5x – 20x</td></tr>
+          <tr class="spec-row"><td class="spec-key">Sensor</td><td class="spec-value">384 × 288</td></tr>
+          <tr class="spec-row"><td class="spec-key">NETD</td><td class="spec-value">&lt;25 mK</td></tr>
+          <tr class="spec-row"><td class="spec-key">Battery</td><td class="spec-value">8 hr</td></tr>
+        </table>
+      </div>
+
+      <!-- Reviews preview -->
+      <div style="padding:0 18px 80px;">
+        <h3 style="font-family:var(--font-condensed);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Reviews · ★ 4.9</h3>
+        <div style="border:1px solid var(--color-border);padding:12px;border-radius:3px;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <div class="placeholder-img" style="width:28px;height:28px;border-radius:50%;flex-shrink:0;">A</div>
+            <div style="flex:1;font-size:12px;font-weight:600;">Alex K. · Oct 2026</div>
+            <div style="font-size:11px;color:var(--color-amber);">★★★★★</div>
+          </div>
+          <p style="font-size:13px;line-height:1.55;color:var(--color-slate);">Marcus was incredibly helpful. Gear was exactly as described.</p>
+        </div>
+        <a href="#" style="font-size:13px;color:var(--color-olive);text-decoration:underline;">See all 14 reviews →</a>
+      </div>
+    </div>
+
+    <!-- Sticky bottom CTA bar -->
+    <div class="m-bottom-bar">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--color-slate);">$85<span style="font-size:12px;font-weight:400;color:var(--color-muted);"> / day</span></div>
+        <div style="font-size:11px;color:var(--color-muted);">+ $250 deposit</div>
+      </div>
+      <button class="btn-amber-mobile">Request this gear</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

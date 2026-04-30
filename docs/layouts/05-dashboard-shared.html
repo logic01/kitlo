@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Layout: Dashboard (Shared)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .page-sep {
+    background: var(--color-slate); color: var(--color-on-dark);
+    padding: 16px 52px; display: flex; align-items: baseline; gap: 20px;
+  }
+  .page-sep-route { font-family: var(--font-mono); font-size: 13px; color: var(--color-amber); }
+  .page-sep-name {
+    font-family: var(--font-condensed); font-size: 20px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-on-dark);
+  }
+  .placeholder-img {
+    background: var(--color-surface); border: 1px dashed var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; color: var(--color-light);
+    letter-spacing: 0.08em;
+  }
+  /* Shell — sidebar + main */
+  .dash {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 720px;
+    background: var(--color-bg);
+  }
+  .dash-side {
+    background: var(--color-bg);
+    border-right: 1px solid var(--color-border);
+    padding: 24px 16px;
+  }
+  .dash-side-logo {
+    font-family: var(--font-condensed);
+    font-size: 22px; font-weight: 900; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--color-slate);
+    text-decoration: none; display: block; padding: 0 8px 24px;
+  }
+  .dash-side-logo span { color: var(--color-amber); }
+  .dash-nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    font-size: 14px; color: var(--color-slate); text-decoration: none;
+    border-radius: 3px; margin-bottom: 2px;
+  }
+  .dash-nav-item:hover { background: var(--color-surface); }
+  .dash-nav-item.active {
+    background: var(--color-olive-pale); color: var(--color-olive);
+    font-weight: 600;
+  }
+  .dash-nav-icon {
+    width: 16px; height: 16px;
+    border: 1px solid var(--color-border); border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .dash-nav-section {
+    font-family: var(--font-condensed);
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--color-light);
+    padding: 18px 12px 8px;
+  }
+  .dash-main { padding: 32px 40px 60px; min-width: 0; }
+
+  /* Booking card variant */
+  .b-card {
+    display: grid;
+    grid-template-columns: 96px 1fr auto;
+    gap: 16px;
+    padding: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    background: var(--color-bg);
+    margin-bottom: 10px;
+    align-items: center;
+  }
+  .b-card-img { width: 96px; height: 72px; }
+
+  /* Threads */
+  .thread-item {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 14px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-border);
+    align-items: center;
+    cursor: pointer;
+  }
+  .thread-item:hover { background: var(--color-surface); }
+  .thread-img { width: 48px; height: 48px; border-radius: 3px; }
+  .thread-name { font-weight: 600; font-size: 14px; color: var(--color-slate); }
+  .thread-preview { font-size: 13px; color: var(--color-muted); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 480px; }
+  .thread-time { font-size: 12px; color: var(--color-light); font-family: var(--font-mono); }
+  .unread-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--color-amber); display: inline-block;
+    margin-left: 6px;
+  }
+
+  /* Message thread */
+  .msg-shell {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 640px;
+    border-left: 1px solid var(--color-border);
+  }
+  .msg-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .msg-stream {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    background: var(--color-surface);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .msg-bubble {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .msg-bubble.self {
+    background: var(--color-olive); color: var(--color-on-dark);
+    align-self: flex-end; border-bottom-right-radius: 2px;
+  }
+  .msg-bubble.other {
+    background: var(--color-bg); color: var(--color-slate);
+    border: 1px solid var(--color-border);
+    align-self: flex-start; border-bottom-left-radius: 2px;
+  }
+  .msg-system {
+    text-align: center; font-size: 12px; color: var(--color-muted);
+    font-family: var(--font-mono);
+    padding: 6px 10px; align-self: center;
+    background: var(--color-bg); border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+  .msg-time {
+    font-size: 11px; color: var(--color-light);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+  .msg-input-bar {
+    display: flex; gap: 10px; align-items: center;
+    padding: 14px 24px;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg);
+  }
+
+  /* Action panel for booking detail */
+  .act-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+  .timeline-mini {
+    border-left: 2px solid var(--color-border);
+    padding: 8px 0 8px 16px;
+    margin-left: 10px;
+  }
+  .timeline-mini-item { padding: 6px 0; font-size: 13px; color: var(--color-muted); position: relative; }
+  .timeline-mini-item::before {
+    content: '';
+    position: absolute; left: -22px; top: 12px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--color-border);
+  }
+  .timeline-mini-item.is-now::before { background: var(--color-olive); }
+  .timeline-mini-item.is-now { color: var(--color-slate); font-weight: 600; }
+</style>
+</head>
+<body>
+
+
+<!-- ================================================================
+     PAGE 5.1 — Dashboard Home  /dashboard
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard</span>
+  <span class="page-sep-name">5.1 Dashboard Home</span>
+</div>
+
+<div class="dash">
+  <!-- SIDEBAR -->
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Home</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Bookings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Messages <span style="margin-left:auto;font-size:11px;background:var(--color-amber);color:var(--color-slate);padding:1px 6px;border-radius:9px;font-weight:600;">3</span></a>
+    <div class="dash-nav-section">Listing</div>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> My Listings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Earnings</a>
+    <div class="dash-nav-section">Account</div>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Profile &amp; settings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Browse gear</a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Welcome back, Sam</h1>
+        <p class="page-subtitle">Here's what's happening with your gear today.</p>
+      </div>
+      <div class="page-header-actions">
+        <a href="#" class="btn btn-ghost">Browse gear</a>
+        <a href="#" class="btn btn-secondary">Create listing</a>
+      </div>
+    </div>
+
+    <!-- Alert banner -->
+    <div class="alert alert-warning" style="margin-bottom:24px;">
+      <div>
+        <span class="alert-label">Return today</span>
+        Your rental of <strong>Pulsar Helion 2 XP50 Pro</strong> is due back to Marcus T. by 6:00 PM. <a href="#" style="color:var(--color-olive);text-decoration:underline;">View booking →</a>
+      </div>
+    </div>
+
+    <!-- Stat row -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-overline">Active bookings</div>
+        <div class="stat-value">2</div>
+        <div class="stat-sublabel">1 as renter · 1 as lister</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-overline">Unread messages</div>
+        <div class="stat-value">3</div>
+        <div class="stat-sublabel">From 2 conversations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-overline">Next payout</div>
+        <div class="stat-value">$224.50</div>
+        <div class="stat-sublabel">Tue, Oct 21</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-overline">YTD earnings</div>
+        <div class="stat-value">$3,142</div>
+        <div class="stat-sublabel">12 rentals completed</div>
+      </div>
+    </div>
+
+    <!-- Active bookings list -->
+    <h2 style="font-family:var(--font-condensed);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-slate);margin:32px 0 14px;">Active &amp; upcoming</h2>
+    <div class="b-card">
+      <div class="b-card-img placeholder-img">GEAR</div>
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+          <span class="status-badge status-active"><span class="status-dot dot-active"></span> Active</span>
+          <span style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00847</span>
+        </div>
+        <div style="font-weight:600;">Pulsar Helion 2 XP50 Pro</div>
+        <div style="font-size:13px;color:var(--color-muted);">As renter · From Marcus T. · Oct 15 → Oct 19</div>
+      </div>
+      <a href="#" class="btn btn-ghost btn-sm">Manage</a>
+    </div>
+    <div class="b-card">
+      <div class="b-card-img placeholder-img">GEAR</div>
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+          <span class="status-badge status-confirmed"><span class="status-dot dot-confirmed"></span> Confirmed</span>
+          <span style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00852</span>
+        </div>
+        <div style="font-weight:600;">FLIR Breach PTQ136</div>
+        <div style="font-size:13px;color:var(--color-muted);">As lister · To Dana R. · Oct 22 → Oct 26 · Pickup in 3 days</div>
+      </div>
+      <a href="#" class="btn btn-ghost btn-sm">Manage</a>
+    </div>
+    <div style="margin-top:14px;">
+      <a href="#" class="btn btn-ghost btn-sm">View all bookings →</a>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 5.2 — Bookings List  /dashboard/bookings
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/bookings</span>
+  <span class="page-sep-name">5.2 Bookings List</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Home</a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Bookings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Messages</a>
+    <div class="dash-nav-section">Listing</div>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> My Listings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Earnings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Bookings</h1>
+        <p class="page-subtitle">All rentals you're part of, as renter and as lister.</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <a href="#" class="tab active">As renter <span class="tab-count">7</span></a>
+      <a href="#" class="tab">As lister <span class="tab-count">12</span></a>
+    </div>
+
+    <!-- Filter bar -->
+    <div style="display:flex;gap:10px;align-items:center;padding:18px 0;">
+      <select class="input" style="width:180px;">
+        <option>All statuses</option>
+        <option>Confirmed</option>
+        <option>Active</option>
+        <option>Returned</option>
+        <option>Disputed</option>
+        <option>Cancelled</option>
+      </select>
+      <input class="input" type="text" placeholder="Search by gear or booking ref" style="flex:1;max-width:280px;">
+      <span style="margin-left:auto;font-size:13px;color:var(--color-muted);">Showing 7 of 7</span>
+    </div>
+
+    <!-- Booking rows -->
+    <div class="b-card">
+      <div class="b-card-img placeholder-img">GEAR</div>
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+          <span class="status-badge status-active"><span class="status-dot dot-active"></span> Active</span>
+          <span style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00847</span>
+        </div>
+        <div style="font-weight:600;">Pulsar Helion 2 XP50 Pro</div>
+        <div style="font-size:13px;color:var(--color-muted);">From Marcus T. · Oct 15 → Oct 19 · 4 nights · $392.00</div>
+      </div>
+      <a href="#" class="btn btn-ghost btn-sm">View →</a>
+    </div>
+    <div class="b-card">
+      <div class="b-card-img placeholder-img">GEAR</div>
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+          <span class="status-badge status-confirmed"><span class="status-dot dot-confirmed"></span> Confirmed</span>
+          <span style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00891</span>
+        </div>
+        <div style="font-weight:600;">Elk Season Bundle — Thermal + NV</div>
+        <div style="font-size:13px;color:var(--color-muted);">From Dana R. · Nov 5 → Nov 8 · 3 nights · $445.00</div>
+      </div>
+      <a href="#" class="btn btn-ghost btn-sm">View →</a>
+    </div>
+    <div class="b-card">
+      <div class="b-card-img placeholder-img">GEAR</div>
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+          <span class="status-badge status-completed">Completed</span>
+          <span style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00712</span>
+        </div>
+        <div style="font-weight:600;">ATN Thor 4 384 2.5-10x</div>
+        <div style="font-size:13px;color:var(--color-muted);">From Jake H. · Sep 22 → Sep 25 · 3 nights · ★ 5.0 review left</div>
+      </div>
+      <a href="#" class="btn btn-ghost btn-sm">View →</a>
+    </div>
+    <div class="b-card">
+      <div class="b-card-img placeholder-img">GEAR</div>
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+          <span class="status-badge status-disputed">Disputed</span>
+          <span style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00683</span>
+        </div>
+        <div style="font-weight:600;">FLIR Scout III-320</div>
+        <div style="font-size:13px;color:var(--color-muted);">From Riley P. · Sep 14 → Sep 16 · Damage flagged · Awaiting Kitlo review</div>
+      </div>
+      <a href="#" class="btn btn-ghost btn-sm">View →</a>
+    </div>
+    <div class="b-card">
+      <div class="b-card-img placeholder-img">GEAR</div>
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+          <span class="status-badge status-cancelled">Cancelled</span>
+          <span style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00611</span>
+        </div>
+        <div style="font-weight:600;">InfiRay RICO G 384</div>
+        <div style="font-size:13px;color:var(--color-muted);">From Marcus T. · Aug 12 cancelled by renter · $0 charged</div>
+      </div>
+      <a href="#" class="btn btn-ghost btn-sm">View →</a>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 5.3 — Booking Detail  /dashboard/bookings/[id]
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/bookings/[id]</span>
+  <span class="page-sep-name">5.3 Booking Detail (Active state, renter view)</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Home</a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Bookings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Messages</a>
+    <div class="dash-nav-section">Listing</div>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> My Listings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Earnings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-breadcrumb" style="margin-bottom:12px;">
+      <span class="breadcrumb-item"><a href="#">Bookings</a></span>
+      <span class="breadcrumb-item">KTL-2026-00847</span>
+    </div>
+
+    <div class="page-header">
+      <div class="page-header-left">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px;">
+          <span class="status-badge status-active" style="font-size:12px;padding:4px 10px;"><span class="status-dot dot-active"></span> Active</span>
+          <span style="font-size:13px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00847</span>
+        </div>
+        <h1 class="page-title">Pulsar Helion 2 XP50 Pro</h1>
+        <p class="page-subtitle">From Marcus T. · Oct 15 → Oct 19 · 4 nights</p>
+      </div>
+    </div>
+
+    <!-- Return countdown -->
+    <div class="alert alert-warning" style="margin-bottom:24px;">
+      <div>
+        <span class="alert-label">Return due</span>
+        <div class="countdown-display" style="margin-top:6px;">
+          <span class="countdown-number">02</span><span class="countdown-unit">d</span>
+          <span class="countdown-number">14</span><span class="countdown-unit">h</span>
+          <span class="countdown-number">22</span><span class="countdown-unit">m</span>
+        </div>
+        <p style="font-size:13px;color:var(--color-muted);margin-top:6px;">Return to Marcus by Sun, Oct 19, 6:00 PM.</p>
+      </div>
+    </div>
+
+    <!-- Action area -->
+    <div class="act-row">
+      <a href="#" class="btn btn-secondary">Message Marcus</a>
+      <a href="#" class="btn btn-outline">Request extension</a>
+      <a href="#" class="btn btn-ghost">Return early</a>
+    </div>
+
+    <!-- Two-column: gear summary + timeline -->
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:32px;margin-top:32px;align-items:start;">
+      <div>
+        <h3 style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:14px;">Booking summary</h3>
+        <div class="gear-summary" style="display:flex;gap:14px;padding:16px;border:1px solid var(--color-border);border-radius:3px;margin-bottom:18px;">
+          <div class="placeholder-img" style="width:96px;height:72px;flex-shrink:0;">GEAR</div>
+          <div style="flex:1;">
+            <h4 style="font-family:var(--font-condensed);font-size:16px;font-weight:800;text-transform:uppercase;margin-bottom:4px;">Pulsar Helion 2 XP50 Pro</h4>
+            <p style="font-size:13px;color:var(--color-muted);">Mint · Thermal · From Marcus T. (Verified)</p>
+          </div>
+        </div>
+
+        <table class="cost-table" style="margin-bottom:18px;">
+          <tr class="cost-row"><td class="cost-label">$85 × 4 days</td><td class="cost-value">$340.00</td></tr>
+          <tr class="cost-row"><td class="cost-label">Service fee</td><td class="cost-value">$34.00</td></tr>
+          <tr class="cost-row"><td class="cost-label">Protection plan</td><td class="cost-value">$18.00</td></tr>
+          <tr class="cost-row cost-total"><td class="cost-label">Total charged</td><td class="cost-value">$392.00</td></tr>
+        </table>
+        <div class="cost-deposit-row">
+          <span>Deposit hold</span><span style="font-family:var(--font-mono);font-size:13px;">$250.00 (released after return)</span>
+        </div>
+
+        <h3 style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin:28px 0 14px;">Pickup details</h3>
+        <p style="font-size:14px;line-height:1.65;color:var(--color-slate);">1284 N 7th Ave, Bozeman, MT 59715<br><span style="color:var(--color-muted);font-size:13px;">Marcus's contact: (406) 555-0142</span></p>
+      </div>
+
+      <div>
+        <h3 style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:14px;">Timeline</h3>
+        <div class="timeline-mini">
+          <div class="timeline-mini-item">Booking requested · Oct 11, 9:14 AM</div>
+          <div class="timeline-mini-item">Lister accepted · Oct 11, 11:42 AM</div>
+          <div class="timeline-mini-item">Payment confirmed · Oct 11, 11:43 AM</div>
+          <div class="timeline-mini-item">Pickup confirmed · Oct 15, 6:30 PM</div>
+          <div class="timeline-mini-item is-now">Active · in your hands</div>
+          <div class="timeline-mini-item" style="opacity:0.4;">Return · Sun, Oct 19</div>
+          <div class="timeline-mini-item" style="opacity:0.4;">Deposit released</div>
+          <div class="timeline-mini-item" style="opacity:0.4;">Reviews opened</div>
+        </div>
+
+        <div style="margin-top:24px;padding-top:18px;border-top:1px solid var(--color-border);">
+          <a href="#" style="font-size:13px;color:var(--color-light);text-decoration:underline;">Cancel this booking</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 5.4 — Booking Cancellation  /dashboard/bookings/[id]/cancel
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/bookings/[id]/cancel</span>
+  <span class="page-sep-name">5.4 Cancel Booking</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Bookings</a>
+  </aside>
+
+  <main class="dash-main" style="max-width:680px;">
+    <div class="page-breadcrumb" style="margin-bottom:12px;">
+      <span class="breadcrumb-item"><a href="#">Bookings</a></span>
+      <span class="breadcrumb-item"><a href="#">KTL-2026-00891</a></span>
+      <span class="breadcrumb-item">Cancel</span>
+    </div>
+
+    <h1 class="page-title">Cancel booking</h1>
+    <p class="page-subtitle">Confirm the refund amount before you commit. This can't be undone.</p>
+
+    <div class="gear-summary" style="display:flex;gap:14px;padding:16px;border:1px solid var(--color-border);border-radius:3px;margin:24px 0;">
+      <div class="placeholder-img" style="width:96px;height:72px;flex-shrink:0;">GEAR</div>
+      <div style="flex:1;">
+        <h4 style="font-family:var(--font-condensed);font-size:16px;font-weight:800;text-transform:uppercase;margin-bottom:4px;">Elk Season Bundle</h4>
+        <p style="font-size:13px;color:var(--color-muted);">From Dana R. · Nov 5 → Nov 8 · $445.00 charged</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:14px;">Refund preview</h3>
+    <table class="cost-table">
+      <tr class="cost-row"><td class="cost-label">Original charge</td><td class="cost-value">$445.00</td></tr>
+      <tr class="cost-row"><td class="cost-label">Cancellation fee (10% — within 48 hr policy)</td><td class="cost-value" style="color:var(--color-battle);">−$44.50</td></tr>
+      <tr class="cost-row cost-total"><td class="cost-label">Refunded to your card</td><td class="cost-value" style="color:var(--color-olive);">$400.50</td></tr>
+    </table>
+
+    <div class="alert alert-info" style="margin-top:18px;">
+      <div>
+        <span class="alert-label">Cancellation policy</span>
+        Free cancellation up to 14 days before pickup. 10% fee inside 14 days. 50% fee inside 48 hours. No refund after pickup. <a href="#" style="color:var(--color-olive);text-decoration:underline;">Read full policy</a>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:18px;border:1px solid var(--color-border);border-radius:3px;background:var(--color-surface);">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <strong style="font-size:14px;">Need a fee-free cancellation?</strong>
+          <p style="font-size:13px;color:var(--color-muted);margin-top:4px;">Ask Dana to mutually cancel — if she agrees, no fee applies to either side.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm">Request mutual cancel</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:32px;">
+      <a href="#" class="btn btn-ghost" style="flex:0 0 auto;">Keep my booking</a>
+      <a href="#" class="btn btn-primary" style="background:#8B0000;border-color:#8B0000;flex:1;justify-content:center;">Confirm cancellation — refund $400.50</a>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 5.5 — Messages Inbox  /dashboard/messages
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/messages</span>
+  <span class="page-sep-name">5.5 Messages Inbox</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Home</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Bookings</a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Messages</a>
+  </aside>
+
+  <main class="dash-main" style="padding:0;">
+    <div style="padding:32px 40px 16px;border-bottom:1px solid var(--color-border);">
+      <h1 class="page-title">Messages</h1>
+      <p class="page-subtitle">All conversations grouped by booking.</p>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-img placeholder-img">GEAR</div>
+      <div>
+        <div style="display:flex;justify-content:space-between;">
+          <span class="thread-name">Marcus T. <span class="badge badge-verified" style="font-size:10px;padding:1px 5px;margin-left:4px;">Verified</span></span>
+        </div>
+        <p class="thread-preview">Cool, I'll have it charged and ready by 6. Driveway has motion lights so y…<span class="unread-dot"></span></p>
+        <p style="font-size:11px;color:var(--color-light);font-family:var(--font-mono);margin-top:3px;">Pulsar Helion 2 · KTL-2026-00847</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="thread-time">2h ago</div>
+        <div style="background:var(--color-amber);color:var(--color-slate);font-size:11px;font-weight:600;padding:1px 7px;border-radius:9px;display:inline-block;margin-top:6px;">2</div>
+      </div>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-img placeholder-img">GEAR</div>
+      <div>
+        <span class="thread-name">Dana R.</span>
+        <p class="thread-preview">Sounds good for Nov 5 evening pickup. I'll text my address closer to the date.<span class="unread-dot"></span></p>
+        <p style="font-size:11px;color:var(--color-light);font-family:var(--font-mono);margin-top:3px;">Elk Season Bundle · KTL-2026-00891</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="thread-time">Yesterday</div>
+        <div style="background:var(--color-amber);color:var(--color-slate);font-size:11px;font-weight:600;padding:1px 7px;border-radius:9px;display:inline-block;margin-top:6px;">1</div>
+      </div>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-img placeholder-img">GEAR</div>
+      <div>
+        <span class="thread-name">Riley P.</span>
+        <p class="thread-preview">Kitlo Support has been notified. Please don't message me directly during th…</p>
+        <p style="font-size:11px;color:var(--color-light);font-family:var(--font-mono);margin-top:3px;">FLIR Scout III · KTL-2026-00683 · Disputed</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="thread-time">3 days</div>
+      </div>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-img placeholder-img">GEAR</div>
+      <div>
+        <span class="thread-name">Jake H.</span>
+        <p class="thread-preview">Thanks again — gear came back in perfect shape. Cheers!</p>
+        <p style="font-size:11px;color:var(--color-light);font-family:var(--font-mono);margin-top:3px;">ATN Thor 4 · KTL-2026-00712 · Completed</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="thread-time">Sep 27</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 5.6 — Message Thread  /dashboard/messages/[id]
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/messages/[id]</span>
+  <span class="page-sep-name">5.6 Message Thread</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Messages</a>
+  </aside>
+
+  <main class="dash-main" style="padding:0;display:flex;flex-direction:column;">
+    <!-- Thread header -->
+    <div class="msg-head">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <a href="#" style="font-size:13px;color:var(--color-muted);text-decoration:underline;">←</a>
+        <div class="avatar avatar-md placeholder-img" style="width:40px;height:40px;">M</div>
+        <div>
+          <div style="font-weight:600;font-size:15px;">Marcus T. <span class="badge badge-verified" style="font-size:10px;padding:1px 5px;margin-left:4px;">Verified</span></div>
+          <div style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">Pulsar Helion 2 · KTL-2026-00847 · Active</div>
+        </div>
+      </div>
+      <a href="#" class="btn btn-ghost btn-sm">View booking →</a>
+    </div>
+
+    <!-- Stream -->
+    <div class="msg-stream">
+      <div class="msg-system">Booking confirmed · Oct 11</div>
+      <div class="msg-bubble other">
+        Howdy! Excited to get the Helion in your hands. When are you thinking pickup?
+        <div class="msg-time">Marcus · Oct 11, 12:04 PM</div>
+      </div>
+      <div class="msg-bubble self">
+        Hey Marcus! Wednesday Oct 15 evening if that works. I can swing by anytime after 4pm.
+        <div class="msg-time">Oct 11, 1:18 PM</div>
+      </div>
+      <div class="msg-bubble other">
+        Perfect. 6pm at my place — 1284 N 7th Ave. I'll have it fully charged with the case.
+        <div class="msg-time">Marcus · Oct 11, 1:45 PM</div>
+      </div>
+      <div class="msg-system">Pickup confirmed · Oct 15, 6:30 PM</div>
+      <div class="msg-bubble self">
+        Made it home — gear is awesome. Couple frames in already. Thanks man.
+        <div class="msg-time">Oct 15, 9:22 PM</div>
+      </div>
+      <div class="msg-bubble other">
+        Glad it worked out. Hit me up if you have any questions on the ballistic profile.
+        <div class="msg-time">Marcus · Oct 15, 9:45 PM</div>
+      </div>
+      <div class="msg-bubble other">
+        Cool, I'll have it charged and ready by 6. Driveway has motion lights so you can't miss it.
+        <div class="msg-time">Marcus · 2h ago</div>
+      </div>
+    </div>
+
+    <!-- Input bar -->
+    <div class="msg-input-bar">
+      <button class="btn btn-ghost btn-sm" style="padding:8px;" title="Attach photo">📎</button>
+      <input class="input" type="text" placeholder="Type a message…" style="flex:1;">
+      <button class="btn btn-primary">Send</button>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 5.7 — Profile & Settings  /dashboard/profile
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/profile</span>
+  <span class="page-sep-name">5.7 Profile &amp; Settings</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Home</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Bookings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Messages</a>
+    <div class="dash-nav-section">Listing</div>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> My Listings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Earnings</a>
+    <div class="dash-nav-section">Account</div>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Profile &amp; settings</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Profile &amp; settings</h1>
+        <p class="page-subtitle">Update your details, photos, and notification preferences.</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <a href="#" class="tab active">Profile</a>
+      <a href="#" class="tab">Notifications</a>
+      <a href="#" class="tab">Security</a>
+      <a href="#" class="tab">Verification</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr;gap:36px;margin-top:32px;align-items:start;">
+      <!-- Photo column -->
+      <div style="text-align:center;">
+        <div class="avatar avatar-lg placeholder-img" style="width:140px;height:140px;border-radius:50%;font-size:32px;margin:0 auto 12px;">PHOTO</div>
+        <button class="btn btn-ghost btn-sm" style="width:100%;">Change photo</button>
+        <button class="btn btn-ghost btn-sm" style="width:100%;color:var(--color-muted);">Remove</button>
+      </div>
+
+      <!-- Form column -->
+      <div style="max-width:520px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;padding:12px 14px;border:1px solid var(--color-olive-border);background:var(--color-olive-pale);border-radius:3px;">
+          <span class="badge badge-verified">Verified Hunter</span>
+          <span style="font-size:13px;color:var(--color-slate);">ID verified · Oct 8, 2025</span>
+        </div>
+
+        <div class="grid-2" style="gap:14px;">
+          <div class="form-group">
+            <label class="input-label">First name</label>
+            <input class="input" type="text" value="Sam">
+          </div>
+          <div class="form-group">
+            <label class="input-label">Last name</label>
+            <input class="input" type="text" value="Walker">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="input-label">Display name</label>
+          <input class="input" type="text" value="Sam W.">
+          <p style="font-size:12px;color:var(--color-muted);margin-top:6px;">This is what other hunters see in listings, reviews, and messages.</p>
+        </div>
+        <div class="form-group">
+          <label class="input-label">City &amp; state</label>
+          <input class="input" type="text" value="Bozeman, MT">
+        </div>
+        <div class="form-group">
+          <label class="input-label">Bio <span style="font-weight:400;color:var(--color-muted);font-size:12px;">(optional)</span></label>
+          <textarea class="input" rows="4" placeholder="A short note for hunters renting from you — your hunting style, what gear you trust, where you live the year out.">Bowhunter, MT native, mostly elk and mule deer. Field-test gear hard before listing it.</textarea>
+        </div>
+        <div class="form-group">
+          <label class="input-label">Email</label>
+          <input class="input" type="email" value="sam@example.com" disabled style="background:var(--color-surface);">
+          <p style="font-size:12px;color:var(--color-muted);margin-top:6px;">Change email through Account Security.</p>
+        </div>
+        <div class="form-group">
+          <label class="input-label">Phone</label>
+          <input class="input" type="tel" value="(406) 555-0188">
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn btn-primary">Save changes</button>
+          <button class="btn btn-ghost">Discard</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 5.8 — Public User Profile  /users/[id]
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/users/[id]</span>
+  <span class="page-sep-name">5.8 Public User Profile</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Browse gear</a></li>
+    <li><a href="#">How it works</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost">Sign in</a>
+    <a href="#" class="btn btn-secondary">List your gear</a>
+  </div>
+</nav>
+
+<div style="max-width:1100px;margin-inline:auto;padding:48px 52px;">
+  <!-- Profile header -->
+  <div style="display:flex;gap:24px;align-items:center;margin-bottom:36px;">
+    <div class="avatar avatar-lg placeholder-img" style="width:112px;height:112px;border-radius:50%;font-size:30px;flex-shrink:0;">M</div>
+    <div style="flex:1;">
+      <h1 style="font-family:var(--font-condensed);font-size:32px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin-bottom:6px;">Marcus T. <span class="badge badge-verified" style="font-size:13px;padding:4px 10px;margin-left:8px;">Verified Hunter</span></h1>
+      <p style="font-size:15px;color:var(--color-muted);margin-bottom:14px;">Bozeman, MT · Member since Oct 2024</p>
+      <div style="display:flex;gap:32px;">
+        <div><span style="font-family:var(--font-condensed);font-size:22px;font-weight:800;">★ 4.9</span> <span style="font-size:13px;color:var(--color-muted);">14 reviews</span></div>
+        <div><span style="font-family:var(--font-condensed);font-size:22px;font-weight:800;">34</span> <span style="font-size:13px;color:var(--color-muted);">rentals</span></div>
+        <div><span style="font-family:var(--font-condensed);font-size:22px;font-weight:800;">3</span> <span style="font-size:13px;color:var(--color-muted);">active listings</span></div>
+        <div><span style="font-family:var(--font-condensed);font-size:22px;font-weight:800;">~2hr</span> <span style="font-size:13px;color:var(--color-muted);">avg response</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bio -->
+  <div style="border-top:1px solid var(--color-border);padding:24px 0;margin-bottom:24px;">
+    <p style="font-size:15px;line-height:1.65;color:var(--color-slate);max-width:680px;">Bowhunter, MT native, mostly elk and mule deer. Field-test gear hard before listing it. Pickup is at my place in Bozeman — flexible on times, just give me a heads up.</p>
+  </div>
+
+  <!-- Listings -->
+  <h2 style="font-family:var(--font-condensed);font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:18px;">Marcus's gear</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:48px;">
+    <div class="listing-card">
+      <div class="placeholder-img" style="height:160px;">GEAR</div>
+      <div class="listing-card-body">
+        <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span><span class="badge badge-type">Thermal</span></div>
+        <h3 class="listing-card-title">Pulsar Helion 2 XP50 Pro</h3>
+        <p class="listing-card-location">$85/day · ★ 4.9 (14)</p>
+      </div>
+    </div>
+    <div class="listing-card">
+      <div class="placeholder-img" style="height:160px;">GEAR</div>
+      <div class="listing-card-body">
+        <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);">Mint</span><span class="badge badge-type">Thermal</span></div>
+        <h3 class="listing-card-title">InfiRay RICO G 384</h3>
+        <p class="listing-card-location">$95/day · ★ 5.0 (3)</p>
+      </div>
+    </div>
+    <div class="listing-card">
+      <div class="placeholder-img" style="height:160px;">GEAR</div>
+      <div class="listing-card-body">
+        <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="badge badge-condition" style="background:var(--color-olive-pale);color:var(--color-olive);">Field-Ready</span><span class="badge badge-type">Bundle</span></div>
+        <h3 class="listing-card-title">Elk Season Bundle</h3>
+        <p class="listing-card-location">$130/day · ★ 4.8 (22)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews -->
+  <h2 style="font-family:var(--font-condensed);font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:18px;">Reviews of Marcus as a lister</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:18px;">
+    <div class="review-card">
+      <div class="review-header">
+        <div class="review-reviewer">
+          <div class="avatar avatar-sm placeholder-img" style="width:36px;height:36px;">A</div>
+          <div><div class="review-name">Alex K.</div><div class="review-date">Oct 2026</div></div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+      </div>
+      <p class="review-text">Marcus was incredibly helpful. Gear was exactly as described — truly mint condition. Will rent again.</p>
+      <div class="review-tags"><span class="review-tag">Responsive</span><span class="review-tag">Easy handoff</span></div>
+    </div>
+    <div class="review-card">
+      <div class="review-header">
+        <div class="review-reviewer">
+          <div class="avatar avatar-sm placeholder-img" style="width:36px;height:36px;">J</div>
+          <div><div class="review-name">Jordan M.</div><div class="review-date">Sep 2026</div></div>
+        </div>
+        <div class="review-stars">★★★★<span style="color:var(--color-border);">★</span></div>
+      </div>
+      <p class="review-text">Great scope, great lister. Battery was at 70% when I picked up but Marcus sorted it quickly.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

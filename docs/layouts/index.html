@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Wireframe Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  body { background: var(--color-bg); }
+  .idx-shell { max-width: 880px; margin-inline: auto; padding: 56px 32px 80px; }
+  .idx-meta { font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+  .idx-shell h1 {
+    font-family: var(--font-condensed);
+    font-size: 42px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.02em;
+    color: var(--color-slate);
+    line-height: 1.0; margin-bottom: 14px;
+  }
+  .idx-shell .lede {
+    font-size: 16px; line-height: 1.7;
+    color: var(--color-muted);
+    max-width: 580px;
+    margin-bottom: 36px;
+  }
+  .idx-section {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+  .idx-section-head {
+    padding: 16px 22px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: baseline; gap: 14px;
+  }
+  .idx-num {
+    font-family: var(--font-mono);
+    font-size: 13px; color: var(--color-amber);
+    letter-spacing: 0.08em;
+  }
+  .idx-name {
+    font-family: var(--font-condensed);
+    font-size: 16px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-slate);
+  }
+  .idx-count {
+    margin-left: auto;
+    font-size: 12px; color: var(--color-muted);
+    font-family: var(--font-mono);
+  }
+  .idx-pages {
+    padding: 14px 22px 18px;
+  }
+  .idx-page {
+    display: flex; gap: 14px; align-items: center;
+    padding: 8px 0;
+    font-size: 14px;
+    border-bottom: 1px dashed var(--color-border);
+  }
+  .idx-page:last-child { border-bottom: none; }
+  .idx-page-route {
+    font-family: var(--font-mono);
+    font-size: 12px; color: var(--color-muted);
+    flex: 0 0 240px;
+  }
+  .idx-page-name { color: var(--color-slate); }
+  .idx-section-link {
+    display: block;
+    padding: 12px 22px;
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-condensed);
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--color-olive);
+    text-decoration: none;
+    text-align: right;
+  }
+  .idx-section-link:hover { background: var(--color-olive-pale); }
+</style>
+</head>
+<body>
+
+<div class="idx-shell">
+  <p class="idx-meta">Task 2.5 · Page Layouts</p>
+  <h1>Kitlo Wireframes</h1>
+  <p class="lede">35 pages across 9 sections, all rendered in HTML using <code style="font-family:var(--font-mono);font-size:13px;">brand/style.css</code> so layout, type, and color all come from the locked brand system. Each file groups related pages under <code style="font-family:var(--font-mono);font-size:13px;">.page-sep</code> dividers.</p>
+
+  <!-- 01 Public -->
+  <div class="idx-section">
+    <div class="idx-section-head">
+      <span class="idx-num">01</span>
+      <span class="idx-name">Public / Marketing</span>
+      <span class="idx-count">4 pages</span>
+    </div>
+    <div class="idx-pages">
+      <div class="idx-page"><span class="idx-page-route">/</span><span class="idx-page-name">1.1 Homepage</span></div>
+      <div class="idx-page"><span class="idx-page-route">/how-it-works</span><span class="idx-page-name">1.2 How It Works</span></div>
+      <div class="idx-page"><span class="idx-page-route">/gear</span><span class="idx-page-name">1.3 Search &amp; Discovery</span></div>
+      <div class="idx-page"><span class="idx-page-route">/gear/[id]</span><span class="idx-page-name">1.4 Listing Detail</span></div>
+    </div>
+    <a class="idx-section-link" href="01-public.html">Open 01-public.html →</a>
+  </div>
+
+  <!-- 02 Auth -->
+  <div class="idx-section">
+    <div class="idx-section-head">
+      <span class="idx-num">02</span>
+      <span class="idx-name">Auth</span>
+      <span class="idx-count">2 pages · 4 screens</span>
+    </div>
+    <div class="idx-pages">
+      <div class="idx-page"><span class="idx-page-route">/sign-in</span><span class="idx-page-name">2.1 Sign In</span></div>
+      <div class="idx-page"><span class="idx-page-route">/sign-up</span><span class="idx-page-name">2.2 Sign Up — Account, Profile, Intent</span></div>
+    </div>
+    <a class="idx-section-link" href="02-auth.html">Open 02-auth.html →</a>
+  </div>
+
+  <!-- 03 Onboarding -->
+  <div class="idx-section">
+    <div class="idx-section-head">
+      <span class="idx-num">03</span>
+      <span class="idx-name">Lister Onboarding</span>
+      <span class="idx-count">1 page · 4 steps</span>
+    </div>
+    <div class="idx-pages">
+      <div class="idx-page"><span class="idx-page-route">/lister-onboarding</span><span class="idx-page-name">3.1 Intro → Verify ID → Payout → Agreement</span></div>
+    </div>
+    <a class="idx-section-link" href="03-lister-onboarding.html">Open 03-lister-onboarding.html →</a>
+  </div>
+
+  <!-- 04 Booking -->
+  <div class="idx-section">
+    <div class="idx-section-head">
+      <span class="idx-num">04</span>
+      <span class="idx-name">Booking Flow</span>
+      <span class="idx-count">3 pages</span>
+    </div>
+    <div class="idx-pages">
+      <div class="idx-page"><span class="idx-page-route">/gear/[id]/book</span><span class="idx-page-name">4.1 Booking Request</span></div>
+      <div class="idx-page"><span class="idx-page-route">/gear/[id]/checkout</span><span class="idx-page-name">4.2 Payment Checkout</span></div>
+      <div class="idx-page"><span class="idx-page-route">/gear/[id]/booking-confirmed</span><span class="idx-page-name">4.3 Booking Confirmed</span></div>
+    </div>
+    <a class="idx-section-link" href="04-booking-flow.html">Open 04-booking-flow.html →</a>
+  </div>
+
+  <!-- 05 Dashboard shared -->
+  <div class="idx-section">
+    <div class="idx-section-head">
+      <span class="idx-num">05</span>
+      <span class="idx-name">Dashboard — Shared</span>
+      <span class="idx-count">8 pages</span>
+    </div>
+    <div class="idx-pages">
+      <div class="idx-page"><span class="idx-page-route">/dashboard</span><span class="idx-page-name">5.1 Dashboard Home</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/bookings</span><span class="idx-page-name">5.2 Bookings List</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/bookings/[id]</span><span class="idx-page-name">5.3 Booking Detail (Active)</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/bookings/[id]/cancel</span><span class="idx-page-name">5.4 Cancel Booking</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/messages</span><span class="idx-page-name">5.5 Messages Inbox</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/messages/[id]</span><span class="idx-page-name">5.6 Message Thread</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/profile</span><span class="idx-page-name">5.7 Profile &amp; Settings</span></div>
+      <div class="idx-page"><span class="idx-page-route">/users/[id]</span><span class="idx-page-name">5.8 Public User Profile</span></div>
+    </div>
+    <a class="idx-section-link" href="05-dashboard-shared.html">Open 05-dashboard-shared.html →</a>
+  </div>
+
+  <!-- 06 Lister dashboard -->
+  <div class="idx-section">
+    <div class="idx-section-head">
+      <span class="idx-num">06</span>
+      <span class="idx-name">Dashboard — Lister</span>
+      <span class="idx-count">6 pages · wizard steps inside</span>
+    </div>
+    <div class="idx-pages">
+      <div class="idx-page"><span class="idx-page-route">/dashboard/listings</span><span class="idx-page-name">6.1 My Listings</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/listings/new</span><span class="idx-page-name">6.2 Create Listing (Steps 1, 5, 6, 10)</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/listings/[id]/edit</span><span class="idx-page-name">6.3 Edit Listing</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/listings/[id]/calendar</span><span class="idx-page-name">6.4 Availability Calendar</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/listings/bundle/new</span><span class="idx-page-name">6.5 Create Bundle</span></div>
+      <div class="idx-page"><span class="idx-page-route">/dashboard/earnings</span><span class="idx-page-name">6.6 Earnings Dashboard</span></div>
+    </div>
+    <a class="idx-section-link" href="06-dashboard-lister.html">Open 06-dashboard-lister.html →</a>
+  </div>
+
+  <!-- 07 Reviews -->
+  <div class="idx-section">
+    <div class="idx-section-head">
+      <span class="idx-num">07</span>
+      <span class="idx-name">Reviews</span>
+      <span class="idx-count">1 page · 2 variants</span>
+    </div>
+    <div class="idx-pages">
+      <div class="idx-page"><span class="idx-page-route">/dashboard/bookings/[id]/review</span><span class="idx-page-name">7.1 Leave a Review (Renter &amp; Lister forms)</span></div>
+    </div>
+    <a class="idx-section-link" href="07-reviews.html">Open 07-reviews.html →</a>
+  </div>
+
+  <!-- 08 Admin -->
+  <div class="idx-section">
+    <div class="idx-section-head">
+      <span class="idx-num">08</span>
+      <span class="idx-name">Admin</span>
+      <span class="idx-count">7 pages</span>
+    </div>
+    <div class="idx-pages">
+      <div class="idx-page"><span class="idx-page-route">/admin</span><span class="idx-page-name">8.1 Admin Dashboard</span></div>
+      <div class="idx-page"><span class="idx-page-route">/admin/listings</span><span class="idx-page-name">8.2 Listing Review Queue</span></div>
+      <div class="idx-page"><span class="idx-page-route">/admin/listings/[id]</span><span class="idx-page-name">8.3 Listing Review Detail</span></div>
+      <div class="idx-page"><span class="idx-page-route">/admin/disputes</span><span class="idx-page-name">8.4 Dispute Queue</span></div>
+      <div class="idx-page"><span class="idx-page-route">/admin/disputes/[id]</span><span class="idx-page-name">8.5 Dispute Detail &amp; Ruling</span></div>
+      <div class="idx-page"><span class="idx-page-route">/admin/users</span><span class="idx-page-name">8.6 User Search</span></div>
+      <div class="idx-page"><span class="idx-page-route">/admin/users/[id]</span><span class="idx-page-name">8.7 User Record</span></div>
+    </div>
+    <a class="idx-section-link" href="08-admin.html">Open 08-admin.html →</a>
+  </div>
+
+  <!-- 09 Static -->
+  <div class="idx-section">
+    <div class="idx-section-head">
+      <span class="idx-num">09</span>
+      <span class="idx-name">Static / Legal</span>
+      <span class="idx-count">3 pages</span>
+    </div>
+    <div class="idx-pages">
+      <div class="idx-page"><span class="idx-page-route">/terms</span><span class="idx-page-name">9.1 Terms of Service</span></div>
+      <div class="idx-page"><span class="idx-page-route">/privacy</span><span class="idx-page-name">9.2 Privacy Policy</span></div>
+      <div class="idx-page"><span class="idx-page-route">/lister-agreement</span><span class="idx-page-name">9.3 Lister Agreement</span></div>
+    </div>
+    <a class="idx-section-link" href="09-static-legal.html">Open 09-static-legal.html →</a>
+  </div>
+
+  <div style="border:1px solid var(--color-olive-border);background:var(--color-olive-pale);border-radius:4px;padding:18px 22px;margin-top:36px;display:flex;justify-content:space-between;align-items:center;">
+    <div>
+      <div style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-olive);margin-bottom:2px;">Mobile companion</div>
+      <p style="font-size:13px;color:var(--color-muted);">390 × 720 phone-frame wireframes · bottom-tab nav · sheet patterns</p>
+    </div>
+    <a href="mobile/index.html" class="btn btn-secondary">Open mobile →</a>
+  </div>
+
+  <p style="font-family:var(--font-mono);font-size:12px;color:var(--color-muted);margin-top:24px;padding-top:24px;border-top:1px solid var(--color-border);text-align:center;">
+    35 pages · 9 desktop files + 6 mobile files · driven by <a href="../style.css" style="color:var(--color-olive);">brand/style.css</a> and <a href="../../pages.md" style="color:var(--color-olive);">pages.md</a>
+  </p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Layout: Reviews</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .page-sep { background: var(--color-slate); color: var(--color-on-dark); padding: 16px 52px; display: flex; align-items: baseline; gap: 20px; }
+  .page-sep-route { font-family: var(--font-mono); font-size: 13px; color: var(--color-amber); }
+  .page-sep-name { font-family: var(--font-condensed); font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-on-dark); }
+  .placeholder-img {
+    background: var(--color-surface); border: 1px dashed var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; color: var(--color-light); letter-spacing: 0.08em;
+  }
+  .dash { display: grid; grid-template-columns: 240px 1fr; min-height: 720px; background: var(--color-bg); }
+  .dash-side { background: var(--color-bg); border-right: 1px solid var(--color-border); padding: 24px 16px; }
+  .dash-side-logo {
+    font-family: var(--font-condensed); font-size: 22px; font-weight: 900;
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-slate);
+    text-decoration: none; display: block; padding: 0 8px 24px;
+  }
+  .dash-side-logo span { color: var(--color-amber); }
+  .dash-nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; font-size: 14px; color: var(--color-slate); text-decoration: none; border-radius: 3px; margin-bottom: 2px; }
+  .dash-nav-item.active { background: var(--color-olive-pale); color: var(--color-olive); font-weight: 600; }
+  .dash-nav-icon { width: 16px; height: 16px; border: 1px solid var(--color-border); border-radius: 2px; flex-shrink: 0; }
+  .dash-main { padding: 32px 40px 60px; }
+
+  .review-form-card {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 28px;
+    background: var(--color-bg);
+    margin-bottom: 18px;
+  }
+  .review-form-head {
+    font-family: var(--font-condensed);
+    font-size: 16px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--color-slate);
+    margin-bottom: 6px;
+  }
+  .review-form-sub {
+    font-size: 13px; color: var(--color-muted);
+    margin-bottom: 18px;
+  }
+  .star-row {
+    display: flex; gap: 6px; margin-bottom: 18px;
+  }
+  .star-pick {
+    width: 44px; height: 44px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; cursor: pointer;
+    background: var(--color-bg);
+    color: var(--color-light);
+  }
+  .star-pick.filled {
+    color: var(--color-amber);
+    background: rgba(242,153,74,0.08);
+    border-color: rgba(242,153,74,0.4);
+  }
+  .accuracy-row {
+    display: flex; gap: 8px; margin-bottom: 18px;
+  }
+  .accuracy-pill {
+    padding: 8px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--color-bg);
+    color: var(--color-muted);
+  }
+  .accuracy-pill.selected {
+    border-color: var(--color-olive);
+    background: var(--color-olive-pale);
+    color: var(--color-olive);
+    font-weight: 600;
+  }
+  .tag-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 6px;
+  }
+  .tag-pick {
+    padding: 7px 13px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--color-bg);
+    color: var(--color-slate);
+  }
+  .tag-pick.selected {
+    border-color: var(--color-olive);
+    background: var(--color-olive-pale);
+    color: var(--color-olive);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+
+<!-- ================================================================
+     PAGE 7.1a — Leave a Review (Renter view)
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/bookings/[id]/review</span>
+  <span class="page-sep-name">7.1a Leave a Review (Renter view)</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Home</a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Bookings</a>
+    <a href="#" class="dash-nav-item"><span class="dash-nav-icon"></span> Messages</a>
+  </aside>
+
+  <main class="dash-main" style="max-width:720px;">
+    <div class="page-breadcrumb" style="margin-bottom:12px;">
+      <span class="breadcrumb-item"><a href="#">Bookings</a></span>
+      <span class="breadcrumb-item"><a href="#">KTL-2026-00712</a></span>
+      <span class="breadcrumb-item">Review</span>
+    </div>
+
+    <h1 class="page-title">Review your rental</h1>
+    <p class="page-subtitle">Reviews stay private until both sides post or 14 days pass — so you can be honest without worrying about retaliation.</p>
+
+    <!-- Booking summary -->
+    <div style="display:flex;gap:14px;padding:14px;border:1px solid var(--color-border);border-radius:3px;margin:20px 0 24px;background:var(--color-surface);">
+      <div class="placeholder-img" style="width:72px;height:54px;flex-shrink:0;">GEAR</div>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:14px;">ATN Thor 4 384 2.5-10x</div>
+        <div style="font-size:13px;color:var(--color-muted);">From Jake H. · Sep 22 → Sep 25 · 3 nights</div>
+      </div>
+    </div>
+
+    <!-- Part 1: gear review -->
+    <div class="review-form-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="review-form-head">Part 1 — Rate the gear</div>
+        <span style="font-size:11px;color:var(--color-light);font-family:var(--font-mono);">1 of 2</span>
+      </div>
+      <p class="review-form-sub">How was the gear itself? This goes on the listing for future renters.</p>
+
+      <p class="input-label" style="margin-bottom:8px;">Overall rating</p>
+      <div class="star-row">
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+      </div>
+
+      <p class="input-label" style="margin-bottom:8px;">Was the condition rating accurate?</p>
+      <div class="accuracy-row">
+        <div class="accuracy-pill selected">Yes, exactly</div>
+        <div class="accuracy-pill">Somewhat</div>
+        <div class="accuracy-pill">No, mismatch</div>
+      </div>
+
+      <div class="form-group">
+        <label class="input-label">What did you think of the gear?</label>
+        <textarea class="input" rows="4" placeholder="Specific notes help future renters. Talk about performance, accessories, what you liked, what surprised you."></textarea>
+        <p style="font-size:12px;color:var(--color-muted);margin-top:6px;">0 / 600 characters</p>
+      </div>
+
+      <p class="input-label" style="margin-bottom:8px;">Tags (optional)</p>
+      <div class="tag-row">
+        <span class="tag-pick selected">Gear as described</span>
+        <span class="tag-pick">Excellent specs</span>
+        <span class="tag-pick selected">Easy to use</span>
+        <span class="tag-pick">Battery solid</span>
+        <span class="tag-pick">Came with extras</span>
+        <span class="tag-pick">Heavy</span>
+        <span class="tag-pick">Battery short</span>
+      </div>
+    </div>
+
+    <!-- Part 2: lister review -->
+    <div class="review-form-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="review-form-head">Part 2 — Rate Jake</div>
+        <span style="font-size:11px;color:var(--color-light);font-family:var(--font-mono);">2 of 2</span>
+      </div>
+      <p class="review-form-sub">How was the lister to deal with? This goes on Jake's profile.</p>
+
+      <p class="input-label" style="margin-bottom:8px;">Overall rating</p>
+      <div class="star-row">
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+      </div>
+
+      <div class="form-group">
+        <label class="input-label">Anything to say to Jake?</label>
+        <textarea class="input" rows="3" placeholder="A short note about communication, pickup, return."></textarea>
+      </div>
+
+      <p class="input-label" style="margin-bottom:8px;">Tags</p>
+      <div class="tag-row">
+        <span class="tag-pick selected">Responsive</span>
+        <span class="tag-pick selected">Easy handoff</span>
+        <span class="tag-pick">Flexible</span>
+        <span class="tag-pick">On time</span>
+        <span class="tag-pick">Helpful tips</span>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <div>
+        <span class="alert-label">Reviews stay private</span>
+        Neither you nor Jake will see what the other wrote until you both post — or 14 days pass. You can edit until then.
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:24px;">
+      <a href="#" class="btn btn-ghost" style="color:var(--color-muted);">Skip</a>
+      <a href="#" class="btn btn-primary" style="margin-left:auto;padding:13px 28px;">Submit review</a>
+    </div>
+  </main>
+</div>
+
+
+<!-- ================================================================
+     PAGE 7.1b — Leave a Review (Lister view)
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/dashboard/bookings/[id]/review</span>
+  <span class="page-sep-name">7.1b Leave a Review (Lister view)</span>
+</div>
+
+<div class="dash">
+  <aside class="dash-side">
+    <a href="#" class="dash-side-logo">KIT<span>LO</span></a>
+    <a href="#" class="dash-nav-item active"><span class="dash-nav-icon"></span> Bookings</a>
+  </aside>
+
+  <main class="dash-main" style="max-width:720px;">
+    <div class="page-breadcrumb" style="margin-bottom:12px;">
+      <span class="breadcrumb-item"><a href="#">Bookings</a></span>
+      <span class="breadcrumb-item"><a href="#">KTL-2026-00712</a></span>
+      <span class="breadcrumb-item">Review</span>
+    </div>
+
+    <h1 class="page-title">Rate your renter</h1>
+    <p class="page-subtitle">Future listers will use your review when deciding whether to accept Sam's bookings.</p>
+
+    <div style="display:flex;gap:14px;padding:14px;border:1px solid var(--color-border);border-radius:3px;margin:20px 0 24px;background:var(--color-surface);">
+      <div class="avatar avatar-md placeholder-img" style="width:48px;height:48px;flex-shrink:0;">S</div>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:14px;">Sam W.</div>
+        <div style="font-size:13px;color:var(--color-muted);">Bozeman, MT · 3 prior rentals · ★ 4.8 from listers</div>
+      </div>
+    </div>
+
+    <div class="review-form-card">
+      <p class="input-label" style="margin-bottom:8px;">How was Sam to deal with?</p>
+      <div class="star-row">
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+        <div class="star-pick filled">★</div>
+      </div>
+
+      <div class="form-group">
+        <label class="input-label">Notes (optional)</label>
+        <textarea class="input" rows="4" placeholder="What stood out about renting to Sam? Communication, gear handling, return condition."></textarea>
+        <p style="font-size:12px;color:var(--color-muted);margin-top:6px;">0 / 400 characters</p>
+      </div>
+
+      <p class="input-label" style="margin-bottom:8px;">Tags</p>
+      <div class="tag-row">
+        <span class="tag-pick selected">Communicative</span>
+        <span class="tag-pick selected">Returned on time</span>
+        <span class="tag-pick selected">Gear in great shape</span>
+        <span class="tag-pick">Punctual at pickup</span>
+        <span class="tag-pick">Asked good questions</span>
+        <span class="tag-pick">Would rent to again</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:24px;">
+      <a href="#" class="btn btn-ghost" style="color:var(--color-muted);">Skip</a>
+      <a href="#" class="btn btn-primary" style="margin-left:auto;padding:13px 28px;">Submit review</a>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

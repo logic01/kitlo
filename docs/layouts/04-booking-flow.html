@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Layout: Booking Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .page-sep {
+    background: var(--color-slate);
+    color: var(--color-on-dark);
+    padding: 16px 52px;
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .page-sep-route { font-family: var(--font-mono); font-size: 13px; color: var(--color-amber); }
+  .page-sep-name {
+    font-family: var(--font-condensed);
+    font-size: 20px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-on-dark);
+  }
+  .placeholder-img {
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px; color: var(--color-light); letter-spacing: 0.08em;
+  }
+  .booking-shell {
+    max-width: 880px;
+    margin-inline: auto;
+    padding: 36px 52px 80px;
+  }
+  .booking-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 36px;
+    align-items: start;
+  }
+  .gear-summary {
+    display: flex;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+  }
+  .gear-summary-img {
+    width: 96px; height: 72px; flex-shrink: 0;
+  }
+  .section-block {
+    border-top: 1px solid var(--color-border);
+    padding: 24px 0;
+  }
+  .section-label {
+    font-family: var(--font-condensed);
+    font-size: 13px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--color-slate);
+    margin-bottom: 14px;
+  }
+  .deposit-block {
+    background: var(--color-amber-pale, rgba(242,153,74,0.08));
+    border: 1px solid rgba(242,153,74,0.25);
+    border-radius: 3px;
+    padding: 16px 18px;
+    margin-top: 16px;
+  }
+  .deposit-block-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .expandable {
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    margin-top: 12px;
+  }
+  .expandable-summary {
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; font-weight: 500; color: var(--color-slate);
+  }
+  .expandable-body {
+    padding: 0 16px 14px;
+    font-size: 13px; color: var(--color-muted); line-height: 1.6;
+    border-top: 1px solid var(--color-border);
+    padding-top: 12px;
+  }
+  .stripe-card-input {
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    padding: 14px;
+    background: var(--color-bg);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--color-muted);
+    display: flex; gap: 10px; align-items: center;
+  }
+  .saved-card {
+    display: flex;
+    align-items: center; gap: 14px;
+    padding: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+  .saved-card.selected { border-color: var(--color-olive); background: var(--color-olive-pale); }
+  .conf-success-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(45,107,58,0.12);
+    color: var(--color-olive);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700;
+    margin: 0 auto 14px;
+  }
+</style>
+</head>
+<body>
+
+
+<!-- ================================================================
+     PAGE 4.1 — Booking Request  /gear/[id]/book
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/gear/[id]/book</span>
+  <span class="page-sep-name">4.1 Booking Request</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <div class="nav-right">
+    <a href="#" style="font-size:13px;color:var(--color-muted);text-decoration:underline;">← Back to listing</a>
+  </div>
+</nav>
+
+<div class="booking-shell">
+  <div class="page-breadcrumb" style="margin-bottom:18px;">
+    <span class="breadcrumb-item"><a href="#">Pulsar Helion 2 XP50 Pro</a></span>
+    <span class="breadcrumb-item">Review &amp; request</span>
+  </div>
+
+  <h1 style="font-family:var(--font-condensed);font-size:32px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin-bottom:24px;">Review your booking</h1>
+
+  <div class="booking-grid">
+    <!-- LEFT: form / summary -->
+    <div>
+      <!-- Gear summary -->
+      <div class="gear-summary">
+        <div class="gear-summary-img placeholder-img">GEAR</div>
+        <div style="flex:1;">
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);border-color:var(--color-mint-border);">Mint</span>
+            <span class="badge badge-type">Thermal</span>
+          </div>
+          <h3 style="font-family:var(--font-condensed);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:4px;">Pulsar Helion 2 XP50 Pro</h3>
+          <p style="font-size:13px;color:var(--color-muted);">Listed by Marcus T. · ★ 4.9 (14)</p>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="section-block">
+        <div class="section-label">Rental period</div>
+        <div class="date-picker-row">
+          <div class="date-picker-cell">
+            <div class="date-picker-label">Pickup</div>
+            <div class="date-picker-value">Wed, Oct 15</div>
+          </div>
+          <div class="date-picker-cell">
+            <div class="date-picker-label">Return</div>
+            <div class="date-picker-value">Sun, Oct 19</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--color-muted);margin-top:10px;">4 nights · <a href="#" style="color:var(--color-olive);text-decoration:underline;">Edit dates</a></p>
+      </div>
+
+      <!-- Pickup -->
+      <div class="section-block">
+        <div class="section-label">Pickup</div>
+        <p style="font-size:14px;color:var(--color-slate);margin-bottom:6px;">Bozeman, MT (full address shared after booking is confirmed)</p>
+        <p style="font-size:13px;color:var(--color-muted);line-height:1.6;">Marcus will message you to coordinate exact time and location once he accepts your request.</p>
+      </div>
+
+      <!-- Message to lister -->
+      <div class="section-block">
+        <div class="section-label">Message to Marcus <span style="font-weight:400;color:var(--color-muted);font-family:var(--font-sans);text-transform:none;letter-spacing:0;font-size:12px;">(optional)</span></div>
+        <textarea class="input" rows="4" placeholder="Hey Marcus — heading out for an elk hunt the week of Oct 15, would love to grab the Helion. Available for pickup Wed evening?"></textarea>
+        <p style="font-size:12px;color:var(--color-muted);margin-top:6px;">A short note increases your odds of acceptance, especially with a lister you haven't rented from before.</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: cost breakdown card -->
+    <div>
+      <div class="booking-sidebar" style="position:sticky;top:80px;">
+        <div class="section-label" style="margin-bottom:12px;">Cost breakdown</div>
+        <table class="cost-table">
+          <tr class="cost-row"><td class="cost-label">$85 × 4 days</td><td class="cost-value">$340.00</td></tr>
+          <tr class="cost-row"><td class="cost-label">Service fee (10%)</td><td class="cost-value">$34.00</td></tr>
+          <tr class="cost-row"><td class="cost-label">Protection plan</td><td class="cost-value">$18.00</td></tr>
+          <tr class="cost-row cost-total"><td class="cost-label">Total to charge</td><td class="cost-value">$392.00</td></tr>
+        </table>
+
+        <div class="deposit-block">
+          <div class="deposit-block-head">
+            <span style="font-weight:600;font-size:14px;color:var(--color-slate);">Deposit hold</span>
+            <span class="cost-value">$250.00</span>
+          </div>
+          <p style="font-size:12px;color:var(--color-muted);line-height:1.55;">Authorization only — released to you 48 hours after return if no damage is reported.</p>
+        </div>
+
+        <div class="expandable">
+          <div class="expandable-summary"><span>Why is there a deposit?</span><span>+</span></div>
+        </div>
+        <div class="expandable">
+          <div class="expandable-summary"><span>What does the Protection Plan cover?</span><span>+</span></div>
+        </div>
+
+        <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:18px;">Continue to payment</a>
+        <p style="text-align:center;font-size:12px;color:var(--color-muted);margin-top:10px;">You won't be charged until Marcus accepts.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 4.2 — Payment Checkout  /gear/[id]/checkout
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/gear/[id]/checkout</span>
+  <span class="page-sep-name">4.2 Payment Checkout</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+  <div class="nav-right">
+    <a href="#" style="font-size:13px;color:var(--color-muted);text-decoration:underline;">← Back</a>
+  </div>
+</nav>
+
+<div class="booking-shell">
+  <h1 style="font-family:var(--font-condensed);font-size:32px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin-bottom:24px;">Confirm payment</h1>
+
+  <div class="booking-grid">
+    <!-- LEFT: payment form -->
+    <div>
+      <!-- Order summary (compact) -->
+      <div class="gear-summary">
+        <div class="gear-summary-img placeholder-img">GEAR</div>
+        <div style="flex:1;">
+          <h3 style="font-family:var(--font-condensed);font-size:16px;font-weight:800;text-transform:uppercase;margin-bottom:4px;">Pulsar Helion 2 XP50 Pro</h3>
+          <p style="font-size:13px;color:var(--color-muted);">Oct 15 → Oct 19 · 4 nights · Marcus T.</p>
+        </div>
+      </div>
+
+      <!-- Saved cards -->
+      <div class="section-block">
+        <div class="section-label">Pay with</div>
+        <div class="saved-card selected">
+          <div class="placeholder-img" style="width:36px;height:24px;flex-shrink:0;">VISA</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Visa ending in 4242</div>
+            <div style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">Exp 09 / 2028</div>
+          </div>
+          <div style="font-size:12px;color:var(--color-olive);font-weight:600;">SELECTED</div>
+        </div>
+        <button class="oauth-btn" style="border:1px dashed var(--color-border);background:transparent;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px 16px;border-radius:3px;font-family:var(--font-sans);font-weight:500;font-size:14px;color:var(--color-muted);cursor:pointer;">+ Use a different card</button>
+
+        <!-- Stripe Elements card input (collapsed when saved card selected) -->
+        <div style="margin-top:16px;display:none;">
+          <div class="stripe-card-input">
+            <span style="color:var(--color-light);">●●●●  ●●●●  ●●●●  ●●●●</span>
+            <span style="margin-left:auto;color:var(--color-light);">MM / YY</span>
+            <span style="color:var(--color-light);">CVC</span>
+          </div>
+          <p style="font-size:12px;color:var(--color-muted);margin-top:6px;">Payments processed by Stripe. Kitlo never stores your card.</p>
+        </div>
+      </div>
+
+      <!-- Billing zip -->
+      <div class="section-block">
+        <div class="section-label">Billing ZIP</div>
+        <input class="input" type="text" placeholder="59715" style="max-width:160px;">
+      </div>
+
+      <p style="font-size:12px;color:var(--color-muted);margin-top:12px;line-height:1.6;">By confirming, you agree to the <a href="#" style="color:var(--color-olive);text-decoration:underline;">Kitlo cancellation policy</a> and authorize the deposit hold.</p>
+    </div>
+
+    <!-- RIGHT: order summary card -->
+    <div>
+      <div class="booking-sidebar" style="position:sticky;top:80px;">
+        <div class="section-label" style="margin-bottom:12px;">Order summary</div>
+        <table class="cost-table">
+          <tr class="cost-row"><td class="cost-label">$85 × 4 days</td><td class="cost-value">$340.00</td></tr>
+          <tr class="cost-row"><td class="cost-label">Service fee</td><td class="cost-value">$34.00</td></tr>
+          <tr class="cost-row"><td class="cost-label">Protection plan</td><td class="cost-value">$18.00</td></tr>
+          <tr class="cost-row cost-total"><td class="cost-label">Total today</td><td class="cost-value">$392.00</td></tr>
+        </table>
+
+        <div class="deposit-block">
+          <div class="deposit-block-head">
+            <span style="font-weight:600;font-size:14px;">Deposit hold</span>
+            <span class="cost-value">$250.00</span>
+          </div>
+          <p style="font-size:12px;color:var(--color-muted);">Authorization only · released after return</p>
+        </div>
+
+        <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;margin-top:18px;font-size:15px;">
+          Confirm booking — charge $392.00
+        </a>
+        <p style="text-align:center;font-size:11px;color:var(--color-muted);margin-top:10px;font-family:var(--font-mono);">🔒 Secured by Stripe</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     PAGE 4.3 — Booking Confirmed  /gear/[id]/booking-confirmed
+================================================================ -->
+<div class="page-sep">
+  <span class="page-sep-route">/gear/[id]/booking-confirmed</span>
+  <span class="page-sep-name">4.3 Booking Confirmed</span>
+</div>
+
+<nav class="nav" style="border-bottom:1px solid var(--color-border);">
+  <a href="#" class="nav-logo">KIT<span>LO</span></a>
+</nav>
+
+<div class="booking-shell" style="max-width:680px;">
+  <!-- Confirmation header -->
+  <div style="text-align:center;padding:24px 0 36px;">
+    <div class="conf-success-icon">✓</div>
+    <p class="text-overline" style="margin-bottom:8px;color:var(--color-olive);">Booking confirmed</p>
+    <h1 style="font-family:var(--font-condensed);font-size:32px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);margin-bottom:12px;">You're booked. Go get the gear.</h1>
+    <p style="font-size:14px;color:var(--color-muted);font-family:var(--font-mono);">Booking reference · KTL-2026-00847</p>
+  </div>
+
+  <!-- Gear + dates block -->
+  <div class="gear-summary">
+    <div class="gear-summary-img placeholder-img">GEAR</div>
+    <div style="flex:1;">
+      <h3 style="font-family:var(--font-condensed);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:4px;">Pulsar Helion 2 XP50 Pro</h3>
+      <p style="font-size:13px;color:var(--color-muted);">Oct 15 → Oct 19 · 4 nights · $392.00 charged</p>
+    </div>
+  </div>
+
+  <!-- Lister contact (revealed) -->
+  <div class="section-block">
+    <div class="section-label">Your lister</div>
+    <div style="display:flex;gap:14px;align-items:center;padding:16px 0;">
+      <div class="avatar avatar-lg placeholder-img" style="width:48px;height:48px;flex-shrink:0;">M</div>
+      <div style="flex:1;">
+        <div style="font-weight:600;">Marcus T. <span class="badge badge-verified" style="font-size:11px;padding:2px 6px;">Verified</span></div>
+        <div style="font-size:13px;color:var(--color-muted);font-family:var(--font-mono);">(406) 555-0142</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pickup address (revealed) -->
+  <div class="section-block">
+    <div class="section-label">Pickup address</div>
+    <p style="font-size:15px;color:var(--color-slate);line-height:1.6;">
+      <strong>1284 N 7th Ave</strong><br>
+      Bozeman, MT 59715<br>
+      <span style="font-size:13px;color:var(--color-muted);">Driveway, north side. Marcus will text you on arrival.</span>
+    </p>
+    <button class="btn btn-ghost btn-sm" style="margin-top:10px;">Open in maps</button>
+    <button class="btn btn-ghost btn-sm">Copy address</button>
+  </div>
+
+  <!-- Next steps -->
+  <div class="section-block">
+    <div class="section-label">Next steps</div>
+    <ol style="padding-left:18px;font-size:14px;color:var(--color-slate);line-height:1.85;">
+      <li>Message Marcus to lock in pickup time</li>
+      <li>At pickup: inspect gear, confirm condition in-app</li>
+      <li>Hunt</li>
+      <li>Return on time, confirm in-app, deposit released within 48 hours</li>
+    </ol>
+  </div>
+
+  <!-- Actions -->
+  <div style="display:flex;gap:10px;margin-top:24px;">
+    <a href="#" class="btn btn-secondary" style="flex:0 0 auto;">Add to calendar</a>
+    <a href="#" class="btn btn-ghost" style="flex:0 0 auto;">View my booking</a>
+    <a href="#" class="btn btn-primary" style="flex:1;justify-content:center;">Message Marcus</a>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo Mobile — Onboarding &amp; Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  body { background: #2A2E29; padding: 32px 16px 60px; }
+  .page-sep { background: var(--color-slate); color: var(--color-on-dark); padding: 12px 16px; display: flex; align-items: baseline; gap: 12px; max-width: 390px; margin: 24px auto 0; }
+  .page-sep:first-of-type { margin-top: 0; }
+  .page-sep-route { font-family: var(--font-mono); font-size: 11px; color: var(--color-amber); }
+  .page-sep-name { font-family: var(--font-condensed); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-on-dark); }
+  .phone { width: 390px; margin: 0 auto; background: var(--color-bg); border: 1px solid #1A1F1A; overflow: hidden; box-shadow: 0 12px 48px rgba(0,0,0,0.3); }
+  .phone-status { background: var(--color-bg); padding: 10px 18px 6px; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: var(--color-slate); }
+  .phone-body { min-height: 700px; }
+  .placeholder-img { background: var(--color-surface); border: 1px dashed var(--color-border); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 10px; color: var(--color-light); letter-spacing: 0.08em; }
+  .topbar { padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); }
+  .topbar a.back { color: var(--color-slate); font-size: 18px; text-decoration: none; }
+  .topbar .save { font-size: 12px; color: var(--color-muted); text-decoration: underline; }
+  .step-bar { display: flex; gap: 4px; padding: 14px 18px 6px; }
+  .step-bar-fill { height: 3px; flex: 1; background: var(--color-border); border-radius: 2px; }
+  .step-bar-fill.is-on { background: var(--color-olive); }
+  .step-counter { font-family: var(--font-mono); font-size: 11px; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 0 18px; }
+  .body-pad { padding: 12px 18px 80px; }
+  .h-page { font-family: var(--font-condensed); font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.02em; color: var(--color-slate); margin: 12px 0 6px; line-height: 1.05; }
+  .sub-page { font-size: 13px; color: var(--color-muted); line-height: 1.55; margin-bottom: 20px; }
+  .req-item-m { display: flex; gap: 12px; padding: 12px; border: 1px solid var(--color-border); border-radius: 3px; background: var(--color-surface); margin-bottom: 8px; }
+  .req-num { width: 26px; height: 26px; border-radius: 50%; background: var(--color-olive); color: var(--color-on-dark); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .footer-cta { position: sticky; bottom: 0; background: var(--color-bg); border-top: 1px solid var(--color-border); padding: 12px 16px; display: flex; gap: 8px; }
+  .deposit-block-m { background: rgba(242,153,74,0.08); border: 1px solid rgba(242,153,74,0.25); border-radius: 3px; padding: 12px 14px; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+
+<!-- 3.1 Lister Onboarding step 1 -->
+<div class="page-sep"><span class="page-sep-route">/lister-onboarding</span><span class="page-sep-name">3.1 Onboarding — Step 1: Intro</span></div>
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body" style="display:flex;flex-direction:column;height:720px;">
+    <div class="topbar"><a class="back" href="#">←</a><span style="font-family:var(--font-condensed);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:13px;">Lister setup</span><a href="#" class="save">Save</a></div>
+    <div class="step-bar"><div class="step-bar-fill is-on"></div><div class="step-bar-fill"></div><div class="step-bar-fill"></div><div class="step-bar-fill"></div></div>
+    <p class="step-counter">Step 1 of 4 · Intro</p>
+
+    <div class="body-pad" style="flex:1;overflow-y:auto;">
+      <h1 class="h-page">Three things before you list</h1>
+      <p class="sub-page">Renters trust verified hunters. ~5–10 minutes total.</p>
+
+      <div class="req-item-m"><div class="req-num">1</div><div><div style="font-weight:600;font-size:13px;">Verify identity</div><p style="font-size:12px;color:var(--color-muted);margin-top:2px;">Government ID + selfie via Stripe.</p></div></div>
+      <div class="req-item-m"><div class="req-num">2</div><div><div style="font-weight:600;font-size:13px;">Connect payout</div><p style="font-size:12px;color:var(--color-muted);margin-top:2px;">Bank or debit via Stripe Connect.</p></div></div>
+      <div class="req-item-m"><div class="req-num">3</div><div><div style="font-weight:600;font-size:13px;">Agree to terms</div><p style="font-size:12px;color:var(--color-muted);margin-top:2px;">Plain-English, covers deposits &amp; disputes.</p></div></div>
+    </div>
+
+    <div class="footer-cta">
+      <button class="btn btn-ghost" style="color:var(--color-muted);">Later</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:12px;">Get started</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 3.1b Lister Onboarding step 2 (ID verify in progress) -->
+<div class="page-sep"><span class="page-sep-route">/lister-onboarding</span><span class="page-sep-name">3.1b Onboarding — Step 2: Verify ID</span></div>
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body" style="display:flex;flex-direction:column;height:720px;">
+    <div class="topbar"><a class="back" href="#">←</a><span style="font-family:var(--font-condensed);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:13px;">Verify ID</span><a href="#" class="save">Save</a></div>
+    <div class="step-bar"><div class="step-bar-fill is-on"></div><div class="step-bar-fill is-on"></div><div class="step-bar-fill"></div><div class="step-bar-fill"></div></div>
+    <p class="step-counter">Step 2 of 4 · Verify ID</p>
+
+    <div class="body-pad" style="flex:1;overflow-y:auto;">
+      <h1 class="h-page">Verify your identity</h1>
+      <p class="sub-page">Stripe Identity will guide you through ID + selfie. ~2 min.</p>
+
+      <div style="border:1px solid var(--color-border);border-radius:3px;background:var(--color-surface);padding:24px 16px;text-align:center;">
+        <div class="placeholder-img" style="width:64px;height:64px;border-radius:50%;margin:0 auto 14px;">STRIPE</div>
+        <p style="font-family:var(--font-condensed);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;color:var(--color-slate);margin-bottom:14px;">Take a photo of your ID</p>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:35%;"></div></div>
+        <p style="font-family:var(--font-mono);font-size:11px;color:var(--color-muted);margin-top:8px;">Step 1 of 3 · Front of ID</p>
+        <button class="btn btn-secondary" style="margin-top:18px;width:100%;justify-content:center;">Open camera</button>
+      </div>
+
+      <div class="alert alert-info" style="margin-top:18px;font-size:13px;">
+        <div><span class="alert-label">Why we ask</span>Renters see your verified status before booking.</div>
+      </div>
+    </div>
+
+    <div class="footer-cta">
+      <button class="btn btn-ghost">Back</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:12px;" disabled>Verifying…</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 4.1 Booking Request -->
+<div class="page-sep"><span class="page-sep-route">/gear/[id]/book</span><span class="page-sep-name">4.1 Booking Request (mobile)</span></div>
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body" style="display:flex;flex-direction:column;height:720px;">
+    <div class="topbar"><a class="back" href="#">←</a><span style="font-family:var(--font-condensed);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:13px;">Review booking</span><span></span></div>
+
+    <div style="flex:1;overflow-y:auto;padding:18px;">
+      <!-- Gear summary -->
+      <div style="display:flex;gap:10px;padding:10px;border:1px solid var(--color-border);border-radius:3px;margin-bottom:18px;">
+        <div class="placeholder-img" style="width:64px;height:48px;flex-shrink:0;">GEAR</div>
+        <div style="flex:1;">
+          <div style="display:flex;gap:4px;margin-bottom:3px;">
+            <span class="badge badge-condition" style="background:var(--color-mint-pale);color:var(--color-mint);font-size:9px;">Mint</span>
+            <span class="badge badge-type" style="font-size:9px;">Thermal</span>
+          </div>
+          <div style="font-weight:700;font-size:13px;">Pulsar Helion 2 XP50 Pro</div>
+          <div style="font-size:11px;color:var(--color-muted);">From Marcus T. · ★ 4.9</div>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:8px;">Rental period</p>
+      <div class="date-picker-row" style="margin-bottom:18px;">
+        <div class="date-picker-cell"><div class="date-picker-label">Pickup</div><div class="date-picker-value">Wed, Oct 15</div></div>
+        <div class="date-picker-cell"><div class="date-picker-label">Return</div><div class="date-picker-value">Sun, Oct 19</div></div>
+      </div>
+
+      <!-- Cost -->
+      <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:8px;">Cost</p>
+      <table class="cost-table" style="font-size:13px;">
+        <tr class="cost-row"><td class="cost-label">$85 × 4 days</td><td class="cost-value">$340.00</td></tr>
+        <tr class="cost-row"><td class="cost-label">Service fee</td><td class="cost-value">$34.00</td></tr>
+        <tr class="cost-row"><td class="cost-label">Protection plan</td><td class="cost-value">$18.00</td></tr>
+        <tr class="cost-row cost-total"><td class="cost-label">Total</td><td class="cost-value">$392.00</td></tr>
+      </table>
+
+      <div class="deposit-block-m">
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;">
+          <span>Deposit hold</span><span style="font-family:var(--font-mono);">$250.00</span>
+        </div>
+        <p style="font-size:11px;color:var(--color-muted);margin-top:4px;">Auth only — released 48h after return.</p>
+      </div>
+
+      <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin:22px 0 8px;">Message Marcus (optional)</p>
+      <textarea class="input" rows="3" placeholder="Hey Marcus, would love to grab the Helion for this trip…" style="font-size:13px;"></textarea>
+    </div>
+
+    <div class="footer-cta">
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:13px;font-size:14px;">Continue to payment</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 4.2 Payment Checkout -->
+<div class="page-sep"><span class="page-sep-route">/gear/[id]/checkout</span><span class="page-sep-name">4.2 Payment Checkout (mobile)</span></div>
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body" style="display:flex;flex-direction:column;height:720px;">
+    <div class="topbar"><a class="back" href="#">←</a><span style="font-family:var(--font-condensed);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:13px;">Payment</span><span></span></div>
+
+    <div style="flex:1;overflow-y:auto;padding:18px;">
+      <h1 class="h-page">Confirm payment</h1>
+      <p class="sub-page">$392.00 charged · $250 deposit held</p>
+
+      <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:8px;">Pay with</p>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--color-olive);background:var(--color-olive-pale);border-radius:3px;margin-bottom:8px;">
+        <div class="placeholder-img" style="width:32px;height:22px;flex-shrink:0;">VISA</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:13px;">Visa ··4242</div>
+          <div style="font-size:11px;color:var(--color-muted);font-family:var(--font-mono);">Exp 09/28</div>
+        </div>
+      </div>
+      <button style="width:100%;padding:11px;border:1px dashed var(--color-border);background:transparent;color:var(--color-muted);font-size:13px;border-radius:3px;">+ Use a different card</button>
+
+      <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin:22px 0 8px;">Billing ZIP</p>
+      <input class="input" type="text" placeholder="59715" style="max-width:140px;">
+
+      <p style="font-size:11px;color:var(--color-muted);margin-top:18px;line-height:1.5;">By confirming, you agree to the <a href="#" style="color:var(--color-olive);">cancellation policy</a> and authorize the deposit hold.</p>
+    </div>
+
+    <div class="footer-cta">
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:13px;font-size:13px;">Confirm — charge $392.00</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 4.3 Booking Confirmed -->
+<div class="page-sep"><span class="page-sep-route">/gear/[id]/booking-confirmed</span><span class="page-sep-name">4.3 Booking Confirmed (mobile)</span></div>
+<div class="phone">
+  <div class="phone-status"><span>9:41</span><span>5G ▮▮▮</span></div>
+  <div class="phone-body" style="padding:0;">
+    <div class="topbar"><span></span><span style="font-family:var(--font-condensed);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:13px;">Confirmed</span><span></span></div>
+    <div style="padding:32px 18px 24px;text-align:center;">
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(45,107,58,0.12);color:var(--color-olive);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto 12px;">✓</div>
+      <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-olive);margin-bottom:6px;">Booking confirmed</p>
+      <h1 style="font-family:var(--font-condensed);font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-slate);line-height:1.05;margin-bottom:6px;">You're booked.<br>Go get the gear.</h1>
+      <p style="font-size:12px;color:var(--color-muted);font-family:var(--font-mono);">KTL-2026-00847</p>
+    </div>
+
+    <div style="padding:0 18px 100px;">
+      <!-- Gear -->
+      <div style="display:flex;gap:10px;padding:12px;border:1px solid var(--color-border);border-radius:3px;margin-bottom:18px;">
+        <div class="placeholder-img" style="width:64px;height:48px;flex-shrink:0;">GEAR</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:13px;">Pulsar Helion 2 XP50 Pro</div>
+          <div style="font-size:12px;color:var(--color-muted);">Oct 15 → Oct 19 · 4 nights</div>
+        </div>
+      </div>
+
+      <!-- Lister -->
+      <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin-bottom:8px;">Your lister</p>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;">
+        <div class="placeholder-img" style="width:40px;height:40px;border-radius:50%;flex-shrink:0;">M</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Marcus T. <span class="badge badge-verified" style="font-size:9px;">Verified</span></div>
+          <div style="font-size:11px;color:var(--color-muted);font-family:var(--font-mono);">(406) 555-0142</div>
+        </div>
+      </div>
+
+      <!-- Address -->
+      <p style="font-family:var(--font-condensed);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-slate);margin:18px 0 8px;">Pickup</p>
+      <p style="font-size:14px;color:var(--color-slate);line-height:1.55;">
+        <strong>1284 N 7th Ave</strong><br>Bozeman, MT 59715
+      </p>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button class="btn btn-ghost btn-sm" style="flex:1;">Open in maps</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1;">Add to calendar</button>
+      </div>
+    </div>
+
+    <div class="footer-cta">
+      <a href="#" class="btn btn-ghost" style="flex:1;justify-content:center;">View booking</a>
+      <a href="#" class="btn btn-primary" style="flex:1;justify-content:center;">Message Marcus</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

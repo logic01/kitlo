@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitlo — Mobile Wireframe Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  body { background: var(--color-bg); }
+  .idx-shell { max-width: 720px; margin-inline: auto; padding: 56px 32px 80px; }
+  .idx-meta { font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+  .idx-shell h1 { font-family: var(--font-condensed); font-size: 38px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.02em; color: var(--color-slate); line-height: 1.0; margin-bottom: 14px; }
+  .lede { font-size: 15px; line-height: 1.7; color: var(--color-muted); max-width: 580px; margin-bottom: 32px; }
+  .row { border: 1px solid var(--color-border); border-radius: 4px; margin-bottom: 12px; overflow: hidden; }
+  .row-head { padding: 14px 18px; background: var(--color-surface); border-bottom: 1px solid var(--color-border); display: flex; align-items: baseline; gap: 12px; }
+  .num { font-family: var(--font-mono); font-size: 12px; color: var(--color-amber); }
+  .nm { font-family: var(--font-condensed); font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+  .ct { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--color-muted); }
+  .pages { padding: 12px 18px; }
+  .pg { display: flex; gap: 12px; padding: 6px 0; font-size: 13px; }
+  .rt { font-family: var(--font-mono); font-size: 11px; color: var(--color-muted); flex: 0 0 200px; }
+  .lk { padding: 10px 18px; background: var(--color-bg); border-top: 1px solid var(--color-border); text-align: right; }
+  .lk a { font-family: var(--font-condensed); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-olive); text-decoration: none; }
+  .lk a:hover { text-decoration: underline; }
+  .desk-link { display: inline-block; margin-top: 28px; font-size: 13px; color: var(--color-olive); text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="idx-shell">
+  <p class="idx-meta">Task 2.6 · Mobile Wireframes</p>
+  <h1>Kitlo Mobile</h1>
+  <p class="lede">Mobile companions to the desktop wireframes. Each screen is shown inside a 390 × 720 phone frame so the layouts read as mobile when viewed on desktop. Bottom-tab nav replaces the sidebar; filter/booking sheets replace sticky sidebars; wizards become one step per screen.</p>
+
+  <div class="row">
+    <div class="row-head"><span class="num">01</span><span class="nm">Public / Marketing</span><span class="ct">4 screens</span></div>
+    <div class="pages">
+      <div class="pg"><span class="rt">/</span><span>Homepage with sticky search</span></div>
+      <div class="pg"><span class="rt">/how-it-works</span><span>How It Works</span></div>
+      <div class="pg"><span class="rt">/gear</span><span>Search &amp; Discovery</span></div>
+      <div class="pg"><span class="rt">/gear (filter sheet)</span><span>Filter bottom-sheet</span></div>
+      <div class="pg"><span class="rt">/gear/[id]</span><span>Listing Detail (sticky CTA)</span></div>
+    </div>
+    <div class="lk"><a href="01-public.html">Open 01-public.html →</a></div>
+  </div>
+
+  <div class="row">
+    <div class="row-head"><span class="num">02</span><span class="nm">Auth</span><span class="ct">4 screens</span></div>
+    <div class="pages">
+      <div class="pg"><span class="rt">/sign-in</span><span>Sign In</span></div>
+      <div class="pg"><span class="rt">/sign-up</span><span>Sign Up — Account, Profile, Intent</span></div>
+    </div>
+    <div class="lk"><a href="02-auth.html">Open 02-auth.html →</a></div>
+  </div>
+
+  <div class="row">
+    <div class="row-head"><span class="num">03</span><span class="nm">Onboarding &amp; Booking</span><span class="ct">5 screens</span></div>
+    <div class="pages">
+      <div class="pg"><span class="rt">/lister-onboarding</span><span>Onboarding steps 1–2</span></div>
+      <div class="pg"><span class="rt">/gear/[id]/book</span><span>Booking Request</span></div>
+      <div class="pg"><span class="rt">/gear/[id]/checkout</span><span>Payment Checkout</span></div>
+      <div class="pg"><span class="rt">/gear/[id]/booking-confirmed</span><span>Booking Confirmed</span></div>
+    </div>
+    <div class="lk"><a href="03-onboarding-booking.html">Open 03-onboarding-booking.html →</a></div>
+  </div>
+
+  <div class="row">
+    <div class="row-head"><span class="num">04</span><span class="nm">Dashboard — Shared</span><span class="ct">7 screens · bottom-tab nav</span></div>
+    <div class="pages">
+      <div class="pg"><span class="rt">/dashboard</span><span>Home</span></div>
+      <div class="pg"><span class="rt">/dashboard/bookings</span><span>Bookings list</span></div>
+      <div class="pg"><span class="rt">/dashboard/bookings/[id]</span><span>Booking Detail (Active)</span></div>
+      <div class="pg"><span class="rt">/dashboard/bookings/[id]/cancel</span><span>Cancel Booking</span></div>
+      <div class="pg"><span class="rt">/dashboard/messages</span><span>Messages Inbox</span></div>
+      <div class="pg"><span class="rt">/dashboard/messages/[id]</span><span>Message Thread</span></div>
+      <div class="pg"><span class="rt">/dashboard/profile</span><span>Profile &amp; Settings</span></div>
+    </div>
+    <div class="lk"><a href="04-dashboard.html">Open 04-dashboard.html →</a></div>
+  </div>
+
+  <div class="row">
+    <div class="row-head"><span class="num">05</span><span class="nm">Dashboard — Lister</span><span class="ct">5 screens</span></div>
+    <div class="pages">
+      <div class="pg"><span class="rt">/dashboard/listings</span><span>My Listings (card view, no table)</span></div>
+      <div class="pg"><span class="rt">/dashboard/listings/new</span><span>Create Listing — step 1 &amp; 5</span></div>
+      <div class="pg"><span class="rt">/dashboard/listings/[id]/calendar</span><span>Availability Calendar</span></div>
+      <div class="pg"><span class="rt">/dashboard/earnings</span><span>Earnings (no-table layout)</span></div>
+    </div>
+    <div class="lk"><a href="05-lister.html">Open 05-lister.html →</a></div>
+  </div>
+
+  <div class="row">
+    <div class="row-head"><span class="num">06</span><span class="nm">Reviews · Admin · Static</span><span class="ct">5 screens</span></div>
+    <div class="pages">
+      <div class="pg"><span class="rt">/dashboard/bookings/[id]/review</span><span>Leave a Review</span></div>
+      <div class="pg"><span class="rt">/admin</span><span>Admin Dashboard</span></div>
+      <div class="pg"><span class="rt">/admin/disputes/[id]</span><span>Dispute Detail (compact)</span></div>
+      <div class="pg"><span class="rt">/terms</span><span>Terms of Service</span></div>
+      <div class="pg"><span class="rt">/lister-agreement</span><span>Lister Agreement</span></div>
+    </div>
+    <div class="lk"><a href="06-reviews-admin-static.html">Open 06-reviews-admin-static.html →</a></div>
+  </div>
+
+  <a href="../index.html" class="desk-link">← Back to desktop wireframes</a>
+</div>
+
+</body>
+</html>
