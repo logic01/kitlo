@@ -3,3 +3,7 @@ export * from './user';
 export * from './booking';
 export * from './review';
 export * from './admin';
+export * from './message';
+export * from './notification';
+export * from './dispute';
+export * from './payout';

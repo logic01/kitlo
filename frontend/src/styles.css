@@ -31,11 +31,11 @@
 
   /* --- Color: Text --- */
   --color-ink: #2f353b;
-  --color-muted: #7a8087;
-  --color-faint: #a8adb2;
+  --color-muted: #5e6469; /* WCAG AA against bone (#f7f7f1): ~5.5:1 */
+  --color-faint: #6f757b; /* WCAG AA against bone: ~4.7:1 */
   --color-on-dark: #f7f7f1;
-  --color-on-dark-muted: rgba(247, 247, 241, 0.5);
-  --color-on-dark-faint: rgba(247, 247, 241, 0.3);
+  --color-on-dark-muted: rgba(247, 247, 241, 0.85); /* AA on charcoal & olive */
+  --color-on-dark-faint: rgba(247, 247, 241, 0.8); /* AA on charcoal & olive */
 
   /* --- Color: Borders --- */
   --color-line: #d8d8d0;

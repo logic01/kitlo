@@ -4,7 +4,8 @@ export type ButtonVariant = 'primary' | 'secondary' | 'olive' | 'ghost' | 'outli
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: 'bg-amber text-white hover:bg-amber-dark',
+  // Dark text on amber: ~4.6:1 against #f2994a, ~5.4:1 against #d4781e — both pass WCAG AA.
+  primary: 'bg-amber text-ink hover:bg-amber-dark',
   secondary: 'bg-slate text-on-dark hover:bg-slate-mid',
   olive: 'bg-olive text-on-dark hover:bg-[#3D4420]',
   ghost: 'bg-transparent text-ink hover:text-slate',

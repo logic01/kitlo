@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, model } from '@angular/core';
 import { FormField } from '../form-field/form-field';
 import { Input } from '../input/input';
 import { Toggle } from '../toggle/toggle';
@@ -70,13 +70,18 @@ const GEAR_OPTIONS = [
         <p class="font-mono text-overline tracking-[0.12em] uppercase text-muted mb-2">Condition</p>
         <app-tag-pill-group
           [options]="conditionOptions"
-          [(selected)]="conditionStrings"
+          [selected]="conditionStrings()"
+          (selectedChange)="onConditionsChange($event)"
         />
       </section>
 
       <section class="mb-5">
         <p class="font-mono text-overline tracking-[0.12em] uppercase text-muted mb-2">Gear type</p>
-        <app-tag-pill-group [options]="gearOptions" [(selected)]="gearStrings" />
+        <app-tag-pill-group
+          [options]="gearOptions"
+          [selected]="filters().gearTypes"
+          (selectedChange)="onGearTypesChange($event)"
+        />
       </section>
 
       <section>
@@ -103,8 +108,7 @@ export class FilterSidebar {
   protected readonly conditionOptions = CONDITION_OPTIONS;
   protected readonly gearOptions = GEAR_OPTIONS;
 
-  protected readonly conditionStrings = model<string[]>([]);
-  protected readonly gearStrings = model<string[]>([]);
+  protected readonly conditionStrings = computed<string[]>(() => this.filters().conditions);
 
   protected minPriceDollars(): string {
     const c = this.filters().minPriceCents;
@@ -126,6 +130,14 @@ export class FilterSidebar {
     const v = (e.target as HTMLInputElement).value;
     const cents = v ? Math.round(Number(v) * 100) : undefined;
     this.filters.set({ ...this.filters(), maxPriceCents: cents });
+  }
+
+  protected onConditionsChange(values: string[]): void {
+    this.filters.set({ ...this.filters(), conditions: values as Condition[] });
+  }
+
+  protected onGearTypesChange(values: string[]): void {
+    this.filters.set({ ...this.filters(), gearTypes: values });
   }
 
   protected updateBool(key: 'verifiedOnly' | 'instantBook', value: boolean): void {

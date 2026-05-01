@@ -4,6 +4,8 @@ const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 
 module.exports = tseslint.config(
+  // Skip generated and Playwright-only directories.
+  { ignores: ['dist/**', 'node_modules/**', 'e2e/**', 'playwright.config.ts', '.playwright/**', 'playwright-report/**'] },
   {
     files: ['**/*.ts'],
     extends: [
@@ -21,6 +23,15 @@ module.exports = tseslint.config(
       '@angular-eslint/component-selector': [
         'error',
         { type: 'element', prefix: 'app', style: 'kebab-case' },
+      ],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
       ],
     },
   },

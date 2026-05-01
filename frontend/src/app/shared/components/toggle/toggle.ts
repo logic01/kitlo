@@ -14,13 +14,10 @@ let nextId = 0;
           <span class="text-xs text-muted block mt-0.5">{{ sub() }}</span>
         }
       </span>
-      <span
-        class="relative w-10 h-[22px] shrink-0 inline-block"
-        role="switch"
-        [attr.aria-checked]="checked()"
-      >
+      <span class="relative w-10 h-[22px] shrink-0 inline-block">
         <input
           type="checkbox"
+          role="switch"
           class="sr-only peer"
           [id]="id"
           [checked]="checked()"
@@ -28,6 +25,7 @@ let nextId = 0;
         />
         <span
           class="absolute inset-0 bg-surface border border-line transition-colors peer-checked:bg-olive peer-checked:border-olive"
+          aria-hidden="true"
         ></span>
         <span
           class="absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-muted transition-transform peer-checked:translate-x-[18px] peer-checked:bg-white"

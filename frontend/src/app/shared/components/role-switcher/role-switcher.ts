@@ -19,9 +19,10 @@ const OPTIONS: { value: UserRole | 'guest'; label: string }[] = [
   selector: 'app-role-switcher',
   template: `
     @if (visible()) {
-      <label class="flex items-center gap-2 text-xs text-muted">
-        <span class="font-mono uppercase tracking-[0.08em]">Role</span>
+      <div class="flex items-center gap-2 text-xs text-muted">
+        <label for="kitlo-role-switcher" class="font-mono uppercase tracking-[0.08em]">Role</label>
         <select
+          id="kitlo-role-switcher"
           class="bg-bone border border-line text-xs font-mono px-2 py-1 cursor-pointer"
           [value]="current()"
           (change)="onChange($event)"
@@ -30,7 +31,7 @@ const OPTIONS: { value: UserRole | 'guest'; label: string }[] = [
             <option [value]="option.value">{{ option.label }}</option>
           }
         </select>
-      </label>
+      </div>
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

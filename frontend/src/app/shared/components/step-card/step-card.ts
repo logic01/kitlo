@@ -5,7 +5,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   template: `
     <article class="p-7 border border-line">
       <div
-        class="font-condensed text-[64px] font-black text-line leading-none mb-3"
+        class="font-condensed text-[64px] font-black text-faint leading-none mb-3"
+        aria-hidden="true"
       >
         {{ stepNumber() }}
       </div>

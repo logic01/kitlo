@@ -1,0 +1,85 @@
+import type { Dispute } from '../models/dispute';
+
+export const MOCK_DISPUTES: Dispute[] = [
+  {
+    id: 'dp-001',
+    bookingId: 'bk-006',
+    filedById: 'u-renter-2',
+    filedByName: 'Robin Cole',
+    filedAt: '2026-04-06T09:30:00Z',
+    status: 'mediation',
+    reason: 'misrepresented',
+    reasonLabel: 'Item not as described',
+    summary:
+      'Glass clarity at high magnification was poor on arrival. Lister claims condition was disclosed and renter caused fogging during the rental.',
+    amountInDisputeCents: 11970,
+    evidence: [
+      {
+        id: 'ev-dp-001-1',
+        uploadedById: 'u-renter-2',
+        uploadedAt: '2026-04-06T09:32:00Z',
+        kind: 'photo',
+        url: 'https://images.unsplash.com/photo-1572635148818-ef6fd45eb394?auto=format&fit=crop&w=600&q=80',
+      },
+      {
+        id: 'ev-dp-001-2',
+        uploadedById: 'u-renter-2',
+        uploadedAt: '2026-04-06T09:34:00Z',
+        kind: 'note',
+        text: 'Glass haze visible on first morning, no impact damage from my use.',
+      },
+      {
+        id: 'ev-dp-001-3',
+        uploadedById: 'u-lister-3',
+        uploadedAt: '2026-04-06T15:02:00Z',
+        kind: 'photo',
+        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=600&q=80',
+      },
+    ],
+  },
+  {
+    id: 'dp-002',
+    bookingId: 'bk-007',
+    filedById: 'u-lister-2',
+    filedByName: 'Tyler Reed',
+    filedAt: '2026-04-21T11:14:00Z',
+    status: 'resolved',
+    reason: 'late-return',
+    reasonLabel: 'Late return',
+    summary: 'Cancellation made 14 hours before pickup; lister contests reason. Resolved with partial credit.',
+    amountInDisputeCents: 5400,
+    resolution: 'split',
+    resolvedAt: '2026-04-23T18:00:00Z',
+    resolutionNote: 'Per cancellation policy, lister keeps 50% of service fee. Renter receives 50% credit toward future booking.',
+    evidence: [
+      {
+        id: 'ev-dp-002-1',
+        uploadedById: 'u-lister-2',
+        uploadedAt: '2026-04-21T11:18:00Z',
+        kind: 'message',
+        text: 'Renter cancelled at 8:14 PM the night before pickup — within strict-policy window.',
+      },
+    ],
+  },
+  {
+    id: 'dp-003',
+    bookingId: 'bk-003',
+    filedById: 'u-lister-3',
+    filedByName: 'Casey Morgan',
+    filedAt: '2026-04-19T19:42:00Z',
+    status: 'open',
+    reason: 'damage',
+    reasonLabel: 'Damage on return',
+    summary: 'Cam wear and frayed string noted on return. Renter says wear is consistent with normal use.',
+    amountInDisputeCents: 18000,
+    evidence: [
+      {
+        id: 'ev-dp-003-1',
+        uploadedById: 'u-lister-3',
+        uploadedAt: '2026-04-19T19:44:00Z',
+        kind: 'photo',
+        url: 'https://images.unsplash.com/photo-1547499199-c84c8f1e0e4f?auto=format&fit=crop&w=600&q=80',
+      },
+    ],
+  },
+];
