@@ -37,8 +37,6 @@ const SORT_MAP: Record<SortKey, ListingSearchQuery['sort']> = {
 const KNOWN_GEAR_TYPES: GearType[] = [
   'thermal',
   'night-vision',
-  'rifle',
-  'bow',
   'tree-stand',
   'optics',
   'pack',

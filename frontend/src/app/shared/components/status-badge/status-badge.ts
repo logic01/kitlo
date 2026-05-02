@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 export type BookingStatus =
+  | 'pending'
   | 'confirmed'
   | 'active'
   | 'returned'
@@ -8,7 +9,7 @@ export type BookingStatus =
   | 'disputed'
   | 'cancelled';
 
-export type ListingStatus = 'draft' | 'pending' | 'paused' | 'flagged' | 'archived' | 'active';
+export type ListingStatus = 'draft' | 'pending' | 'paused' | 'flagged' | 'archived' | 'active' | 'rejected';
 
 export type Status = BookingStatus | ListingStatus;
 
@@ -23,6 +24,7 @@ const TONE: Record<Status, string> = {
   pending: 'text-[#7B5200] bg-[rgba(242,153,74,0.10)] border-[rgba(242,153,74,0.25)]',
   paused: 'text-muted bg-surface border-line',
   flagged: 'text-[#8B0000] bg-[rgba(139,0,0,0.07)] border-[rgba(139,0,0,0.20)]',
+  rejected: 'text-[#8B0000] bg-[rgba(139,0,0,0.07)] border-[rgba(139,0,0,0.20)]',
   archived: 'text-faint bg-surface border-line',
 };
 

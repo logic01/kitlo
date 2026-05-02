@@ -4,6 +4,6 @@
 
 ---
 
-## Active main task: (none — Phase 3 essentially complete pending user walkthrough)
+## Active main task: (none — Phase 1 pricing rollout landed)
 
-3.20–3.24 and 3.26 are done. 3.25 (manual walkthrough) is partial — see `tasks.md`. Next is Phase 4 (backend).
+Phase 1 launch pricing (5% renter + 5% lister = 10% total take rate) is now reflected in the business plan, all docs, all UI copy, mock fixtures, the Listing service spec, and the backend `Listing.ServiceFeeBp` default. Source of truth: `docs/business-plan.md`. See `docs/done-tasks.md` for the rollout summary once the next pass moves it across.

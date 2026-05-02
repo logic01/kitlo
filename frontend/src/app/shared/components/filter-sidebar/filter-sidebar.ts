@@ -24,8 +24,6 @@ const CONDITION_OPTIONS = [
 const GEAR_OPTIONS = [
   { value: 'thermal', label: 'Thermal' },
   { value: 'night-vision', label: 'Night vision' },
-  { value: 'rifle', label: 'Rifle' },
-  { value: 'bow', label: 'Bow' },
   { value: 'tree-stand', label: 'Tree stand' },
   { value: 'optics', label: 'Optics' },
   { value: 'pack', label: 'Pack' },

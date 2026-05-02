@@ -1,0 +1,19 @@
+# .NET build artifacts
+**/bin/
+**/obj/
+*.user
+
+# Rider / VS / VS Code
+.idea/
+.vs/
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+
+# Local secrets — appsettings.Development.json may hold dev creds; keep it tracked
+# but never commit appsettings.Production.json
+appsettings.Production.json
+appsettings.Local.json

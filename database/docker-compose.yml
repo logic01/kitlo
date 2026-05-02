@@ -1,0 +1,50 @@
+# Local Postgres + optional API for the Kitlo backend.
+# Connection params match Kitlo.Api/appsettings.json -> ConnectionStrings:Default.
+#
+# Usage:
+#   cd backend
+#   docker compose up -d                       # DB only (default workflow)
+#   docker compose --profile full up -d        # DB + API
+#   docker compose down                        # stop, keep data
+#   docker compose down -v                     # stop and wipe the data volume
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: kitlo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: kitlo
+    ports:
+      - "5432:5432"
+    volumes:
+      - kitlo-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kitlo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Kitlo.Api/Dockerfile
+    container_name: kitlo-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=kitlo;Username=postgres;Password=postgres"
+      Jwt__Issuer: kitlo
+      Jwt__Audience: kitlo-api
+      Jwt__Key: "DEV_ONLY_REPLACE_WITH_A_LONG_RANDOM_STRING_AT_LEAST_32_BYTES"
+    ports:
+      - "5268:8080"
+    profiles: ["full"]
+
+volumes:
+  kitlo-pgdata:

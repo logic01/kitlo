@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
@@ -15,7 +15,23 @@ import {
   type Crumb,
 } from '../../../../shared';
 import { BookingsService } from '../../../../core/services/bookings.service';
+import { ToastService } from '../../../../core/services/toast.service';
 import type { BookingSummary, BookingTimelineEvent } from '../../../../core/models/booking';
+
+type ActionKind = 'confirm' | 'pickup' | 'return' | 'complete';
+
+interface ActionDef {
+  kind: ActionKind;
+  label: string;
+  busyLabel: string;
+}
+
+const ACTIONS_BY_STATUS: Record<string, ActionDef[]> = {
+  pending: [{ kind: 'confirm', label: 'Accept booking', busyLabel: 'Accepting…' }],
+  confirmed: [{ kind: 'pickup', label: 'Confirm pickup', busyLabel: 'Saving…' }],
+  active: [{ kind: 'return', label: 'Confirm return', busyLabel: 'Saving…' }],
+  returned: [{ kind: 'complete', label: 'Release funds', busyLabel: 'Releasing…' }],
+};
 
 @Component({
   selector: 'app-dashboard-booking-detail',
@@ -36,11 +52,23 @@ import type { BookingSummary, BookingTimelineEvent } from '../../../../core/mode
     } @else if (booking(); as b) {
       <div class="px-8 py-8">
         <app-page-header [title]="b.gearTitle" [breadcrumbs]="crumbs()">
-          <div slot="actions" class="flex gap-2">
-            <button appButton variant="ghost" type="button">Message {{ b.counterpartyName }}</button>
-            <a appButton variant="secondary" [routerLink]="['/dashboard/bookings', b.id, 'cancel']">
-              Cancel booking
-            </a>
+          <div slot="actions" class="flex gap-2 flex-wrap">
+            @for (action of availableActions(b.status); track action.kind) {
+              <button
+                appButton
+                variant="primary"
+                type="button"
+                [disabled]="acting()"
+                (click)="runAction(b.id, action.kind)"
+              >
+                {{ acting() && actingKind() === action.kind ? action.busyLabel : action.label }}
+              </button>
+            }
+            @if (canCancel(b.status)) {
+              <a appButton variant="ghost" [routerLink]="['/dashboard/bookings', b.id, 'cancel']">
+                Cancel booking
+              </a>
+            }
           </div>
         </app-page-header>
 
@@ -98,6 +126,9 @@ import type { BookingSummary, BookingTimelineEvent } from '../../../../core/mode
 export class DashboardBookingDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly bookings = inject(BookingsService);
+  private readonly toast = inject(ToastService);
+
+  private readonly refresh = signal(0);
 
   private readonly bookingId = toSignal(
     this.route.params.pipe(map((p) => p['id'] as string)),
@@ -105,16 +136,20 @@ export class DashboardBookingDetail {
   );
 
   private readonly bookingResult = toSignal(
-    toObservable(this.bookingId).pipe(
-      switchMap((id) => (id ? this.bookings.getById(id).pipe(catchError(() => of(null))) : of(null))),
+    toObservable(computed(() => ({ id: this.bookingId(), v: this.refresh() }))).pipe(
+      switchMap(({ id }) => (id ? this.bookings.getById(id).pipe(catchError(() => of(null))) : of(null))),
       startWith(undefined as BookingSummary | null | undefined),
     ),
     { initialValue: undefined as BookingSummary | null | undefined },
   );
 
   private readonly timelineResult = toSignal(
-    toObservable(this.bookingId).pipe(
-      switchMap((id) => (id ? this.bookings.getTimeline(id).pipe(catchError(() => of([] as BookingTimelineEvent[]))) : of([] as BookingTimelineEvent[]))),
+    toObservable(computed(() => ({ id: this.bookingId(), v: this.refresh() }))).pipe(
+      switchMap(({ id }) =>
+        id
+          ? this.bookings.getTimeline(id).pipe(catchError(() => of([] as BookingTimelineEvent[])))
+          : of([] as BookingTimelineEvent[]),
+      ),
     ),
     { initialValue: [] as BookingTimelineEvent[] },
   );
@@ -122,6 +157,8 @@ export class DashboardBookingDetail {
   protected readonly loading = computed(() => this.bookingResult() === undefined);
   protected readonly booking = computed(() => this.bookingResult() ?? null);
   protected readonly timeline = computed(() => this.timelineResult());
+  protected readonly acting = signal(false);
+  protected readonly actingKind = signal<ActionKind | null>(null);
   protected readonly crumbs = computed<Crumb[]>(() => [
     { label: 'Bookings', route: '/dashboard/bookings' },
     { label: this.booking()?.gearTitle ?? 'Detail' },
@@ -135,4 +172,35 @@ export class DashboardBookingDetail {
       { label: `$${dailyCents / 100} × ${days} days`, amountCents: dailyCents * days },
     ];
   });
+
+  protected availableActions(status: string): ActionDef[] {
+    return ACTIONS_BY_STATUS[status] ?? [];
+  }
+
+  protected canCancel(status: string): boolean {
+    return status !== 'cancelled' && status !== 'returned' && status !== 'completed';
+  }
+
+  protected runAction(id: string, kind: ActionKind): void {
+    if (this.acting()) return;
+    this.acting.set(true);
+    this.actingKind.set(kind);
+    const obs =
+      kind === 'confirm' ? this.bookings.confirm(id)
+      : kind === 'pickup' ? this.bookings.confirmPickup(id)
+      : kind === 'return' ? this.bookings.confirmReturn(id)
+      : this.bookings.complete(id);
+    obs.subscribe({
+      next: () => {
+        this.acting.set(false);
+        this.actingKind.set(null);
+        this.refresh.update((n) => n + 1);
+      },
+      error: (err: { error?: { message?: string } }) => {
+        this.toast.error(err.error?.message ?? 'Could not update booking.');
+        this.acting.set(false);
+        this.actingKind.set(null);
+      },
+    });
+  }
 }

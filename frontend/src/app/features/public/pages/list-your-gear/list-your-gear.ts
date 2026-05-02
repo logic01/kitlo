@@ -13,8 +13,8 @@ import { Button, StepCard, StatCard } from '../../../../shared';
           Earn from the gear<br /><span class="text-olive">already in your safe.</span>
         </h1>
         <p class="text-body-lg text-muted mt-6 max-w-2xl mx-auto">
-          Most hunting gear is used 3–5 weeks a year. List on Kitlo, set your daily rate, and let your scope, bow, or
-          treestand work for you the other 47.
+          Most hunting gear is used 3–5 weeks a year. List on Kitlo, set your daily rate, and let your thermal, night vision, or
+          spotting optics work for you the other 47.
         </p>
         <div class="mt-8">
           <a appButton variant="primary" routerLink="/auth/signup">Start listing</a>
@@ -25,7 +25,7 @@ import { Button, StepCard, StatCard } from '../../../../shared';
     <section class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-16">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <app-stat-card overline="Avg lister earns" value="$2,840" sublabel="per season" tone="primary" />
-        <app-stat-card overline="Take rate" value="12%" sublabel="of every booking" />
+        <app-stat-card overline="You keep" value="95%" sublabel="of every booking" />
         <app-stat-card overline="Avg payout time" value="3 days" sublabel="after return confirmation" />
       </div>
 

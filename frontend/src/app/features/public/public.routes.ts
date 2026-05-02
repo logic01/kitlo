@@ -10,6 +10,7 @@ import { PublicContact } from './pages/contact/contact';
 import { PublicAbout } from './pages/about/about';
 import { PublicListYourGear } from './pages/list-your-gear/list-your-gear';
 import { PublicLegal } from './pages/legal/legal';
+import { PublicTrust } from './pages/trust/trust';
 
 export const PUBLIC_ROUTES: Routes = [
   {
@@ -22,6 +23,7 @@ export const PUBLIC_ROUTES: Routes = [
       { path: 'listing/:id', component: PublicListingDetail, data: { title: 'Listing detail' } },
       { path: 'list-your-gear', component: PublicListYourGear, data: { title: 'For listers' } },
       { path: 'about', component: PublicAbout, data: { title: 'About' } },
+      { path: 'trust', component: PublicTrust, data: { title: 'Trust & safety' } },
       { path: 'contact', component: PublicContact, data: { title: 'Contact' } },
       { path: 'terms', component: PublicLegal, data: { slug: 'terms', title: 'Terms of service' } },
       { path: 'privacy', component: PublicLegal, data: { slug: 'privacy', title: 'Privacy policy' } },

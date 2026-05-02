@@ -1,70 +1,101 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import type { Observable } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import type { Message, MessageThread } from '../models/message';
-import { MOCK_MESSAGES_BY_THREAD, MOCK_MESSAGE_THREADS } from '../mock-data';
-import { AuthService } from './auth.service';
-import { generateId, mockError, mockResponse, nowIso } from './mock-response';
 
 export interface SendMessageInput {
   body: string;
   attachmentUrl?: string;
 }
 
+interface BackendMessage {
+  id: string;
+  threadId: string;
+  senderId: string;
+  body: string;
+  sentAt: string;
+  read: boolean;
+}
+
+interface BackendThread {
+  id: string;
+  participantIds: string[];
+  participantName: string;
+  participantAvatarUrl?: string | null;
+  bookingId?: string | null;
+  listingId?: string | null;
+  lastMessagePreview: string;
+  lastMessageAt: string;
+  unreadCount: number;
+}
+
+function mapMessage(b: BackendMessage): Message {
+  return {
+    id: b.id,
+    threadId: b.threadId,
+    senderId: b.senderId,
+    body: b.body,
+    sentAt: b.sentAt,
+    read: b.read,
+  };
+}
+
+function mapThread(b: BackendThread): MessageThread {
+  return {
+    id: b.id,
+    participantIds: b.participantIds,
+    participantName: b.participantName,
+    participantAvatarUrl: b.participantAvatarUrl ?? undefined,
+    bookingId: b.bookingId ?? undefined,
+    listingId: b.listingId ?? undefined,
+    lastMessagePreview: b.lastMessagePreview,
+    lastMessageAt: b.lastMessageAt,
+    unreadCount: b.unreadCount,
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class MessagesService {
-  private readonly auth = inject(AuthService);
-  private threads: MessageThread[] = MOCK_MESSAGE_THREADS.map((t) => ({ ...t }));
-  private messagesByThread: Record<string, Message[]> = Object.fromEntries(
-    Object.entries(MOCK_MESSAGES_BY_THREAD).map(([id, msgs]) => [id, msgs.map((m) => ({ ...m }))]),
-  );
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/messages`;
 
   listThreads(): Observable<MessageThread[]> {
-    return mockResponse(
-      [...this.threads]
-        .sort((a, b) => b.lastMessageAt.localeCompare(a.lastMessageAt))
-        .map((t) => ({ ...t })),
-    );
+    return this.http.get<BackendThread[]>(`${this.base}/threads`).pipe(map((rows) => rows.map(mapThread)));
   }
 
   getThread(threadId: string): Observable<Message[]> {
-    const thread = this.threads.find((t) => t.id === threadId);
-    if (!thread) return mockError(`Thread ${threadId} not found`);
-    return mockResponse((this.messagesByThread[threadId] ?? []).map((m) => ({ ...m })));
+    return this.http.get<BackendMessage[]>(`${this.base}/threads/${threadId}`).pipe(map((rows) => rows.map(mapMessage)));
+  }
+
+  /** Fetch a single thread's metadata (participant, booking, unread count). */
+  getThreadMeta(threadId: string): Observable<MessageThread> {
+    return this.http.get<BackendThread>(`${this.base}/threads/${threadId}/meta`).pipe(map(mapThread));
+  }
+
+  /** Open or fetch a thread between the caller and the listing's lister. */
+  startListingThread(listingId: string): Observable<MessageThread> {
+    return this.http.post<BackendThread>(`${this.base}/threads/listing/${listingId}`, {}).pipe(map(mapThread));
   }
 
   sendMessage(threadId: string, input: SendMessageInput): Observable<Message> {
-    const idx = this.threads.findIndex((t) => t.id === threadId);
-    if (idx < 0) return mockError(`Thread ${threadId} not found`);
-    const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    const message: Message = {
-      id: generateId('m'),
-      threadId,
-      senderId: me.id,
-      body: input.body,
-      sentAt: nowIso(),
-      read: true,
-    };
-    this.messagesByThread[threadId] = [...(this.messagesByThread[threadId] ?? []), message];
-    this.threads[idx] = {
-      ...this.threads[idx],
-      lastMessagePreview: input.body.slice(0, 80),
-      lastMessageAt: message.sentAt,
-    };
-    return mockResponse({ ...message });
+    return this.http
+      .post<BackendMessage>(`${this.base}/threads/${threadId}`, { body: input.body })
+      .pipe(map(mapMessage));
   }
 
-  markThreadRead(threadId: string): Observable<void> {
-    const idx = this.threads.findIndex((t) => t.id === threadId);
-    if (idx < 0) return mockError(`Thread ${threadId} not found`);
-    this.threads[idx] = { ...this.threads[idx], unreadCount: 0 };
-    this.messagesByThread[threadId] = (this.messagesByThread[threadId] ?? []).map((m) => ({ ...m, read: true }));
-    return mockResponse(undefined);
+  /**
+   * Mark-thread-read happens automatically when `getThread` runs server-side.
+   * Kept as a no-op to preserve the API surface.
+   */
+  markThreadRead(_threadId: string): Observable<void> {
+    return of(undefined);
   }
 
-  uploadAttachment(threadId: string, _file: File | Blob): Observable<string> {
-    if (!this.threads.some((t) => t.id === threadId)) return mockError(`Thread ${threadId} not found`);
-    const url = `https://images.unsplash.com/photo-${generateId('att')}?auto=format&fit=crop&w=600&q=80`;
-    return mockResponse(url, 400);
+  /**
+   * Cloudinary attachment upload is scaffolded in 5.5; until then return a placeholder.
+   */
+  uploadAttachment(_threadId: string, _file: File | Blob): Observable<string> {
+    return of(`https://placehold.co/600x400/333/eee?text=Attachment`);
   }
 }

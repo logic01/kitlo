@@ -32,11 +32,11 @@ const STEPS: StepDef[] = [
   { label: 'Review' },
 ];
 
+// Weapons (firearms, hunting bows, crossbows) are not listable on Kitlo.
+// Keep the option set in sync with `GearType` in core/models/listing.ts.
 const CATEGORY_OPTIONS: PillOption[] = [
   { value: 'thermal', label: 'Thermal' },
   { value: 'night-vision', label: 'Night Vision' },
-  { value: 'rifle', label: 'Rifle' },
-  { value: 'bow', label: 'Bow' },
   { value: 'optics', label: 'Optics' },
   { value: 'tree-stand', label: 'Treestand / saddle' },
   { value: 'pack', label: 'Pack' },
@@ -77,6 +77,20 @@ const CATEGORY_OPTIONS: PillOption[] = [
               />
             </app-form-field>
             <app-form-field
+              label="Description"
+              hint="Specs, condition notes, what's included. 60 chars minimum."
+              required
+              [control]="basics.controls.description"
+            >
+              <textarea
+                appInput
+                rows="5"
+                formControlName="description"
+                placeholder="Pulsar XP50 Pro thermal scope. 640×480 sensor, 50 mm objective, 2 batteries…"
+                [invalid]="showError(basics.controls.description)"
+              ></textarea>
+            </app-form-field>
+            <app-form-field
               label="Category"
               required
               [error]="categoryError()"
@@ -102,10 +116,31 @@ const CATEGORY_OPTIONS: PillOption[] = [
         @case (1) {
           <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-2">Photos</h2>
           <p class="text-sm text-muted mb-5">At least 3 photos. First photo becomes the listing card hero.</p>
-          <app-upload-zone />
+          <app-upload-zone (filesAdded)="onFilesAdded($event)" />
+          @if (photos().length > 0) {
+            <ul class="grid grid-cols-3 gap-3 mt-4" aria-label="Selected photos">
+              @for (photo of photos(); track photo.url) {
+                <li class="relative border border-line bg-bone p-1">
+                  <img [src]="photo.url" [alt]="photo.name" class="w-full h-24 object-cover" />
+                  <button
+                    type="button"
+                    class="absolute top-1 right-1 bg-bone border border-line text-xs px-1.5 py-0.5"
+                    aria-label="Remove photo"
+                    (click)="removePhoto(photo.url)"
+                  >×</button>
+                </li>
+              }
+            </ul>
+          }
+          <p class="text-xs text-muted mt-3" aria-live="polite">
+            {{ photos().length }} of 3 minimum
+          </p>
           <app-alert tone="info" class="block mt-5">
             Show the gear in good light, multiple angles, and any cosmetic wear. Honesty pays off — accurate listings get more 5-star reviews.
           </app-alert>
+          @if (photoError(); as msg) {
+            <app-alert tone="danger" class="block mt-3">{{ msg }}</app-alert>
+          }
           <div class="flex gap-2 mt-6">
             <button appButton variant="ghost" type="button" (click)="back()">Back</button>
             <button appButton variant="primary" type="button" class="flex-1" (click)="advance()">Continue</button>
@@ -208,9 +243,12 @@ export class DashboardListingCreate {
   protected readonly condition = signal<Condition>('field-ready');
   protected readonly submitting = signal(false);
   protected readonly error = signal<string | null>(null);
+  protected readonly photos = signal<{ name: string; url: string }[]>([]);
+  protected readonly photoError = signal<string | null>(null);
 
   protected readonly basics = this.fb.group({
     title: ['', Validators.required],
+    description: ['', [Validators.required, Validators.minLength(60)]],
     zip: ['', [Validators.required, kitloValidators.zip]],
   });
 
@@ -233,11 +271,33 @@ export class DashboardListingCreate {
         return;
       }
     }
+    if (this.step() === 1) {
+      if (this.photos().length < 3) {
+        this.photoError.set('At least 3 photos are required to publish.');
+        return;
+      }
+      this.photoError.set(null);
+    }
     if (this.step() === 2 && this.pricing.invalid) {
       this.pricing.markAllAsTouched();
       return;
     }
     this.step.update((n) => Math.min(n + 1, STEPS.length - 1));
+  }
+
+  protected onFilesAdded(files: File[]): void {
+    this.photoError.set(null);
+    // Local object-URL preview. Real Cloudinary upload happens at publish time.
+    const next = files.map((f) => ({ name: f.name, url: URL.createObjectURL(f) }));
+    this.photos.update((current) => [...current, ...next]);
+  }
+
+  protected removePhoto(url: string): void {
+    this.photos.update((list) => {
+      const remaining = list.filter((p) => p.url !== url);
+      try { URL.revokeObjectURL(url); } catch { /* not all URLs are object URLs */ }
+      return remaining;
+    });
   }
 
   protected back(): void {
@@ -255,60 +315,71 @@ export class DashboardListingCreate {
       this.error.set('Sign in to publish a listing.');
       return;
     }
+    if (this.photos().length < 3) {
+      this.error.set('At least 3 photos are required to publish.');
+      this.step.set(1);
+      return;
+    }
     const gearTypeRaw = this.categories()[0] ?? 'optics';
     const gearTypeMap: Record<string, GearType> = {
       thermal: 'thermal',
       'night-vision': 'night-vision',
-      rifle: 'rifle',
-      bow: 'bow',
       optics: 'optics',
       'tree-stand': 'tree-stand',
       pack: 'pack',
     };
     const gearType = gearTypeMap[gearTypeRaw] ?? 'optics';
     const gearTypeLabel = this.categoryOptions.find((c) => c.value === gearTypeRaw)?.label ?? 'Optics';
+    const dailyRateCents = Math.round((this.pricing.value.dailyRate ?? 0) * 100);
+    const depositCents = Math.round((this.pricing.value.deposit ?? 0) * 100);
+    const cancellationPolicy = this.pricing.value.cancellation as 'flexible' | 'moderate' | 'strict';
+    const description = this.basics.value.description ?? '';
 
     this.submitting.set(true);
     this.error.set(null);
+
+    // Single create call now carries all the basics so we don't have an
+    // orphaned-draft window if the follow-up update fails.
     this.listings
       .create({
         title: this.basics.value.title!,
+        description,
         gearType,
         gearTypeLabel,
         condition: this.condition(),
         pickupZip: this.basics.value.zip!,
+        dailyRateCents,
+        depositCents: depositCents || undefined,
+        cancellationPolicy,
         listerId: me.id,
         listerName: me.name,
         listerVerified: me.verified,
       })
       .subscribe({
         next: (draft) => {
-          const dailyRateCents = Math.round((this.pricing.value.dailyRate ?? 0) * 100);
-          const depositCents = Math.round((this.pricing.value.deposit ?? 0) * 100);
-          this.listings
-            .update(draft.id, {
-              dailyRateCents,
-              depositCents: depositCents || undefined,
-              cancellationPolicy: this.pricing.value.cancellation as 'flexible' | 'moderate' | 'strict',
-            })
-            .subscribe({
-              next: () => {
-                this.listings.publish(draft.id).subscribe({
-                  next: () => this.router.navigateByUrl('/dashboard/listings'),
-                  error: (e: Error) => {
-                    this.error.set(e.message);
-                    this.submitting.set(false);
-                  },
-                });
-              },
-              error: (e: Error) => {
-                this.error.set(e.message);
-                this.submitting.set(false);
-              },
-            });
+          const photosToAdd = this.photos().map((p, i) => ({
+            url: p.url,
+            alt: p.name,
+            isHero: i === 0,
+          }));
+          this.listings.addPhotos(draft.id, photosToAdd).subscribe({
+            next: () => {
+              this.listings.publish(draft.id).subscribe({
+                next: () => this.router.navigateByUrl('/dashboard/listings'),
+                error: (e: { error?: { message?: string } }) => {
+                  this.error.set(e.error?.message ?? 'Could not publish listing.');
+                  this.submitting.set(false);
+                },
+              });
+            },
+            error: (e: { error?: { message?: string } }) => {
+              this.error.set(e.error?.message ?? 'Could not upload photos.');
+              this.submitting.set(false);
+            },
+          });
         },
-        error: (e: Error) => {
-          this.error.set(e.message);
+        error: (e: { error?: { message?: string } }) => {
+          this.error.set(e.error?.message ?? 'Could not create listing.');
           this.submitting.set(false);
         },
       });

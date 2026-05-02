@@ -1,9 +1,14 @@
-import { Injectable } from '@angular/core';
-import type { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import type { Condition } from '../../shared/components/badge/badge';
-import type { GearType, Listing, ListingPhoto, ListingSummary } from '../models/listing';
-import { MOCK_LISTINGS, MOCK_LISTING_SUMMARIES } from '../mock-data';
-import { generateId, mockError, mockResponse } from './mock-response';
+import type {
+  GearType,
+  Listing,
+  ListingPhoto,
+  ListingSummary,
+} from '../models/listing';
 
 export interface ListingSearchQuery {
   location?: string;
@@ -49,181 +54,258 @@ export interface MarketRate {
 export type ListingDraftInput = Pick<
   Listing,
   'title' | 'gearType' | 'gearTypeLabel' | 'condition' | 'pickupZip'
-> & { listerId: string; listerName: string; listerVerified: boolean };
+> & {
+  listerId: string;
+  listerName: string;
+  listerVerified: boolean;
+  description?: string;
+  dailyRateCents?: number;
+  depositCents?: number;
+  cancellationPolicy?: 'flexible' | 'moderate' | 'strict';
+  isBundle?: boolean;
+};
 
-const DEFAULT_PAGE_SIZE = 12;
+interface BackendListingSummary {
+  id: string;
+  title: string;
+  gearType: number;
+  gearTypeLabel: string;
+  condition: number;
+  dailyRateCents: number;
+  pickupZip: string;
+  heroPhotoUrl: string;
+  listerName: string;
+  listerVerified: boolean;
+  isBundle: boolean;
+  ratingAverage: number;
+  ratingCount: number;
+  status: number;
+}
+
+interface BackendListing extends Omit<BackendListingSummary, 'heroPhotoUrl'> {
+  description: string;
+  depositCents: number | null;
+  serviceFeeBp: number;
+  cancellationPolicy: number;
+  status: number;
+  listerId: string;
+  photos: { id: string; url: string; alt: string | null; isHero: boolean }[];
+  specs: { key: string; value: string }[];
+  bundleListingIds: string[] | null;
+}
+
+const GEAR_TYPES: GearType[] = ['thermal', 'night-vision', 'tree-stand', 'optics', 'pack', 'other'];
+const CONDITIONS: Condition[] = ['mint', 'field-ready', 'battle-scarred'];
+const POLICIES = ['flexible', 'moderate', 'strict'] as const;
+// ListingStatus enum values from backend Kitlo.Core/Enums/Enums.cs
+export type ListingStatus = 'draft' | 'pending' | 'published' | 'paused' | 'rejected' | 'archived';
+const LISTING_STATUSES: ListingStatus[] = ['draft', 'pending', 'published', 'paused', 'rejected', 'archived'];
+function listingStatusFromInt(value: number): ListingStatus {
+  return LISTING_STATUSES[value] ?? 'published';
+}
+
+function gearTypeFromInt(value: number): GearType {
+  return GEAR_TYPES[value] ?? 'other';
+}
+function gearTypeToInt(value: GearType): number {
+  return GEAR_TYPES.indexOf(value);
+}
+function conditionFromInt(value: number): Condition {
+  return CONDITIONS[value] ?? 'field-ready';
+}
+function conditionToString(value: Condition): string {
+  // Backend parses csv with hyphens stripped; send the canonical label.
+  return value;
+}
+function policyFromInt(value: number): 'flexible' | 'moderate' | 'strict' {
+  return POLICIES[value] ?? 'moderate';
+}
+
+function mapSummary(b: BackendListingSummary): ListingSummary {
+  return {
+    id: b.id,
+    title: b.title,
+    gearType: gearTypeFromInt(b.gearType),
+    gearTypeLabel: b.gearTypeLabel,
+    condition: conditionFromInt(b.condition),
+    dailyRateCents: b.dailyRateCents,
+    pickupZip: b.pickupZip,
+    heroPhotoUrl: b.heroPhotoUrl,
+    listerName: b.listerName,
+    listerVerified: b.listerVerified,
+    isBundle: b.isBundle,
+    rating: b.ratingCount > 0 ? { average: b.ratingAverage, count: b.ratingCount } : undefined,
+    status: listingStatusFromInt(b.status),
+  };
+}
+
+function mapListing(b: BackendListing): Listing {
+  const heroPhoto = b.photos.find((p) => p.isHero) ?? b.photos[0];
+  return {
+    id: b.id,
+    title: b.title,
+    gearType: gearTypeFromInt(b.gearType),
+    gearTypeLabel: b.gearTypeLabel,
+    condition: conditionFromInt(b.condition),
+    dailyRateCents: b.dailyRateCents,
+    depositCents: b.depositCents ?? undefined,
+    serviceFeePct: b.serviceFeeBp / 100,
+    cancellationPolicy: policyFromInt(b.cancellationPolicy),
+    pickupZip: b.pickupZip,
+    description: b.description,
+    heroPhotoUrl: heroPhoto?.url ?? '',
+    listerName: b.listerName,
+    listerVerified: b.listerVerified,
+    isBundle: b.isBundle,
+    rating: b.ratingCount > 0 ? { average: b.ratingAverage, count: b.ratingCount } : undefined,
+    photos: b.photos.map((p) => ({ id: p.id, url: p.url, alt: p.alt ?? undefined, isHero: p.isHero })),
+    specs: b.specs.map((s) => ({ key: s.key, value: s.value })),
+    bundleListingIds: b.bundleListingIds ?? undefined,
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class ListingsService {
-  private listings: Listing[] = MOCK_LISTINGS.map((l) => ({ ...l }));
-  private summaries: ListingSummary[] = MOCK_LISTING_SUMMARIES.map((l) => ({ ...l }));
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/listings`;
 
   search(query: ListingSearchQuery = {}): Observable<ListingSearchResult> {
-    const filtered = this.applyFilters(this.summaries, query);
-    const sorted = this.applySort(filtered, query.sort);
-    const page = query.page ?? 1;
-    const pageSize = query.pageSize ?? DEFAULT_PAGE_SIZE;
-    const start = (page - 1) * pageSize;
-    const items = sorted.slice(start, start + pageSize);
-    return mockResponse({ items, total: sorted.length, page, pageSize });
+    let params = new HttpParams();
+    if (query.gearType) params = params.set('gearType', String(gearTypeToInt(query.gearType)));
+    if (query.condition?.length) params = params.set('conditions', query.condition.map(conditionToString).join(','));
+    if (query.minPriceCents != null) params = params.set('minPriceCents', String(query.minPriceCents));
+    if (query.maxPriceCents != null) params = params.set('maxPriceCents', String(query.maxPriceCents));
+    if (query.verifiedOnly) params = params.set('verifiedOnly', 'true');
+    if (query.location) params = params.set('location', query.location);
+    if (query.sort) params = params.set('sort', query.sort);
+    if (query.listerId) params = params.set('listerId', query.listerId);
+    if (query.page) params = params.set('page', String(query.page));
+    if (query.pageSize) params = params.set('pageSize', String(query.pageSize));
+
+    return this.http
+      .get<{ items: BackendListingSummary[]; total: number; page: number; pageSize: number }>(this.base, { params })
+      .pipe(
+        map((r) => ({
+          items: r.items.map(mapSummary),
+          total: r.total,
+          page: r.page,
+          pageSize: r.pageSize,
+        })),
+      );
   }
 
   count(query: ListingSearchQuery = {}): Observable<number> {
-    return mockResponse(this.applyFilters(this.summaries, query).length);
+    return this.search({ ...query, pageSize: 1 }).pipe(map((r) => r.total));
   }
 
   getById(id: string): Observable<Listing> {
-    const listing = this.listings.find((l) => l.id === id);
-    if (!listing) return mockError(`Listing ${id} not found`);
-    return mockResponse({ ...listing });
+    return this.http.get<BackendListing>(`${this.base}/${id}`).pipe(map(mapListing));
   }
 
   getAvailability(id: string): Observable<AvailabilityRange[]> {
-    if (!this.listings.some((l) => l.id === id)) {
-      return mockError(`Listing ${id} not found`);
-    }
-    return mockResponse(this.syntheticAvailability(id));
+    return this.http.get<{ startDate: string; endDate: string; status: string }[]>(`${this.base}/${id}/availability`).pipe(
+      map((rows) =>
+        rows.map((r) => ({
+          start: r.startDate,
+          end: r.endDate,
+          status: (r.status === 'booked' ? 'booked' : 'blocked') as AvailabilityRangeStatus,
+        })),
+      ),
+    );
   }
 
-  getMine(listerId: string): Observable<Listing[]> {
-    const mine = this.listings.filter((l) => l.listerName === listerId || this.listerIdGuess(l) === listerId);
-    return mockResponse(mine.map((l) => ({ ...l })));
+  /**
+   * "My listings" — calls the dedicated `/api/listings/mine` endpoint that returns
+   * summaries for all of the caller's listings (drafts/paused included).
+   */
+  getMine(): Observable<ListingSummary[]> {
+    const params = new HttpParams().set('pageSize', '100');
+    return this.http
+      .get<{ items: BackendListingSummary[]; total: number; page: number; pageSize: number }>(
+        `${this.base}/mine`,
+        { params },
+      )
+      .pipe(map((r) => r.items.map(mapSummary)));
   }
 
   create(input: ListingDraftInput): Observable<Listing> {
-    const draft: Listing = {
-      id: generateId('lst'),
-      title: input.title,
-      gearType: input.gearType,
-      gearTypeLabel: input.gearTypeLabel,
-      condition: input.condition,
-      dailyRateCents: 0,
-      pickupZip: input.pickupZip,
-      heroPhotoUrl: '',
-      listerName: input.listerName,
-      listerVerified: input.listerVerified,
-      description: '',
-      photos: [],
-      specs: [],
-      serviceFeePct: 12,
-      cancellationPolicy: 'moderate',
-    };
-    this.listings = [draft, ...this.listings];
-    this.summaries = [this.toSummary(draft), ...this.summaries];
-    return mockResponse({ ...draft });
+    return this.http
+      .post<BackendListing>(this.base, {
+        title: input.title,
+        gearType: gearTypeToInt(input.gearType),
+        gearTypeLabel: input.gearTypeLabel,
+        condition: CONDITIONS.indexOf(input.condition),
+        pickupZip: input.pickupZip,
+        description: input.description ?? '',
+        dailyRateCents: input.dailyRateCents ?? 0,
+        depositCents: input.depositCents,
+        cancellationPolicy: input.cancellationPolicy
+          ? POLICIES.indexOf(input.cancellationPolicy)
+          : 1,
+        isBundle: input.isBundle ?? false,
+      })
+      .pipe(map(mapListing));
   }
 
   update(id: string, patch: Partial<Listing>): Observable<Listing> {
-    const idx = this.listings.findIndex((l) => l.id === id);
-    if (idx < 0) return mockError(`Listing ${id} not found`);
-    const next: Listing = { ...this.listings[idx], ...patch, id };
-    this.listings[idx] = next;
-    const summaryIdx = this.summaries.findIndex((s) => s.id === id);
-    if (summaryIdx >= 0) this.summaries[summaryIdx] = this.toSummary(next);
-    return mockResponse({ ...next });
+    const body: Record<string, unknown> = {};
+    if (patch.title !== undefined) body['title'] = patch.title;
+    if (patch.description !== undefined) body['description'] = patch.description;
+    if (patch.dailyRateCents !== undefined) body['dailyRateCents'] = patch.dailyRateCents;
+    if (patch.depositCents !== undefined) body['depositCents'] = patch.depositCents;
+    if (patch.cancellationPolicy !== undefined) body['cancellationPolicy'] = POLICIES.indexOf(patch.cancellationPolicy);
+    if (patch.condition !== undefined) body['condition'] = CONDITIONS.indexOf(patch.condition);
+    if (patch.pickupZip !== undefined) body['pickupZip'] = patch.pickupZip;
+    if (patch.isBundle !== undefined) body['isBundle'] = patch.isBundle;
+    if (patch.bundleListingIds !== undefined) body['bundleListingIds'] = patch.bundleListingIds;
+    return this.http.put<BackendListing>(`${this.base}/${id}`, body).pipe(map(mapListing));
   }
 
   archive(id: string): Observable<void> {
-    this.listings = this.listings.filter((l) => l.id !== id);
-    this.summaries = this.summaries.filter((s) => s.id !== id);
-    return mockResponse(undefined);
+    return this.http.delete<void>(`${this.base}/${id}`);
   }
 
   addPhotos(id: string, photos: Omit<ListingPhoto, 'id'>[]): Observable<ListingPhoto[]> {
-    const idx = this.listings.findIndex((l) => l.id === id);
-    if (idx < 0) return mockError(`Listing ${id} not found`);
-    const created: ListingPhoto[] = photos.map((p) => ({ ...p, id: generateId('p') }));
-    const next: Listing = { ...this.listings[idx], photos: [...this.listings[idx].photos, ...created] };
-    this.listings[idx] = next;
-    return mockResponse(created);
-  }
-
-  publish(id: string): Observable<Listing> {
-    return this.update(id, {});
-  }
-
-  getMarketRates(category: GearType): Observable<MarketRate> {
-    const sample = this.summaries.filter((l) => l.gearType === category);
-    if (!sample.length) {
-      return mockResponse({ gearType: category, averageDailyCents: 0, p25Cents: 0, p75Cents: 0, sampleSize: 0 });
-    }
-    const rates = sample.map((l) => l.dailyRateCents).sort((a, b) => a - b);
-    const avg = Math.round(rates.reduce((sum, r) => sum + r, 0) / rates.length);
-    const p25 = rates[Math.floor(rates.length * 0.25)] ?? rates[0];
-    const p75 = rates[Math.floor(rates.length * 0.75)] ?? rates[rates.length - 1];
-    return mockResponse({ gearType: category, averageDailyCents: avg, p25Cents: p25, p75Cents: p75, sampleSize: rates.length });
-  }
-
-  private applyFilters(items: ListingSummary[], q: ListingSearchQuery): ListingSummary[] {
-    return items.filter((l) => {
-      if (q.gearType && l.gearType !== q.gearType) return false;
-      if (q.condition?.length && !q.condition.includes(l.condition)) return false;
-      if (q.minPriceCents != null && l.dailyRateCents < q.minPriceCents) return false;
-      if (q.maxPriceCents != null && l.dailyRateCents > q.maxPriceCents) return false;
-      if (q.verifiedOnly && !l.listerVerified) return false;
-      if (q.minRating != null && (l.rating?.average ?? 0) < q.minRating) return false;
-      if (q.location) {
-        const loc = q.location.trim().toLowerCase();
-        if (!l.pickupZip.toLowerCase().includes(loc) && !l.listerName.toLowerCase().includes(loc)) {
-          return false;
-        }
-      }
-      return true;
+    // Backend exposes single-photo upload; add them sequentially.
+    const calls = photos.map((p) =>
+      this.http.post<{ id: string; url: string; alt: string | null; isHero: boolean }>(
+        `${this.base}/${id}/photos`,
+        { url: p.url, alt: p.alt ?? null, isHero: p.isHero ?? false },
+      ),
+    );
+    return new Observable<ListingPhoto[]>((subscriber) => {
+      Promise.all(calls.map((o) => new Promise<ListingPhoto>((res, rej) => o.subscribe({ next: (r) => res({ id: r.id, url: r.url, alt: r.alt ?? undefined, isHero: r.isHero }), error: rej }))))
+        .then((all) => {
+          subscriber.next(all);
+          subscriber.complete();
+        })
+        .catch((err) => subscriber.error(err));
     });
   }
 
-  private applySort(items: ListingSummary[], sort: ListingSearchQuery['sort']): ListingSummary[] {
-    const copy = [...items];
-    switch (sort) {
-      case 'price-asc':
-        return copy.sort((a, b) => a.dailyRateCents - b.dailyRateCents);
-      case 'price-desc':
-        return copy.sort((a, b) => b.dailyRateCents - a.dailyRateCents);
-      case 'rating':
-        return copy.sort((a, b) => (b.rating?.average ?? 0) - (a.rating?.average ?? 0));
-      case 'newest':
-        return copy.reverse();
-      default:
-        return copy;
-    }
+  publish(id: string): Observable<Listing> {
+    return this.http.post<BackendListing>(`${this.base}/${id}/publish`, {}).pipe(map(mapListing));
   }
 
-  private toSummary(l: Listing): ListingSummary {
-    return {
-      id: l.id,
-      title: l.title,
-      gearType: l.gearType,
-      gearTypeLabel: l.gearTypeLabel,
-      condition: l.condition,
-      dailyRateCents: l.dailyRateCents,
-      pickupZip: l.pickupZip,
-      heroPhotoUrl: l.heroPhotoUrl,
-      rating: l.rating,
-      listerName: l.listerName,
-      listerVerified: l.listerVerified,
-      isBundle: l.isBundle,
-    };
-  }
-
-  private listerIdGuess(l: Listing): string {
-    return `u-lister-${l.listerName.toLowerCase().replace(/\s+/g, '-')}`;
-  }
-
-  private syntheticAvailability(listingId: string): AvailabilityRange[] {
-    const seed = listingId.charCodeAt(listingId.length - 1) % 5;
-    const today = new Date();
-    const ranges: AvailabilityRange[] = [];
-    for (let i = 0; i < 2; i++) {
-      const start = new Date(today);
-      start.setDate(today.getDate() + 7 + i * 14 + seed);
-      const end = new Date(start);
-      end.setDate(start.getDate() + 2 + (i % 2));
-      ranges.push({
-        start: start.toISOString().slice(0, 10),
-        end: end.toISOString().slice(0, 10),
-        status: i === 0 ? 'booked' : 'blocked',
-      });
-    }
-    return ranges;
+  /**
+   * Market-rate stats are not in the backend yet. Returns a coarse client-side
+   * placeholder so the listing-create form's hint stays populated; replace
+   * once a `/api/listings/market-rates` endpoint lands.
+   */
+  getMarketRates(category: GearType): Observable<MarketRate> {
+    return this.search({ gearType: category, pageSize: 50 }).pipe(
+      map((r) => {
+        if (!r.items.length) return { gearType: category, averageDailyCents: 0, p25Cents: 0, p75Cents: 0, sampleSize: 0 };
+        const rates = r.items.map((l) => l.dailyRateCents).sort((a, b) => a - b);
+        const avg = Math.round(rates.reduce((s, v) => s + v, 0) / rates.length);
+        return {
+          gearType: category,
+          averageDailyCents: avg,
+          p25Cents: rates[Math.floor(rates.length * 0.25)] ?? rates[0],
+          p75Cents: rates[Math.floor(rates.length * 0.75)] ?? rates[rates.length - 1],
+          sampleSize: rates.length,
+        };
+      }),
+    );
   }
 }

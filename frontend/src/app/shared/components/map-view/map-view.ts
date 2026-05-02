@@ -1,5 +1,28 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { MoneyPipe } from '../../pipes/money.pipe';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  effect,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
+import * as L from 'leaflet';
+
+// Leaflet's default-icon images are referenced relatively in CSS and break when
+// imported inline. Wire them up here instead so markers render correctly.
+const ICON_BASE = 'https://unpkg.com/leaflet@1.9.4/dist/images';
+const KitloMarkerIcon = L.icon({
+  iconUrl: `${ICON_BASE}/marker-icon.png`,
+  iconRetinaUrl: `${ICON_BASE}/marker-icon-2x.png`,
+  shadowUrl: `${ICON_BASE}/marker-shadow.png`,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
 export interface MapPin {
   id: string;
@@ -9,56 +32,87 @@ export interface MapPin {
   priceCents?: number;
 }
 
+const DEFAULT_CENTER: L.LatLngTuple = [40.0, -105.27]; // Boulder, CO
+
 @Component({
   selector: 'app-map-view',
-  imports: [MoneyPipe],
   template: `
     <div
-      class="relative bg-surface border border-line min-h-[420px] flex items-center justify-center overflow-hidden topo"
-    >
-      <div class="absolute inset-0 topo-texture opacity-40" aria-hidden="true"></div>
-      <div class="relative z-[1] text-center">
-        <p
-          class="font-mono text-overline tracking-[0.10em] uppercase text-muted mb-2"
-        >Map placeholder</p>
-        <p
-          class="font-condensed text-h3 font-extrabold uppercase tracking-[0.06em] text-slate"
-        >Real Mapbox wiring lands in Phase 5</p>
-      </div>
-      <ul class="absolute bottom-4 left-4 right-4 grid grid-cols-2 gap-2 z-[1]">
-        @for (pin of pins(); track pin.id) {
-          <li>
-            <button
-              type="button"
-              class="w-full text-left bg-bone border border-line px-3 py-2 cursor-pointer hover:border-slate transition-colors"
-              (click)="pinClick.emit(pin)"
-            >
-              <span class="font-condensed text-sm font-extrabold uppercase tracking-[0.04em] text-slate block">
-                {{ pin.label }}
-              </span>
-              @if (pin.priceCents !== undefined) {
-                <span class="font-mono text-xs text-olive">
-                  {{ pin.priceCents | money }}/day
-                </span>
-              }
-            </button>
-          </li>
-        }
-      </ul>
-    </div>
+      #host
+      class="relative bg-surface border border-line min-h-[420px] overflow-hidden"
+      style="z-index: 0"
+    ></div>
   `,
   styles: `
-    .topo-texture {
-      background-image:
-        radial-gradient(ellipse 50% 35% at 50% 50%, transparent 78%, rgba(83, 90, 45, 0.06) 78%, rgba(83, 90, 45, 0.06) 79%, transparent 79%),
-        radial-gradient(ellipse 68% 50% at 50% 50%, transparent 82%, rgba(83, 90, 45, 0.04) 82%, rgba(83, 90, 45, 0.04) 83%, transparent 83%),
-        radial-gradient(ellipse 86% 65% at 50% 50%, transparent 86%, rgba(83, 90, 45, 0.03) 86%, rgba(83, 90, 45, 0.03) 87%, transparent 87%);
-    }
+    :host { display: block; }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MapView {
+export class MapView implements AfterViewInit, OnDestroy {
   readonly pins = input.required<MapPin[]>();
   readonly center = input<{ lat: number; lng: number }>();
   readonly pinClick = output<MapPin>();
+
+  private readonly host = viewChild.required<ElementRef<HTMLElement>>('host');
+  private map?: L.Map;
+  private layer?: L.LayerGroup;
+
+  constructor() {
+    effect(() => {
+      const list = this.pins();
+      if (this.map) this.renderPins(list);
+    });
+  }
+
+  ngAfterViewInit(): void {
+    const el = this.host().nativeElement;
+    const c = this.center();
+    const initial: L.LatLngTuple = c ? [c.lat, c.lng] : DEFAULT_CENTER;
+
+    this.map = L.map(el, {
+      center: initial,
+      zoom: 11,
+      attributionControl: true,
+      zoomControl: true,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(this.map);
+
+    this.layer = L.layerGroup().addTo(this.map);
+    this.renderPins(this.pins());
+  }
+
+  ngOnDestroy(): void {
+    this.map?.remove();
+  }
+
+  private renderPins(pins: MapPin[]): void {
+    if (!this.map || !this.layer) return;
+    this.layer.clearLayers();
+
+    pins.forEach((pin) => {
+      const marker = L.marker([pin.lat, pin.lng], { title: pin.label, icon: KitloMarkerIcon });
+      const price = pin.priceCents !== undefined ? `<br><strong>$${(pin.priceCents / 100).toFixed(0)}/day</strong>` : '';
+      marker.bindPopup(`<strong>${this.escape(pin.label)}</strong>${price}`);
+      marker.on('click', () => this.pinClick.emit(pin));
+      marker.addTo(this.layer!);
+    });
+
+    if (pins.length > 0) {
+      const bounds = L.latLngBounds(pins.map((p) => [p.lat, p.lng] as L.LatLngTuple));
+      this.map.fitBounds(bounds.pad(0.2), { animate: false, maxZoom: 14 });
+    }
+  }
+
+  private escape(text: string): string {
+    return text.replace(/[&<>"']/g, (c) =>
+      c === '&' ? '&amp;' :
+      c === '<' ? '&lt;' :
+      c === '>' ? '&gt;' :
+      c === '"' ? '&quot;' : '&#39;',
+    );
+  }
 }

@@ -8,15 +8,15 @@ export interface StepDef {
   selector: 'app-stepper',
   template: `
     <ol
-      class="flex items-center gap-0 px-10 py-5 border-b border-line bg-bone list-none"
+      class="flex items-start gap-0 px-10 py-5 border-b border-line bg-bone list-none"
     >
       @for (step of steps(); track $index; let i = $index) {
-        <li class="flex items-center gap-3 flex-1 relative">
+        <li class="flex flex-col items-center gap-2 flex-1 relative">
           @if (i > 0) {
             <span
-              class="absolute left-[-50%] top-1/2 -translate-y-1/2 w-full h-px"
-              [class.bg-olive]="i <= currentIndex()"
-              [class.bg-line]="i > currentIndex()"
+              class="absolute left-[-50%] top-3.5 -translate-y-1/2 w-full h-px"
+              [class.bg-olive]="i <= currentNorm()"
+              [class.bg-line]="i > currentNorm()"
               aria-hidden="true"
             ></span>
           }

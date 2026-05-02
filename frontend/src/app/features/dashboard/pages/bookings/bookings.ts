@@ -14,7 +14,7 @@ import type { BookingStatus } from '../../../../shared';
 
 const TAB_FILTERS: Record<string, BookingStatus[]> = {
   all: [],
-  upcoming: ['confirmed'],
+  upcoming: ['pending', 'confirmed'],
   active: ['active'],
   past: ['completed', 'returned', 'cancelled', 'disputed'],
 };

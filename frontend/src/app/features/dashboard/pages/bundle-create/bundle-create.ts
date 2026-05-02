@@ -88,12 +88,7 @@ export class DashboardBundleCreate {
   private readonly auth = inject(AuthService);
 
   protected readonly myListings = toSignal(
-    this.listings.search({ pageSize: 50 }).pipe(
-      map((page) => {
-        const myName = this.auth.currentUser()?.name;
-        return myName ? page.items.filter((l) => l.listerName === myName) : page.items.slice(0, 6);
-      }),
-    ),
+    this.listings.getMine().pipe(map((items) => items.filter((l) => !l.isBundle))),
     { initialValue: [] as ListingSummary[] },
   );
   protected readonly includedIds = signal<string[]>([]);
@@ -120,14 +115,24 @@ export class DashboardBundleCreate {
     if (this.form.invalid || this.includedIds().length < 2 || this.submitting()) return;
     const me = this.auth.currentUser();
     if (!me) return;
+
+    // Inherit pickup ZIP from the first child listing — bundles meet at the
+    // strictest constraint of any included item, and ZIP must be a real
+    // 5-digit value to pass backend validation.
+    const firstChild = this.myListings().find((l) => l.id === this.includedIds()[0]);
+    const pickupZip = firstChild?.pickupZip ?? '00000';
+
     this.submitting.set(true);
     this.listings
       .create({
         title: this.form.value.title!,
+        description: this.form.value.description ?? '',
         gearType: 'other',
         gearTypeLabel: 'Bundle',
         condition: 'field-ready',
-        pickupZip: '00000',
+        pickupZip,
+        dailyRateCents: this.form.value.dailyRateCents ?? 0,
+        isBundle: true,
         listerId: me.id,
         listerName: me.name,
         listerVerified: me.verified,
@@ -136,8 +141,6 @@ export class DashboardBundleCreate {
         next: (draft) => {
           this.listings
             .update(draft.id, {
-              dailyRateCents: this.form.value.dailyRateCents ?? 0,
-              description: this.form.value.description ?? '',
               isBundle: true,
               bundleListingIds: this.includedIds(),
             })

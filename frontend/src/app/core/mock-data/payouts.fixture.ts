@@ -1,5 +1,7 @@
 import type { EarningsSummary, Payout } from '../models/payout';
 
+// Phase 1 launch pricing: 5% lister payout fee deducted from gross.
+// See docs/business-plan.md.
 export const MOCK_PAYOUTS: Payout[] = [
   {
     id: 'po-001',
@@ -7,8 +9,8 @@ export const MOCK_PAYOUTS: Payout[] = [
     listingTitle: 'Vortex Razor HD 27-60x85 Spotter',
     rentalDays: 3,
     grossCents: 13680,
-    platformFeeCents: 1642,
-    netCents: 12038,
+    platformFeeCents: 684,
+    netCents: 12996,
     status: 'paid',
     scheduledFor: '2026-03-24',
     paidAt: '2026-03-24T03:00:00Z',
@@ -20,8 +22,8 @@ export const MOCK_PAYOUTS: Payout[] = [
     listingTitle: 'Tikka T3x Roughtech 6.5 Creedmoor',
     rentalDays: 3,
     grossCents: 32490,
-    platformFeeCents: 3899,
-    netCents: 28591,
+    platformFeeCents: 1625,
+    netCents: 30865,
     status: 'paid',
     scheduledFor: '2026-02-12',
     paidAt: '2026-02-12T03:00:00Z',
@@ -33,8 +35,8 @@ export const MOCK_PAYOUTS: Payout[] = [
     listingTitle: 'Hoyt RX-7 Ultra Compound',
     rentalDays: 4,
     grossCents: 30100,
-    platformFeeCents: 3612,
-    netCents: 26488,
+    platformFeeCents: 1505,
+    netCents: 28595,
     status: 'in-transit',
     scheduledFor: '2026-04-30',
     bankLast4: '4421',
@@ -45,8 +47,8 @@ export const MOCK_PAYOUTS: Payout[] = [
     listingTitle: 'ATN X-Sight 4K Pro',
     rentalDays: 4,
     grossCents: 39200,
-    platformFeeCents: 4704,
-    netCents: 34496,
+    platformFeeCents: 1960,
+    netCents: 37240,
     status: 'scheduled',
     scheduledFor: '2026-05-04',
     bankLast4: '4421',
@@ -57,8 +59,8 @@ export const MOCK_PAYOUTS: Payout[] = [
     listingTitle: 'Pulsar Thermion 2 XQ50 Pro',
     rentalDays: 3,
     grossCents: 49620,
-    platformFeeCents: 5954,
-    netCents: 43666,
+    platformFeeCents: 2481,
+    netCents: 47139,
     status: 'scheduled',
     scheduledFor: '2026-05-17',
     bankLast4: '4421',
@@ -66,9 +68,9 @@ export const MOCK_PAYOUTS: Payout[] = [
 ];
 
 export const MOCK_EARNINGS_SUMMARY: EarningsSummary = {
-  lifetimeCents: 145279,
-  pendingCents: 104650,
-  thisMonthCents: 60984,
+  lifetimeCents: 156835,
+  pendingCents: 112974,
+  thisMonthCents: 65805,
   bookingsCount: 5,
   averageDailyRateCents: 9117,
 };

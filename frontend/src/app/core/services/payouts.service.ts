@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import type { Observable } from 'rxjs';
-import type { EarningsSummary, Payout } from '../models/payout';
-import { MOCK_EARNINGS_SUMMARY, MOCK_PAYOUTS } from '../mock-data';
-import { mockResponse } from './mock-response';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import type { EarningsSummary, Payout, PayoutStatus } from '../models/payout';
 
 export interface PayoutPage {
   items: Payout[];
@@ -17,47 +17,104 @@ export interface ListingEarnings {
   netCents: number;
 }
 
-const DEFAULT_PAGE_SIZE = 20;
+interface BackendPayout {
+  id: string;
+  bookingId: string;
+  listingTitle: string;
+  rentalDays: number;
+  grossCents: number;
+  platformFeeCents: number;
+  netCents: number;
+  status: number;
+  scheduledFor: string;
+  paidAt?: string | null;
+  bankLast4?: string | null;
+}
+
+interface BackendSummary {
+  lifetimeCents: number;
+  pendingCents: number;
+  thisMonthCents: number;
+  bookingsCount: number;
+  averageDailyRateCents: number;
+}
+
+const STATUSES: PayoutStatus[] = ['scheduled', 'in-transit', 'paid', 'failed'];
+
+function mapPayout(b: BackendPayout): Payout {
+  return {
+    id: b.id,
+    bookingId: b.bookingId,
+    listingTitle: b.listingTitle,
+    rentalDays: b.rentalDays,
+    grossCents: b.grossCents,
+    platformFeeCents: b.platformFeeCents,
+    netCents: b.netCents,
+    status: STATUSES[b.status] ?? 'scheduled',
+    scheduledFor: b.scheduledFor,
+    paidAt: b.paidAt ?? undefined,
+    bankLast4: b.bankLast4 ?? undefined,
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class PayoutsService {
-  private payouts: Payout[] = MOCK_PAYOUTS.map((p) => ({ ...p }));
-  private summary: EarningsSummary = { ...MOCK_EARNINGS_SUMMARY };
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/payouts`;
 
   getSummary(): Observable<EarningsSummary> {
-    return mockResponse({ ...this.summary });
+    return this.http.get<BackendSummary>(`${this.base}/summary`).pipe(
+      map((s) => ({
+        lifetimeCents: s.lifetimeCents,
+        pendingCents: s.pendingCents,
+        thisMonthCents: s.thisMonthCents,
+        bookingsCount: s.bookingsCount,
+        averageDailyRateCents: s.averageDailyRateCents,
+      })),
+    );
   }
 
-  getHistory(page = 1, pageSize = DEFAULT_PAGE_SIZE): Observable<PayoutPage> {
-    const sorted = [...this.payouts].sort((a, b) => b.scheduledFor.localeCompare(a.scheduledFor));
-    const start = (page - 1) * pageSize;
-    return mockResponse({
-      items: sorted.slice(start, start + pageSize).map((p) => ({ ...p })),
-      total: sorted.length,
-      page,
-      pageSize,
-    });
+  getHistory(page = 1, pageSize = 20): Observable<PayoutPage> {
+    const params = new HttpParams().set('page', String(page)).set('pageSize', String(pageSize));
+    return this.http
+      .get<{ items: BackendPayout[]; total: number; page: number; pageSize: number }>(this.base, { params })
+      .pipe(
+        map((r) => ({
+          items: r.items.map(mapPayout),
+          total: r.total,
+          page: r.page,
+          pageSize: r.pageSize,
+        })),
+      );
   }
 
+  /**
+   * Per-listing earnings rollup is owed on the backend; for now derive it from
+   * the paged history endpoint.
+   */
   getByListing(): Observable<ListingEarnings[]> {
-    const grouped = new Map<string, ListingEarnings>();
-    for (const p of this.payouts) {
-      const existing = grouped.get(p.listingTitle);
-      if (existing) {
-        existing.bookingsCount += 1;
-        existing.netCents += p.netCents;
-      } else {
-        grouped.set(p.listingTitle, { listingTitle: p.listingTitle, bookingsCount: 1, netCents: p.netCents });
-      }
-    }
-    return mockResponse([...grouped.values()].sort((a, b) => b.netCents - a.netCents));
+    return this.getHistory(1, 100).pipe(
+      map((p) => {
+        const grouped = new Map<string, ListingEarnings>();
+        for (const item of p.items) {
+          const existing = grouped.get(item.listingTitle);
+          if (existing) {
+            existing.bookingsCount += 1;
+            existing.netCents += item.netCents;
+          } else {
+            grouped.set(item.listingTitle, {
+              listingTitle: item.listingTitle,
+              bookingsCount: 1,
+              netCents: item.netCents,
+            });
+          }
+        }
+        return [...grouped.values()].sort((a, b) => b.netCents - a.netCents);
+      }),
+    );
   }
 
   exportCsv(): Observable<string> {
-    const header = 'id,bookingId,listingTitle,rentalDays,grossCents,platformFeeCents,netCents,status,scheduledFor,paidAt';
-    const rows = this.payouts.map((p) =>
-      [p.id, p.bookingId, `"${p.listingTitle.replace(/"/g, '""')}"`, p.rentalDays, p.grossCents, p.platformFeeCents, p.netCents, p.status, p.scheduledFor, p.paidAt ?? ''].join(','),
-    );
-    return mockResponse([header, ...rows].join('\n'), 250);
+    return this.http.get(`${this.base}/export`, { responseType: 'text' });
   }
 }

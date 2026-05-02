@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, map, of, switchMap } from 'rxjs';
 import {
@@ -15,9 +15,10 @@ import {
   Skeleton,
   SpecTable,
   type Crumb,
+  type DateRangeValue,
   type SpecRow,
 } from '../../../../shared';
-import { ListingsService, ReviewsService } from '../../../../core/services';
+import { AuthService, ListingsService, ReviewsService } from '../../../../core/services';
 import type { Listing, Review } from '../../../../core/models';
 
 interface ListingDetailState {
@@ -153,7 +154,11 @@ interface ListingDetailState {
 
           <aside>
             <div class="sticky top-20">
-              <app-booking-sidebar [listing]="l" />
+              <app-booking-sidebar
+                [listing]="l"
+                [(range)]="dateRange"
+                (book)="requestBooking(l.id)"
+              />
             </div>
           </aside>
         </div>
@@ -171,8 +176,33 @@ interface ListingDetailState {
 })
 export class PublicListingDetail {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly listings = inject(ListingsService);
   private readonly reviews = inject(ReviewsService);
+  private readonly auth = inject(AuthService);
+
+  protected readonly dateRange = signal<DateRangeValue>({ start: null, end: null });
+
+  protected requestBooking(listingId: string): void {
+    const r = this.dateRange();
+    if (!r.start || !r.end) return;
+    if (!this.auth.isAuthenticated()) {
+      this.router.navigate(['/auth/login'], {
+        queryParams: { redirect: `/listing/${listingId}` },
+      });
+      return;
+    }
+    this.router.navigate(['/booking', listingId, 'request'], {
+      queryParams: {
+        start: this.toIsoDate(r.start),
+        end: this.toIsoDate(r.end),
+      },
+    });
+  }
+
+  private toIsoDate(d: Date): string {
+    return d.toISOString().slice(0, 10);
+  }
 
   protected readonly state = toSignal(
     this.route.params.pipe(
@@ -205,6 +235,4 @@ export class PublicListingDetail {
     const l = this.state().listing;
     return l ? [{ label: l.gearTypeLabel, route: '/search' }, { label: l.title }] : [];
   });
-
-  protected readonly _selected = signal<null>(null);
 }

@@ -1,17 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
 import { Badge, Button, EmptyState, PageHeader, Spinner, StatusBadge, Tabs, type TabDef } from '../../../../shared';
 import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
-import { AuthService } from '../../../../core/services/auth.service';
 import { ListingsService } from '../../../../core/services/listings.service';
-import type { ListingSummary } from '../../../../core/models/listing';
+import type { ListingStatus, ListingSummary } from '../../../../core/models/listing';
+
+type RowStatus = 'active' | 'paused' | 'pending' | 'archived' | 'draft' | 'rejected';
+
+const STATUS_TO_ROW: Record<ListingStatus, RowStatus> = {
+  draft: 'draft',
+  pending: 'pending',
+  published: 'active',
+  paused: 'paused',
+  rejected: 'rejected',
+  archived: 'archived',
+};
 
 interface ListingRow extends ListingSummary {
-  rowStatus: 'active' | 'paused' | 'pending' | 'archived';
-  bookingsCount: number;
-  monthlyEarningsCents: number;
+  rowStatus: RowStatus;
 }
 
 @Component({
@@ -43,7 +50,7 @@ interface ListingRow extends ListingSummary {
               </div>
               <h3 class="font-condensed text-h3 font-extrabold uppercase text-slate">{{ row.title }}</h3>
               <p class="text-xs text-muted">
-                {{ row.dailyRateCents | money }}/day · {{ row.bookingsCount }} bookings · {{ row.monthlyEarningsCents | money }} this month
+                {{ row.dailyRateCents | money }}/day · ZIP {{ row.pickupZip }}
               </p>
             </div>
             <div class="flex flex-col gap-2 justify-end">
@@ -62,33 +69,22 @@ interface ListingRow extends ListingSummary {
 })
 export class DashboardListings {
   private readonly listings = inject(ListingsService);
-  private readonly auth = inject(AuthService);
 
   protected readonly activeTab = signal('all');
 
   private readonly result = toSignal(
-    this.listings
-      .search({ pageSize: 50 })
-      .pipe(
-        map((page) => {
-          const myName = this.auth.currentUser()?.name;
-          const items = myName
-            ? page.items.filter((l) => l.listerName === myName)
-            : page.items.slice(0, 6);
-          return items.map<ListingRow>((l, i) => ({
-            ...l,
-            rowStatus: i === 1 ? 'paused' : 'active',
-            bookingsCount: 8 + i,
-            monthlyEarningsCents: 23000 + i * 4500,
-          }));
-        }),
-      ),
+    this.listings.getMine(),
     { initialValue: undefined },
   );
 
   protected readonly loading = computed(() => this.result() === undefined);
 
-  protected readonly rows = computed<ListingRow[]>(() => this.result() ?? []);
+  protected readonly rows = computed<ListingRow[]>(() =>
+    (this.result() ?? []).map((l) => ({
+      ...l,
+      rowStatus: STATUS_TO_ROW[l.status ?? 'published'],
+    })),
+  );
 
   protected readonly filtered = computed(() => {
     const tab = this.activeTab();

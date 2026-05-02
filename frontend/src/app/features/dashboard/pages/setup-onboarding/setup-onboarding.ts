@@ -137,8 +137,8 @@ const STEPS: StepDef[] = [
 
             <div class="border border-line p-5 bg-surface">
               <div class="font-mono text-overline text-muted uppercase tracking-[0.10em] mb-2">Kitlo take rate</div>
-              <div class="font-condensed text-h2 font-black text-slate">12% of every rental</div>
-              <p class="text-sm text-muted mt-2">Deducted from each rental before payout.</p>
+              <div class="font-condensed text-h2 font-black text-slate">5% of every rental</div>
+              <p class="text-sm text-muted mt-2">Deducted from each payout. Renters separately pay a 5% service fee at checkout. Phase 1 launch pricing — locked at this rate for your first 24 months.</p>
             </div>
 
             <ul class="text-sm text-muted leading-relaxed list-disc pl-5 mt-5 space-y-2">

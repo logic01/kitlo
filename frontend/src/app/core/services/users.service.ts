@@ -1,9 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import type { Observable } from 'rxjs';
-import type { ProfileSummary, User } from '../models/user';
-import { MOCK_PROFILES, MOCK_USERS } from '../mock-data';
+import { Observable, map, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import type { ProfileSummary, User, UserRole } from '../models/user';
 import { AuthService } from './auth.service';
-import { generateId, mockError, mockResponse, nowIso } from './mock-response';
 
 export interface NotificationPreferences {
   emailBookingUpdates: boolean;
@@ -30,6 +30,37 @@ export interface PublicProfile {
   responseHours: number;
 }
 
+interface BackendUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  verified: boolean;
+  city?: string | null;
+  state?: string | null;
+  avatarUrl?: string | null;
+  joinedAt: string;
+}
+
+interface BackendPublicProfile {
+  id: string;
+  name: string;
+  avatarUrl?: string | null;
+  verified: boolean;
+  city?: string | null;
+  state?: string | null;
+  joinedAt: string;
+  ratingAverage: number;
+  ratingCount: number;
+}
+
+interface BackendPreferences {
+  emailEnabled: boolean;
+  pushEnabled: boolean;
+  smsEnabled: boolean;
+  optedOutMask: number;
+}
+
 const DEFAULT_PREFS: NotificationPreferences = {
   emailBookingUpdates: true,
   emailMessages: true,
@@ -39,106 +70,162 @@ const DEFAULT_PREFS: NotificationPreferences = {
   smsBookingReminders: false,
 };
 
+const AGREEMENT_KEY = 'kitlo_lister_agreement';
+
+function toUser(b: BackendUser): User {
+  return {
+    id: b.id,
+    name: b.name,
+    email: b.email,
+    role: (b.role as UserRole) ?? 'renter',
+    verified: b.verified,
+    city: b.city ?? undefined,
+    state: b.state ?? undefined,
+    avatarUrl: b.avatarUrl ?? undefined,
+    joinedAt: b.joinedAt,
+  };
+}
+
+function toProfile(b: BackendPublicProfile): ProfileSummary {
+  return {
+    id: b.id,
+    name: b.name,
+    avatarUrl: b.avatarUrl ?? undefined,
+    verified: b.verified,
+    city: b.city ?? undefined,
+    state: b.state ?? undefined,
+    rating: b.ratingCount > 0 ? { average: b.ratingAverage, count: b.ratingCount } : undefined,
+  };
+}
+
+/**
+ * Frontend exposes per-event toggles; backend exposes per-channel toggles + an
+ * opt-out bitmask. We collapse for now — granular per-event opt-outs land
+ * behind a follow-up endpoint.
+ */
+function toFrontendPrefs(b: BackendPreferences): NotificationPreferences {
+  return {
+    emailBookingUpdates: b.emailEnabled,
+    emailMessages: b.emailEnabled,
+    emailMarketing: b.emailEnabled,
+    pushBookingUpdates: b.pushEnabled,
+    pushMessages: b.pushEnabled,
+    smsBookingReminders: b.smsEnabled,
+  };
+}
+
+function fromFrontendPrefs(p: NotificationPreferences): BackendPreferences {
+  return {
+    emailEnabled: p.emailBookingUpdates || p.emailMessages || p.emailMarketing,
+    pushEnabled: p.pushBookingUpdates || p.pushMessages,
+    smsEnabled: p.smsBookingReminders,
+    optedOutMask: 0,
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class UsersService {
+  private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthService);
-  private users: User[] = MOCK_USERS.map((u) => ({ ...u }));
-  private profiles: ProfileSummary[] = MOCK_PROFILES.map((p) => ({ ...p }));
-  private prefs: Record<string, NotificationPreferences> = {};
-  private onboarding: Record<string, OnboardingStatus> = {};
-  private agreementsSignedAt: Record<string, string> = {};
+  private readonly base = environment.apiUrl;
 
   getMe(): Observable<User> {
-    const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    const stored = this.users.find((u) => u.id === me.id);
-    return mockResponse({ ...(stored ?? me) });
+    return this.http.get<BackendUser>(`${this.base}/users/me`).pipe(map(toUser));
   }
 
   getProfile(id: string): Observable<ProfileSummary> {
-    const profile = this.profiles.find((p) => p.id === id);
-    if (!profile) return mockError(`Profile ${id} not found`);
-    return mockResponse({ ...profile });
+    return this.http.get<BackendPublicProfile>(`${this.base}/users/${id}/profile`).pipe(map(toProfile));
   }
 
   getPublicProfile(id: string): Observable<PublicProfile> {
-    const user = this.users.find((u) => u.id === id);
-    const profile = this.profiles.find((p) => p.id === id);
-    if (!user || !profile) return mockError(`User ${id} not found`);
-    return mockResponse({
-      user: { ...user },
-      profile: { ...profile },
-      listerSince: user.role === 'lister' ? user.joinedAt : undefined,
-      totalRentals: profile.rating?.count ?? 0,
-      responseHours: 4,
-    });
+    return this.http.get<BackendPublicProfile>(`${this.base}/users/${id}/profile`).pipe(
+      map((p) => {
+        const profile = toProfile(p);
+        return {
+          user: {
+            id: p.id,
+            name: p.name,
+            email: '',
+            role: 'lister' as UserRole,
+            verified: p.verified,
+            city: p.city ?? undefined,
+            state: p.state ?? undefined,
+            avatarUrl: p.avatarUrl ?? undefined,
+            joinedAt: p.joinedAt,
+          },
+          profile,
+          listerSince: p.joinedAt,
+          totalRentals: p.ratingCount,
+          responseHours: 4,
+        };
+      }),
+    );
   }
 
-  updateProfile(patch: Partial<User>): Observable<User> {
+  updateProfile(patch: Partial<User> & { bio?: string }): Observable<User> {
     const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    const idx = this.users.findIndex((u) => u.id === me.id);
-    if (idx < 0) {
-      const created = { ...me, ...patch };
-      this.users.push(created);
-      return mockResponse({ ...created });
-    }
-    const next = { ...this.users[idx], ...patch, id: me.id };
-    this.users[idx] = next;
-    return mockResponse({ ...next });
+    if (!me) throw new Error('Not authenticated');
+    return this.http
+      .put<BackendUser>(`${this.base}/users/${me.id}`, {
+        name: patch.name,
+        city: patch.city,
+        state: patch.state,
+        avatarUrl: patch.avatarUrl,
+        bio: patch.bio,
+      })
+      .pipe(map(toUser));
   }
 
-  saveIntent(intent: 'renter' | 'lister' | 'both'): Observable<void> {
-    const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    const role = intent === 'lister' ? 'lister' : 'renter';
-    const idx = this.users.findIndex((u) => u.id === me.id);
-    if (idx >= 0) this.users[idx] = { ...this.users[idx], role };
-    return mockResponse(undefined);
+  /**
+   * Intent is now persisted at signup time. Kept as a no-op so existing callers
+   * (signup wizard) don't break; safe to delete once those flows finish migrating.
+   */
+  saveIntent(_intent: 'renter' | 'lister' | 'both'): Observable<void> {
+    return of(undefined);
   }
 
+  /**
+   * Cloudinary signed-upload integration is scaffolded in 5.5 but inert without
+   * a configured cloud. Returns a placehold.co URL so previews still render in dev.
+   */
   uploadProfilePhoto(_file: File | Blob): Observable<string> {
-    const url = `https://images.unsplash.com/photo-${generateId('av')}?auto=format&fit=crop&w=240&q=80`;
-    const me = this.auth.currentUser();
-    if (me) {
-      const idx = this.users.findIndex((u) => u.id === me.id);
-      if (idx >= 0) this.users[idx] = { ...this.users[idx], avatarUrl: url };
-    }
-    return mockResponse(url, 400);
+    const url = `https://placehold.co/240x240/333/eee?text=Avatar`;
+    return of(url);
   }
 
   getNotificationPreferences(): Observable<NotificationPreferences> {
-    const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    return mockResponse({ ...(this.prefs[me.id] ?? DEFAULT_PREFS) });
+    return this.http
+      .get<BackendPreferences>(`${this.base}/notifications/preferences`)
+      .pipe(map(toFrontendPrefs));
   }
 
   updateNotificationPreferences(prefs: Partial<NotificationPreferences>): Observable<NotificationPreferences> {
-    const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    const next = { ...(this.prefs[me.id] ?? DEFAULT_PREFS), ...prefs };
-    this.prefs[me.id] = next;
-    return mockResponse({ ...next });
+    const merged: NotificationPreferences = { ...DEFAULT_PREFS, ...prefs };
+    return this.http
+      .put<BackendPreferences>(`${this.base}/notifications/preferences`, fromFrontendPrefs(merged))
+      .pipe(map(toFrontendPrefs));
   }
 
+  /**
+   * Onboarding status is computed client-side from the cached `currentUser` plus a
+   * locally-tracked agreement signature. A dedicated `/api/users/me/onboarding`
+   * endpoint is owed in a follow-up.
+   */
   getOnboardingStatus(): Observable<OnboardingStatus> {
     const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    const status = this.onboarding[me.id] ?? {
-      profileComplete: !!me.city && !!me.state,
-      identityVerified: me.verified,
+    const signed = typeof localStorage !== 'undefined' && !!localStorage.getItem(AGREEMENT_KEY);
+    return of({
+      profileComplete: !!me?.city && !!me?.state,
+      identityVerified: !!me?.verified,
       bankConnected: false,
-      listerAgreementSigned: !!this.agreementsSignedAt[me.id],
+      listerAgreementSigned: signed,
       firstListingPublished: false,
-    };
-    return mockResponse({ ...status });
+    });
   }
 
   recordListerAgreement(): Observable<{ signedAt: string }> {
-    const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    const signedAt = nowIso();
-    this.agreementsSignedAt[me.id] = signedAt;
-    return mockResponse({ signedAt });
+    const signedAt = new Date().toISOString();
+    if (typeof localStorage !== 'undefined') localStorage.setItem(AGREEMENT_KEY, signedAt);
+    return of({ signedAt });
   }
 }

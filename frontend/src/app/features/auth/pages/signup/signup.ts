@@ -8,7 +8,6 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { Alert, Button, FormField, Input, Stepper, type StepDef } from '../../../../shared';
 import { AuthService } from '../../../../core/services/auth.service';
-import { UsersService } from '../../../../core/services/users.service';
 
 const STEPS: StepDef[] = [
   { label: 'Account' },
@@ -138,7 +137,7 @@ type Intent = 'renter' | 'lister' | 'both';
               @for (option of intentOptions; track option.id) {
                 <button
                   type="button"
-                  class="p-5 border text-left transition-colors"
+                  class="flex flex-col items-start p-5 border text-left transition-colors"
                   [class.border-olive]="intent() === option.id"
                   [class.bg-olive-pale]="intent() === option.id"
                   [class.border-line]="intent() !== option.id"
@@ -177,7 +176,6 @@ type Intent = 'renter' | 'lister' | 'both';
 export class AuthSignup {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly auth = inject(AuthService);
-  private readonly users = inject(UsersService);
   private readonly router = inject(Router);
 
   protected readonly steps = STEPS;
@@ -231,14 +229,18 @@ export class AuthSignup {
     if (this.submitting()) return;
     this.error.set(null);
     this.submitting.set(true);
-    try {
-      const fullName = `${this.profile.value.firstName} ${this.profile.value.lastName}`.trim();
-      this.auth.signup({
+    const fullName = `${this.profile.value.firstName} ${this.profile.value.lastName}`.trim();
+    const { city, state } = this.parseLocation(this.profile.value.location ?? '');
+    this.auth
+      .signup({
         name: fullName,
         email: this.account.value.email!,
+        password: this.account.value.password!,
         intent: this.intent(),
-      });
-      this.users.saveIntent(this.intent()).subscribe({
+        city,
+        state,
+      })
+      .subscribe({
         next: () => {
           if (this.intent() === 'renter') {
             this.router.navigateByUrl('/search');
@@ -246,14 +248,22 @@ export class AuthSignup {
             this.router.navigateByUrl('/dashboard/setup-onboarding');
           }
         },
-        error: (err: Error) => {
-          this.error.set(err.message);
+        error: (err: { error?: { message?: string } }) => {
+          this.error.set(err.error?.message ?? 'Could not create account.');
           this.submitting.set(false);
         },
       });
-    } catch (err) {
-      this.error.set(err instanceof Error ? err.message : 'Could not create account.');
-      this.submitting.set(false);
-    }
+  }
+
+  /** "Bozeman, MT" → { city: "Bozeman", state: "MT" }. Tolerates extra whitespace. */
+  private parseLocation(value: string): { city?: string; state?: string } {
+    const trimmed = value.trim();
+    if (!trimmed) return {};
+    const lastComma = trimmed.lastIndexOf(',');
+    if (lastComma === -1) return { city: trimmed };
+    return {
+      city: trimmed.slice(0, lastComma).trim() || undefined,
+      state: trimmed.slice(lastComma + 1).trim().toUpperCase() || undefined,
+    };
   }
 }

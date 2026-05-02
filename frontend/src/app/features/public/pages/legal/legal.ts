@@ -64,7 +64,7 @@ const DOCS: Record<string, LegalDoc> = {
         heading: '4. Payments & escrow',
         body: [
           'Payments are processed by Stripe. Funds are held in escrow until both parties confirm return.',
-          'Kitlo retains a platform fee disclosed on each booking. Net payout is sent to the lister bank account on file.',
+          'Kitlo charges a 5% renter service fee at checkout and deducts a 5% lister payout fee from earnings (Phase 1 launch pricing). Both fees are disclosed on every booking before confirmation. Net payout is sent to the lister bank account on file.',
         ],
       },
       {

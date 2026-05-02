@@ -101,13 +101,13 @@ export class AuthLogin {
     }
     this.error.set(null);
     this.submitting.set(true);
-    try {
-      this.auth.login(this.form.value.email!, this.form.value.password!);
-      this.router.navigateByUrl('/dashboard');
-    } catch {
-      this.error.set('Email or password is incorrect.');
-      this.submitting.set(false);
-    }
+    this.auth.login(this.form.value.email!, this.form.value.password!).subscribe({
+      next: () => this.router.navigateByUrl('/dashboard'),
+      error: (err: { error?: { message?: string } }) => {
+        this.error.set(err.error?.message ?? 'Email or password is incorrect.');
+        this.submitting.set(false);
+      },
+    });
   }
 
   protected showError(control: AbstractControl): boolean {

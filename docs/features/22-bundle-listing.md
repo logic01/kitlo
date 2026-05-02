@@ -99,10 +99,10 @@ Bundle price:          $175/day
   Bundle saves:        $25/day
 
 5-day bundle:         $875.00
-Service fee (12%):   +$105.00
+Service fee (5%):     +$43.75
 Protection plan:      +$75.00
 ──────────────────────────────
-Total charged:        $1,055.00
+Total charged:        $993.75
 Deposit hold:         $500.00 (released on return)
 ```
 

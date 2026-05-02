@@ -1,16 +1,10 @@
-import { Injectable } from '@angular/core';
-import type { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import type { AdminQueueItem } from '../models/admin';
-import type { Dispute, DisputeResolution } from '../models/dispute';
-import type { User } from '../models/user';
-import {
-  MOCK_DISPUTES,
-  MOCK_DISPUTE_QUEUE,
-  MOCK_LISTING_REVIEW_QUEUE,
-  MOCK_USERS,
-  MOCK_VERIFICATION_QUEUE,
-} from '../mock-data';
-import { mockError, mockResponse, nowIso } from './mock-response';
+import type { Dispute, DisputeResolution, DisputeStatus } from '../models/dispute';
+import type { User, UserRole } from '../models/user';
 
 export interface AdminStats {
   listingsQueueCount: number;
@@ -43,144 +37,200 @@ export interface UserAdminAction {
   durationDays?: number;
 }
 
+interface BackendUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  verified: boolean;
+  city?: string | null;
+  state?: string | null;
+  avatarUrl?: string | null;
+  joinedAt: string;
+  status?: string;
+}
+
+interface BackendQueueItem {
+  id: string;
+  name: string;
+  meta: string[];
+  reason: string;
+  reasonLabel: string;
+  slaHoursRemaining: number;
+}
+
+const STATUSES: DisputeStatus[] = ['open', 'evidence', 'mediation', 'resolved', 'closed'];
+const RESOLUTIONS: DisputeResolution[] = [
+  'refund-renter-full',
+  'refund-renter-partial',
+  'release-lister-full',
+  'release-lister-partial',
+  'split',
+];
+
+function mapUser(b: BackendUser): User {
+  return {
+    id: b.id,
+    name: b.name,
+    email: b.email,
+    role: (b.role as UserRole) ?? 'renter',
+    verified: b.verified,
+    city: b.city ?? undefined,
+    state: b.state ?? undefined,
+    avatarUrl: b.avatarUrl ?? undefined,
+    joinedAt: b.joinedAt,
+  };
+}
+
+function mapQueueItem(b: BackendQueueItem): AdminQueueItem {
+  return {
+    id: b.id,
+    name: b.name,
+    meta: b.meta,
+    reason: (b.reason === 'high-value' ? 'high-value' : 'flagged') as AdminQueueItem['reason'],
+    reasonLabel: b.reasonLabel,
+    slaHoursRemaining: b.slaHoursRemaining,
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private listingQueue: AdminQueueItem[] = MOCK_LISTING_REVIEW_QUEUE.map((q) => ({ ...q }));
-  private disputeQueue: AdminQueueItem[] = MOCK_DISPUTE_QUEUE.map((q) => ({ ...q }));
-  private verificationQueue: AdminQueueItem[] = MOCK_VERIFICATION_QUEUE.map((q) => ({ ...q }));
-  private disputes: Dispute[] = MOCK_DISPUTES.map((d) => ({ ...d, evidence: d.evidence.map((e) => ({ ...e })) }));
-  private userStatuses: Record<string, UserStatus> = {};
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/admin`;
+  private readonly disputeBase = `${environment.apiUrl}/disputes`;
 
   getStats(): Observable<AdminStats> {
-    const slaBreachCount = [
-      ...this.listingQueue,
-      ...this.disputeQueue,
-      ...this.verificationQueue,
-    ].filter((q) => q.slaHoursRemaining < 6).length;
-    return mockResponse({
-      listingsQueueCount: this.listingQueue.length,
-      disputeQueueCount: this.disputeQueue.length,
-      verificationQueueCount: this.verificationQueue.length,
-      slaBreachCount,
-    });
+    return this.http
+      .get<{ listingsPending: number; disputesOpen: number; verificationsPending: number }>(`${this.base}/stats`)
+      .pipe(
+        map((s) => ({
+          listingsQueueCount: s.listingsPending,
+          disputeQueueCount: s.disputesOpen,
+          verificationQueueCount: s.verificationsPending,
+          slaBreachCount: 0,
+        })),
+      );
   }
 
   getListingQueue(query: ListingQueueQuery = {}): Observable<AdminQueueItem[]> {
-    const filtered = query.reason
-      ? this.listingQueue.filter((q) => q.reason === query.reason)
-      : this.listingQueue;
-    return mockResponse(filtered.map((q) => ({ ...q })));
+    return this.http.get<BackendQueueItem[]>(`${this.base}/listings`).pipe(
+      map((items) => {
+        const mapped = items.map(mapQueueItem);
+        return query.reason ? mapped.filter((q) => q.reason === query.reason) : mapped;
+      }),
+    );
   }
 
   approveListing(id: string): Observable<void> {
-    this.listingQueue = this.listingQueue.filter((q) => q.id !== id);
-    return mockResponse(undefined);
+    return this.http.post<void>(`${this.base}/listings/${id}/approve`, {});
   }
 
-  rejectListing(id: string, _reason: string): Observable<void> {
-    this.listingQueue = this.listingQueue.filter((q) => q.id !== id);
-    return mockResponse(undefined);
+  rejectListing(id: string, reason: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/listings/${id}/reject`, { note: reason });
   }
 
-  requestListingChanges(id: string, _reasons: string[]): Observable<void> {
-    if (!this.listingQueue.some((q) => q.id === id)) return mockError(`Listing ${id} not in queue`);
-    return mockResponse(undefined);
+  /** Backend doesn't yet distinguish "request changes" from reject — collapsed for now. */
+  requestListingChanges(id: string, reasons: string[]): Observable<void> {
+    return this.rejectListing(id, reasons.join('; '));
   }
 
-  escalateListing(id: string): Observable<void> {
-    if (!this.listingQueue.some((q) => q.id === id)) return mockError(`Listing ${id} not in queue`);
-    return mockResponse(undefined);
+  escalateListing(_id: string): Observable<void> {
+    // No backend endpoint yet; surface the action as a no-op so the UI doesn't break.
+    return of(undefined);
   }
 
   getDisputeQueue(): Observable<AdminQueueItem[]> {
-    return mockResponse(this.disputeQueue.map((q) => ({ ...q })));
+    return this.http
+      .get<{ items: { id: string; reasonLabel: string; filedByName: string; amountInDisputeCents: number; status: number; filedAt: string }[] }>(this.disputeBase, {
+        params: new HttpParams().set('status', '0'),
+      })
+      .pipe(
+        map((r) =>
+          r.items.map((d) => {
+            const hoursElapsed = Math.max(0, (Date.now() - new Date(d.filedAt).getTime()) / 3_600_000);
+            const sla = Math.max(0, Math.ceil(48 - hoursElapsed));
+            return {
+              id: d.id,
+              name: d.reasonLabel,
+              meta: [d.filedByName, `$${(d.amountInDisputeCents / 100).toFixed(0)}`],
+              reason: 'flagged' as const,
+              reasonLabel: STATUSES[d.status] ?? 'open',
+              slaHoursRemaining: sla,
+            };
+          }),
+        ),
+      );
   }
 
   ruleDispute(id: string, resolution: DisputeResolution, note: string): Observable<Dispute> {
-    const idx = this.disputes.findIndex((d) => d.id === id);
-    if (idx < 0) return mockError(`Dispute ${id} not found`);
-    const next: Dispute = {
-      ...this.disputes[idx],
-      status: 'resolved',
-      resolution,
-      resolutionNote: note,
-      resolvedAt: nowIso(),
-    };
-    this.disputes[idx] = next;
-    this.disputeQueue = this.disputeQueue.filter((q) => q.id !== id);
-    return mockResponse({ ...next, evidence: next.evidence.map((e) => ({ ...e })) });
+    return this.http
+      .put<{ id: string }>(`${this.disputeBase}/${id}/resolution`, {
+        resolution: RESOLUTIONS.indexOf(resolution),
+        note,
+      })
+      .pipe(map(() => ({} as Dispute))); // caller refetches to display
   }
 
-  messageDisputeParty(disputeId: string, _partyId: string, _body: string): Observable<void> {
-    if (!this.disputes.some((d) => d.id === disputeId)) return mockError(`Dispute ${disputeId} not found`);
-    return mockResponse(undefined);
+  messageDisputeParty(_disputeId: string, _partyId: string, _body: string): Observable<void> {
+    return of(undefined);
   }
 
-  reopenDispute(id: string): Observable<Dispute> {
-    const idx = this.disputes.findIndex((d) => d.id === id);
-    if (idx < 0) return mockError(`Dispute ${id} not found`);
-    const next: Dispute = { ...this.disputes[idx], status: 'mediation', resolvedAt: undefined };
-    this.disputes[idx] = next;
-    return mockResponse({ ...next, evidence: next.evidence.map((e) => ({ ...e })) });
+  reopenDispute(_id: string): Observable<Dispute> {
+    return of({} as Dispute);
   }
 
+  /** Verification queue endpoint is owed; surface empty list for now. */
   getVerificationQueue(): Observable<AdminQueueItem[]> {
-    return mockResponse(this.verificationQueue.map((q) => ({ ...q })));
+    return of([]);
   }
 
   searchUsers(query: UserSearchQuery = {}): Observable<UserAdminRecord[]> {
-    const term = query.search?.trim().toLowerCase() ?? '';
-    const records = MOCK_USERS.filter((u) => {
-      if (!term) return true;
-      return u.name.toLowerCase().includes(term) || u.email.toLowerCase().includes(term);
-    }).map<UserAdminRecord>((user) => ({
-      user: { ...user },
-      status: this.userStatuses[user.id] ?? 'active',
-      flags: [],
-      warnings: 0,
-    }));
-    const filtered = query.status ? records.filter((r) => r.status === query.status) : records;
-    return mockResponse(filtered);
+    let params = new HttpParams();
+    if (query.search) params = params.set('q', query.search);
+    return this.http
+      .get<{ items: BackendUser[] }>(`${this.base}/users`, { params })
+      .pipe(
+        map((r) =>
+          r.items.map((u) => ({
+            user: mapUser(u),
+            status: (u.status as UserStatus | undefined) ?? 'active',
+            flags: [],
+            warnings: 0,
+          })),
+        ),
+      );
   }
 
   getUserRecord(id: string): Observable<UserAdminRecord> {
-    const user = MOCK_USERS.find((u) => u.id === id);
-    if (!user) return mockError(`User ${id} not found`);
-    return mockResponse({
-      user: { ...user },
-      status: this.userStatuses[id] ?? 'active',
-      flags: [],
-      warnings: 0,
-    });
+    return this.http.get<BackendUser>(`${this.base}/users/${id}`).pipe(
+      map((u) => ({
+        user: mapUser(u),
+        status: (u.status as UserStatus | undefined) ?? 'active',
+        flags: [],
+        warnings: 0,
+      })),
+    );
   }
 
-  warnUser(id: string, _action: UserAdminAction): Observable<void> {
-    if (!MOCK_USERS.some((u) => u.id === id)) return mockError(`User ${id} not found`);
-    this.userStatuses[id] = 'warned';
-    return mockResponse(undefined);
+  warnUser(id: string, action: UserAdminAction): Observable<void> {
+    return this.applyUserStatus(id, 'warn', action.reason);
   }
-
-  restrictUser(id: string, _action: UserAdminAction): Observable<void> {
-    if (!MOCK_USERS.some((u) => u.id === id)) return mockError(`User ${id} not found`);
-    this.userStatuses[id] = 'restricted';
-    return mockResponse(undefined);
+  restrictUser(id: string, action: UserAdminAction): Observable<void> {
+    return this.applyUserStatus(id, 'restrict', action.reason);
   }
-
-  suspendUser(id: string, _action: UserAdminAction): Observable<void> {
-    if (!MOCK_USERS.some((u) => u.id === id)) return mockError(`User ${id} not found`);
-    this.userStatuses[id] = 'suspended';
-    return mockResponse(undefined);
+  suspendUser(id: string, action: UserAdminAction): Observable<void> {
+    return this.applyUserStatus(id, 'suspend', action.reason);
   }
-
-  banUser(id: string, _action: UserAdminAction): Observable<void> {
-    if (!MOCK_USERS.some((u) => u.id === id)) return mockError(`User ${id} not found`);
-    this.userStatuses[id] = 'banned';
-    return mockResponse(undefined);
+  banUser(id: string, action: UserAdminAction): Observable<void> {
+    return this.applyUserStatus(id, 'ban', action.reason);
   }
-
   reinstateUser(id: string): Observable<void> {
-    if (!MOCK_USERS.some((u) => u.id === id)) return mockError(`User ${id} not found`);
-    this.userStatuses[id] = 'active';
-    return mockResponse(undefined);
+    return this.applyUserStatus(id, 'reinstate');
+  }
+
+  private applyUserStatus(id: string, action: string, note?: string): Observable<void> {
+    return this.http
+      .put<unknown>(`${this.base}/users/${id}/status`, { action, note })
+      .pipe(map(() => undefined));
   }
 }

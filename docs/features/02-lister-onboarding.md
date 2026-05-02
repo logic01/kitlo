@@ -97,7 +97,7 @@ Verify the lister's identity and set up their payout account before any listing 
 
 ## Open Questions
 
-- [ ] What is Kitlo's take rate from listers? (needed for the Lister Agreement copy)
+- [x] What is Kitlo's take rate from listers? **Phase 1: 5% deducted from each payout.** See `docs/business-plan.md` for the phased rollout.
 - [ ] Do we offer a lender protection guarantee beyond Thimble coverage? (affects agreement terms)
 - [ ] At what earnings level does Kitlo issue a 1099-K? (IRS threshold is $600/year — confirm this applies)
 - [ ] Should we allow corporate entities (LLCs) to list gear, or individuals only in Phase 1?

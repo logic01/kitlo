@@ -81,7 +81,7 @@ After selecting condition, text field: "Notes for renters" — describe specific
 - Pricing reference panel shown alongside (pulled from `docs/gear-catalogue.md` market rates):
   - "ATN ThOR thermal scopes: $199–$375/weekend on competitor platforms"
   - "PVS-14 Gen 3: $150–$300/weekend"
-- Platform fee shown: "Kitlo charges renters a [X]% service fee on top of your rate"
+- Platform fee shown: "Kitlo charges renters a 5% service fee on top of your rate, and deducts a 5% payout fee from your earnings (Phase 1 launch pricing — see business-plan.md)"
 - **Minimum rental period**: 1 day (default). Lister can set minimum (e.g., "3 days minimum").
 - **Weekend rate**: option to set a different rate for Fri–Sun bookings
 
@@ -136,7 +136,7 @@ After selecting condition, text field: "Notes for renters" — describe specific
 - Photo honesty: disputes where pickup condition doesn't match listing photos result in lister rating penalty and potential suspension
 - MSRP > $5,000: admin review before publishing — prevents fraudulent listings for premium gear
 - Serial number (optional): recommended for high-value items to help with insurance claims
-- Prohibited categories enforced at category selection (no tree stands, no drone thermal, no firearms)
+- Prohibited categories enforced at category selection (no firearms, no hunting bows or crossbows, no drone thermal, no NFA items). Weapons of any kind cannot be loaned through Kitlo — see `18-admin-listing-review.md` for the full list.
 
 ---
 

@@ -36,14 +36,16 @@ Confirm the renter's intent and show a complete, honest cost breakdown before an
 **Cost breakdown (full transparency):**
 ```
 Daily rate:         $225.00 × 3 days    = $675.00
-Renter service fee: 12%                 = $81.00
+Renter service fee: 5%                  = $33.75
 Renter Protection Plan:                 = $45.00
 ──────────────────────────────────────────────────
-Total charged today:                      $801.00
+Total charged today:                      $753.75
 
 Deposit hold (returned on return):        $150.00
 (Your card is authorized for $150 but not charged)
 ```
+
+The 5% renter service fee is the Phase 1 default per `docs/business-plan.md`. It scales with the phased rollout — Phase 2 raises it to 7%, Phase 3 to 9%, Phase 4 to 10%.
 
 - "Why is there a deposit?" — expandable tooltip explaining escrow, when it's released, what happens in a dispute
 - "What does the Protection Plan cover?" — expandable: damage up to $5,000, exclusions (intentional damage, loss)
@@ -113,7 +115,7 @@ Phase 1 recommendation: Default all listings to Instant Book to minimize frictio
 
 ## Open Questions
 
-- [ ] What is Kitlo's renter service fee percentage? (needs to be set before this screen can be built)
+- [x] What is Kitlo's renter service fee percentage? **Phase 1: 5%.** See `docs/business-plan.md` for the phased rollout.
 - [ ] What is the Protection Plan daily rate? ($15/day for under-$5K gear per gear-catalogue.md — confirm)
 - [ ] Do we show the lister's take on this screen? (Airbnb doesn't; transparency builds trust but may cause sticker shock on the fee split)
 - [ ] Should renters be able to add a "tip" for exceptional listers? (unusual for equipment rental, but common in service P2P)

@@ -34,26 +34,26 @@ Lister payout = Rental charge
               - Any damage-related deductions (if dispute ruled against lister)
 ```
 
-### Fee structure (Phase 1 defaults — subject to change)
+### Fee structure (Phase 1 — see `docs/business-plan.md` for phased rollout)
 
 | Line item | Rate | Direction |
 |---|---|---|
 | Rental charge | Set by lister (daily rate × days) | + to lister |
-| Platform service fee | 12% of rental charge | − from lister |
-| Protection plan | $X/day (varies by MSRP tier) | − from lister |
-| Late fee income | 150% of daily rate per late day | + to lister |
+| Lister payout fee | 5% of rental charge | − from lister |
+| Protection plan | $X/day (varies by MSRP tier) | pass-through (no Kitlo margin in Phase 1) |
+| Late fee income | 150% of daily rate per late day | + to lister (100% to lister) |
 
 **Example payout (5-day rental, $135/day thermal scope):**
 
 ```
 Rental charge:           $675.00
-Platform fee (12%):     −$81.00
-Protection plan:         −$45.00 ($9/day × 5 days)
+Lister payout fee (5%):  −$33.75
+Protection plan:         −$45.00 ($9/day × 5 days, pass-through)
 ─────────────────────────────────
-Lister payout:           $549.00
+Lister payout:           $596.25
 ```
 
-Renter paid $801.00 total (rental + service fee charged to renter side + protection). The fee structure means the platform takes from both sides — this is standard P2P practice and should be documented clearly to both parties at the time of listing creation and booking confirmation.
+Renter paid $753.75 total: rental ($675) + 5% renter service fee ($33.75) + protection ($45). The split fee model means each side sees a small percentage rather than one party absorbing the full take rate. Total Kitlo take in Phase 1 = renter fee + lister fee = 10% of rental.
 
 ---
 
@@ -209,7 +209,7 @@ These views are in the lister dashboard, visible only when the account has 3+ li
 
 ## Open Questions
 
-- [ ] Platform service fee split: 12% from lister only, or split (e.g., 6% lister + 6% renter side)? Airbnb charges both. Fat Llama charges renter only. Recommendation: charge renter side only to reduce lister friction.
-- [ ] Late fee revenue: does Kitlo keep a cut of late fees, or pass 100% to lister? (Lister incurs the inconvenience — suggest pass 100% to lister)
+- [x] Platform service fee split. **Resolved: 5% renter + 5% lister = 10% total in Phase 1.** See `docs/business-plan.md` §4.
+- [x] Late fee revenue. **Resolved: 100% to lister in Phase 1.** Lister incurs the inconvenience; Kitlo earns nothing on late fees.
 - [ ] Instant payouts: should listers be able to pay a fee (e.g., 1%) to get same-day payout instead of 2 business days? Stripe supports this.
 - [ ] Earnings dashboard: should we show a "rental income vs. gear cost" payoff calculator? (Helps Marcus-type listers understand ROI of listing their gear)

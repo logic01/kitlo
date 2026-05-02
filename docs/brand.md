@@ -41,7 +41,7 @@ Write like one hunter talking to another. Not a brand talking to a customer.
 
 **Short sentences win.** Especially in headlines and CTAs.
 
-**Practical nouns over emotional ones.** Gear, kit, rifle, pack, blind, lease. Not "experience," "adventure," "passion," "community."
+**Practical nouns over emotional ones.** Gear, kit, scope, pack, blind, lease. Not "experience," "adventure," "passion," "community."
 
 ### Voice Examples
 

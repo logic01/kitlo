@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'leaflet/dist/leaflet.css';
 
 /* =============================================================================
    Kitlo design tokens — ported from docs/layouts/style.css section 1.

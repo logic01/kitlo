@@ -105,7 +105,7 @@ After review, admin chooses:
 - Listing is archived (not deleted — preserved for audit trail)
 - Rejection reasons:
   - Fraudulent (gear does not exist or cannot be verified)
-  - Prohibited gear category (firearms, live ammunition, illegal NV equipment)
+  - Prohibited gear category (firearms, hunting bows/crossbows, ammunition, illegal NV equipment)
   - Lister account in bad standing
   - Terms of service violation in description
 
@@ -160,11 +160,14 @@ Flagging user receives no notification of outcome — their flag is anonymous fr
 
 Kitlo does not allow listings for:
 
-- Firearms, ammunition, or firearm components
+- **Firearms** — rifles, shotguns, handguns, air rifles, ammunition, and firearm components
+- **Hunting bows** — compound bows, recurve bows, longbows, crossbows, arrows, and broadheads
 - NFA items (suppressors, SBRs, etc.) — even if lister claims they're legal in their state
 - Export-controlled night vision equipment (ITAR-restricted)
 - Counterfeit or knockoff gear listed as genuine
 - Any gear with evidence of tampering, modification for illegal use
+
+Note: optics that mount to a renter's own weapon (rifle scopes, clip-ons, weapon-mounted thermal/NV) are **allowed**. The platform does not transfer the weapon itself.
 
 Admin maintains a prohibited gear list (internal document, updated as edge cases arise).
 

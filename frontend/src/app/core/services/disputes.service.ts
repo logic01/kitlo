@@ -1,5 +1,7 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import type { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import type {
   Dispute,
   DisputeEvidence,
@@ -7,9 +9,6 @@ import type {
   DisputeResolution,
   DisputeStatus,
 } from '../models/dispute';
-import { MOCK_DISPUTES } from '../mock-data';
-import { AuthService } from './auth.service';
-import { generateId, mockError, mockResponse, nowIso } from './mock-response';
 
 export interface DisputeListQuery {
   status?: DisputeStatus | DisputeStatus[];
@@ -36,79 +35,129 @@ export interface ResolveDisputeInput {
   resolutionNote: string;
 }
 
+interface BackendEvidence {
+  id: string;
+  uploadedById: string;
+  uploadedAt: string;
+  kind: number;
+  url?: string | null;
+  text?: string | null;
+}
+
+interface BackendDispute {
+  id: string;
+  bookingId: string;
+  filedById: string;
+  filedByName: string;
+  filedAt: string;
+  status: number;
+  reason: number;
+  reasonLabel: string;
+  summary: string;
+  amountInDisputeCents: number;
+  resolution?: number | null;
+  resolvedAt?: string | null;
+  resolutionNote?: string | null;
+  evidence: BackendEvidence[];
+}
+
+const STATUSES: DisputeStatus[] = ['open', 'evidence', 'mediation', 'resolved', 'closed'];
+const REASONS: DisputeReason[] = ['damage', 'late-return', 'no-show', 'misrepresented', 'other'];
+const RESOLUTIONS: DisputeResolution[] = [
+  'refund-renter-full',
+  'refund-renter-partial',
+  'release-lister-full',
+  'release-lister-partial',
+  'split',
+];
+const EVIDENCE_KINDS: DisputeEvidence['kind'][] = ['photo', 'message', 'note'];
+
+function mapEvidence(b: BackendEvidence): DisputeEvidence {
+  return {
+    id: b.id,
+    uploadedById: b.uploadedById,
+    uploadedAt: b.uploadedAt,
+    kind: EVIDENCE_KINDS[b.kind] ?? 'note',
+    url: b.url ?? undefined,
+    text: b.text ?? undefined,
+  };
+}
+
+function mapDispute(b: BackendDispute): Dispute {
+  return {
+    id: b.id,
+    bookingId: b.bookingId,
+    filedById: b.filedById,
+    filedByName: b.filedByName,
+    filedAt: b.filedAt,
+    status: STATUSES[b.status] ?? 'open',
+    reason: REASONS[b.reason] ?? 'other',
+    reasonLabel: b.reasonLabel,
+    summary: b.summary,
+    amountInDisputeCents: b.amountInDisputeCents,
+    resolution: b.resolution != null ? RESOLUTIONS[b.resolution] : undefined,
+    resolvedAt: b.resolvedAt ?? undefined,
+    resolutionNote: b.resolutionNote ?? undefined,
+    evidence: b.evidence.map(mapEvidence),
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class DisputesService {
-  private readonly auth = inject(AuthService);
-  private disputes: Dispute[] = MOCK_DISPUTES.map((d) => ({ ...d, evidence: d.evidence.map((e) => ({ ...e })) }));
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/disputes`;
 
   list(query: DisputeListQuery = {}): Observable<Dispute[]> {
-    const statuses = Array.isArray(query.status) ? query.status : query.status ? [query.status] : null;
-    const filtered = this.disputes.filter((d) => {
-      if (statuses && !statuses.includes(d.status)) return false;
-      if (query.bookingId && d.bookingId !== query.bookingId) return false;
-      return true;
-    });
-    return mockResponse(filtered.map((d) => ({ ...d, evidence: d.evidence.map((e) => ({ ...e })) })));
+    let params = new HttpParams();
+    if (query.status) {
+      const list = Array.isArray(query.status) ? query.status : [query.status];
+      // The list endpoint accepts a single status; if multiple are requested
+      // we issue the first and let the caller filter further.
+      params = params.set('status', String(STATUSES.indexOf(list[0])));
+    }
+    return this.http
+      .get<{ items: BackendDispute[] }>(this.base, { params })
+      .pipe(
+        map((r) => {
+          let items = r.items.map(mapDispute);
+          if (query.bookingId) items = items.filter((d) => d.bookingId === query.bookingId);
+          return items;
+        }),
+      );
   }
 
   getById(id: string): Observable<Dispute> {
-    const dispute = this.disputes.find((d) => d.id === id);
-    if (!dispute) return mockError(`Dispute ${id} not found`);
-    return mockResponse({ ...dispute, evidence: dispute.evidence.map((e) => ({ ...e })) });
+    return this.http.get<BackendDispute>(`${this.base}/${id}`).pipe(map(mapDispute));
   }
 
   file(input: FileDisputeInput): Observable<Dispute> {
-    const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    const dispute: Dispute = {
-      id: generateId('dp'),
-      bookingId: input.bookingId,
-      filedById: me.id,
-      filedByName: input.filedByName,
-      filedAt: nowIso(),
-      status: 'open',
-      reason: input.reason,
-      reasonLabel: input.reasonLabel,
-      summary: input.summary,
-      amountInDisputeCents: input.amountInDisputeCents,
-      evidence: [],
-    };
-    this.disputes = [dispute, ...this.disputes];
-    return mockResponse({ ...dispute, evidence: [] });
+    return this.http
+      .post<BackendDispute>(this.base, {
+        bookingId: input.bookingId,
+        reason: REASONS.indexOf(input.reason),
+        reasonLabel: input.reasonLabel,
+        summary: input.summary,
+        amountInDisputeCents: input.amountInDisputeCents,
+      })
+      .pipe(map(mapDispute));
   }
 
   addEvidence(disputeId: string, input: AddEvidenceInput): Observable<DisputeEvidence> {
-    const me = this.auth.currentUser();
-    if (!me) return mockError('Not authenticated');
-    const idx = this.disputes.findIndex((d) => d.id === disputeId);
-    if (idx < 0) return mockError(`Dispute ${disputeId} not found`);
-    const evidence: DisputeEvidence = {
-      id: generateId('ev-dp'),
-      uploadedById: me.id,
-      uploadedAt: nowIso(),
-      kind: input.kind,
-      url: input.url,
-      text: input.text,
-    };
-    this.disputes[idx] = {
-      ...this.disputes[idx],
-      evidence: [...this.disputes[idx].evidence, evidence],
-      status: this.disputes[idx].status === 'open' ? 'evidence' : this.disputes[idx].status,
-    };
-    return mockResponse({ ...evidence });
+    return this.http
+      .post<BackendEvidence>(`${this.base}/${disputeId}/evidence`, {
+        kind: EVIDENCE_KINDS.indexOf(input.kind),
+        url: input.url,
+        text: input.text,
+      })
+      .pipe(map(mapEvidence));
   }
 
   resolve(disputeId: string, input: ResolveDisputeInput): Observable<Dispute> {
-    const idx = this.disputes.findIndex((d) => d.id === disputeId);
-    if (idx < 0) return mockError(`Dispute ${disputeId} not found`);
-    const next: Dispute = {
-      ...this.disputes[idx],
-      status: 'resolved',
-      resolution: input.resolution,
-      resolutionNote: input.resolutionNote,
-      resolvedAt: nowIso(),
-    };
-    this.disputes[idx] = next;
-    return mockResponse({ ...next, evidence: next.evidence.map((e) => ({ ...e })) });
+    return this.http
+      .put<BackendDispute>(`${this.base}/${disputeId}/resolution`, {
+        resolution: RESOLUTIONS.indexOf(input.resolution),
+        note: input.resolutionNote,
+      })
+      .pipe(map(mapDispute));
   }
 }

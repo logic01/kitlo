@@ -5,6 +5,10 @@ Read docs/task.md for your next task.
 
 A marketplace where hunters can list and rent hunting equipment to/from each other.
 
+## Listing Policy — Weapons Prohibited
+
+Kitlo does **not** facilitate the loan or rental of weapons. Firearms (rifles, shotguns, handguns, air rifles, ammunition, firearm components, NFA items) and hunting bows (compound bows, recurve bows, longbows, crossbows) cannot be listed. Optics that mount to a renter's own weapon — rifle scopes, clip-on thermals, weapon-mounted NV — are allowed; the platform never moves the weapon itself. Full policy in `docs/gear-catalogue.md` and `docs/features/18-admin-listing-review.md`.
+
 ## Design Philosophy
 
 - **Clean and minimal**: No clutter, no noise. Whitespace is intentional. Avoid decorative UI.
@@ -83,10 +87,18 @@ kitlo/
 
 ## Key Business Rules
 
-- Lister sets a daily rate; renter pays rate × days + service fee.
-- Funds are held until the rental period ends, then released to lister minus platform fee.
+- Lister sets a daily rate; renter pays rate × days + 5% renter service fee (Phase 1 launch pricing).
+- Funds are held until the rental period ends, then released to lister minus the 5% lister payout fee.
 - Both parties must confirm return before funds release.
 - Equipment must have at minimum: title, 3 photos, condition, pickup ZIP, daily rate.
+
+## Pricing — Phase 1 (Launch)
+
+- **Renter service fee:** 5% of the rental subtotal, added at checkout.
+- **Lister payout fee:** 5% of the rental subtotal, deducted from the lister payout.
+- **Total Kitlo take rate:** 10% of every booking.
+- **No listing fees, no subscriptions** in Phase 1.
+- Source of truth: `docs/business-plan.md` (includes phased rollout to 22% at nationwide peak).
 
 ## Development Commands
 

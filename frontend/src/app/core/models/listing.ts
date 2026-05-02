@@ -3,8 +3,6 @@ import type { Condition } from '../../shared/components/badge/badge';
 export type GearType =
   | 'thermal'
   | 'night-vision'
-  | 'rifle'
-  | 'bow'
   | 'tree-stand'
   | 'optics'
   | 'pack'
@@ -22,6 +20,8 @@ export interface ListingSpec {
   value: string;
 }
 
+export type ListingStatus = 'draft' | 'pending' | 'published' | 'paused' | 'rejected' | 'archived';
+
 export interface ListingSummary {
   id: string;
   title: string;
@@ -35,6 +35,7 @@ export interface ListingSummary {
   listerName: string;
   listerVerified: boolean;
   isBundle?: boolean;
+  status?: ListingStatus;
 }
 
 export interface Listing extends ListingSummary {

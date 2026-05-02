@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import type { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import type { Review, ReviewAccuracy } from '../models/review';
-import { MOCK_RENTER_REVIEWS, MOCK_REVIEWS_BY_LISTING } from '../mock-data';
-import { generateId, mockError, mockResponse, nowIso } from './mock-response';
 
 export interface ReviewPage {
   items: Review[];
@@ -24,51 +24,70 @@ export interface SubmitReviewInput {
   reviewedRole: 'lister' | 'renter';
 }
 
-const DEFAULT_PAGE_SIZE = 10;
+interface BackendReview {
+  id: string;
+  bookingId: string;
+  reviewerName: string;
+  reviewerAvatarUrl?: string | null;
+  submittedAt: string;
+  rating: number;
+  accuracy?: number | null;
+  text: string;
+  tags?: string[] | null;
+}
+
+const ACCURACY: ReviewAccuracy[] = ['accurate', 'somewhat', 'inaccurate'];
+
+function mapReview(b: BackendReview): Review {
+  const r = Math.min(5, Math.max(1, Math.round(b.rating))) as 1 | 2 | 3 | 4 | 5;
+  return {
+    id: b.id,
+    reviewerName: b.reviewerName,
+    reviewerAvatarUrl: b.reviewerAvatarUrl ?? undefined,
+    reviewedAt: b.submittedAt,
+    rating: r,
+    accuracy: b.accuracy != null ? ACCURACY[b.accuracy] : undefined,
+    text: b.text,
+    tags: b.tags ?? undefined,
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class ReviewsService {
-  private byListing: Record<string, Review[]> = Object.fromEntries(
-    MOCK_REVIEWS_BY_LISTING.map((g) => [g.listingId, g.reviews.map((r) => ({ ...r }))]),
-  );
-  private aboutUser: Record<string, Review[]> = { 'u-renter-1': MOCK_RENTER_REVIEWS.map((r) => ({ ...r })) };
-  private listingByBookingId: Record<string, string> = {};
+  private readonly http = inject(HttpClient);
+  private readonly base = environment.apiUrl;
 
-  getByListing(listingId: string, page = 1, pageSize = DEFAULT_PAGE_SIZE): Observable<ReviewPage> {
-    const all = this.byListing[listingId] ?? [];
-    const start = (page - 1) * pageSize;
-    return mockResponse({
-      items: all.slice(start, start + pageSize),
-      total: all.length,
-      page,
-      pageSize,
-    });
+  getByListing(listingId: string, page = 1, pageSize = 10): Observable<ReviewPage> {
+    const params = new HttpParams().set('page', String(page)).set('pageSize', String(pageSize));
+    return this.http
+      .get<{ items: BackendReview[]; total: number; page: number; pageSize: number }>(
+        `${this.base}/listings/${listingId}/reviews`,
+        { params },
+      )
+      .pipe(
+        map((r) => ({
+          items: r.items.map(mapReview),
+          total: r.total,
+          page: r.page,
+          pageSize: r.pageSize,
+        })),
+      );
   }
 
   getByUser(userId: string, _role?: 'lister' | 'renter'): Observable<Review[]> {
-    return mockResponse((this.aboutUser[userId] ?? []).map((r) => ({ ...r })));
+    return this.http
+      .get<{ items: BackendReview[] }>(`${this.base}/reviews`, { params: new HttpParams().set('userId', userId) })
+      .pipe(map((r) => r.items.map(mapReview)));
   }
 
   submit(input: SubmitReviewInput): Observable<Review> {
-    if (!input.listingId && !input.aboutUserId) {
-      return mockError('Review must reference a listing or a user');
-    }
-    const review: Review = {
-      id: generateId('rv'),
-      reviewerName: input.reviewerName,
-      reviewerAvatarUrl: input.reviewerAvatarUrl,
-      reviewedAt: nowIso(),
-      rating: input.rating,
-      accuracy: input.accuracy,
-      text: input.text,
-      tags: input.tags,
-    };
-    if (input.listingId) {
-      this.byListing[input.listingId] = [review, ...(this.byListing[input.listingId] ?? [])];
-    }
-    if (input.aboutUserId) {
-      this.aboutUser[input.aboutUserId] = [review, ...(this.aboutUser[input.aboutUserId] ?? [])];
-    }
-    return mockResponse({ ...review });
+    return this.http
+      .post<BackendReview>(`${this.base}/reviews/bookings/${input.bookingId}`, {
+        rating: input.rating,
+        accuracy: input.accuracy != null ? ACCURACY.indexOf(input.accuracy) : null,
+        text: input.text,
+        tags: input.tags ?? null,
+      })
+      .pipe(map(mapReview));
   }
 }

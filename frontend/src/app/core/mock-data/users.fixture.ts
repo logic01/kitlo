@@ -103,8 +103,8 @@ export const MOCK_PROFILES: ProfileSummary[] = MOCK_USERS.map((u) => ({
   rating: RATINGS[u.id]?.count ? RATINGS[u.id] : undefined,
   primaryGear:
     u.id === 'u-lister-1' ? 'Thermal optics' :
-    u.id === 'u-lister-2' ? 'Night-vision & rifles' :
-    u.id === 'u-lister-3' ? 'Bows & treestands' :
+    u.id === 'u-lister-2' ? 'Night vision & spotting optics' :
+    u.id === 'u-lister-3' ? 'Treestands & packs' :
     undefined,
   primaryRateCents:
     u.id === 'u-lister-1' ? 14500 :

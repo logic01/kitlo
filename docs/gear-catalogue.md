@@ -5,7 +5,24 @@
 Sourced from research conducted April 2026. Rent vs. own verdicts are based on four signals:
 **unit cost** (high = rent appeal), **use frequency** (infrequent = rent appeal), **portability** (hard to travel with = rent appeal), **identity attachment** (becomes part of someone's kit = own preference).
 
-**Listing Key:** ✅ Accept — strong rent candidate | ⚠️ Accept with caveats | ❌ Decline — own-preference item
+**Listing Key:** ✅ Accept — strong rent candidate | ⚠️ Accept with caveats | ❌ Decline — own-preference item | 🚫 Prohibited — never listable
+
+---
+
+## Prohibited (never listable on Kitlo)
+
+Kitlo does not facilitate the loan or transfer of weapons of any kind. Listings in any of the following categories are blocked at submission and removed if discovered post-publish:
+
+- 🚫 **Firearms** — rifles, shotguns, handguns, air rifles, and any complete firearm
+- 🚫 **Firearm components & ammunition** — receivers, barrels, magazines, suppressors, ammunition, primers, powder
+- 🚫 **Hunting bows** — compound bows, recurve bows, longbows
+- 🚫 **Crossbows** — including pistol crossbows
+- 🚫 **Arrows, bolts, broadheads, and bow-string accessories sold as a complete shooting kit**
+- 🚫 **NFA / ITAR-controlled items**
+
+**Optics that mount to a weapon are allowed.** Rifle scopes, clip-on thermals, and weapon-mounted NV are optics — the renter brings their own weapon. The platform never moves the weapon itself.
+
+See `features/18-admin-listing-review.md` for full enforcement workflow.
 
 ---
 

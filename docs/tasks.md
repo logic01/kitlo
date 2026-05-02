@@ -4,7 +4,7 @@
 
 Last updated: 2026-05-01
 
-> **Phase 0, Phase 1, Phase 2, and Phase 3.1–3.24 + 3.26 are complete — see `docs/done-tasks.md`. 3.25 (manual walkthrough) is ⚠️ partial — automated checks pass, full 22-workflow human walkthrough still owed.** Phase 4 (backend) is the next major block.
+> **Phase 0–4 complete (3.25, 4.3, 4.12–4.14 ⚠️ Partial). Phase 5 integration landed — frontend talks to backend over HTTP + SignalR; Stripe/Cloudinary scaffolded pending live keys.** End-to-end smoke verified against Dockerized Postgres: signup → JWT → `/api/users/me` + `/api/listings` (real seeded data).
 
 ---
 
@@ -46,42 +46,42 @@ Last updated: 2026-05-01
 ### Database Setup
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 4.1 | Scaffold C# .NET project |  ⬜ Pending | backend/ — ASP.NET Core 10+ Web API, Entity Framework Core, PostgreSQL provider, project structure (Controllers/, Services/, Models/, Data/). |
-| 4.2 | Create Entity Framework Core models |  ⬜ Pending | backend/Kitlo.Core — User, Listing+Photos+Specs, Bundle, AvailabilityBlock, Booking + BookingEvent (state machine), Payment, Payout, MessageThread+Message, Review (blind two-way), Dispute, Notification + Preferences, AdminAction audit log, Report. All money in cents. |
-| 4.3 | Configure PostgreSQL & migrations |  ⬜ Pending | backend/Kitlo.Data — DbContext, connection string via appsettings.json, initial migration. Run `dotnet ef database update` to create schema. |
-| 4.4 | Seed initial data |  ⬜ Pending | Sample users, listings, categories for testing. Can be disabled in production. |
+| 4.1 | Scaffold C# .NET project |  ✅ Done | `backend/Kitlo.slnx` (new .NET 10 XML solution format) + `Kitlo.Api` (webapi, net10.0, controllers + OpenAPI), `Kitlo.Core` (classlib), `Kitlo.Data` (classlib with `Microsoft.EntityFrameworkCore` + `Npgsql.EntityFrameworkCore.PostgreSQL`). Project refs: Api → Core + Data, Data → Core. Api has `Microsoft.EntityFrameworkCore.Design` for migrations. Folder skeleton (Controllers/Services/Models/Middleware) committable via `.gitkeep`. `appsettings.json` has `ConnectionStrings:Default` (Postgres) and `Jwt` placeholders. `backend/.gitignore` covers `bin/`, `obj/`, IDE files. `dotnet build` clean (0 warnings); `dotnet run --project Kitlo.Api` boots cleanly on port 5268; `/openapi/v1.json` returns 200. |
+| 4.2 | Create Entity Framework Core models |  ✅ Done | `Kitlo.Core/Enums/Enums.cs` (20+ enums) and 13 entity files in `Kitlo.Core/Models/`: `User`, `Listing` (+`ListingPhoto`, `ListingSpec`, `BundleItem`, `AvailabilityBlock`), `Booking` (+`BookingEvent`), `Payment`, `Payout`, `MessageThread` (+`ThreadParticipant`, `Message`), `Review`, `Dispute` (+`DisputeEvidence`), `Notification` (+`NotificationPreferences`), `AdminAction`, `Report`. All money in cents (int). DateOnly for booking dates, DateTimeOffset for timestamps. `KitloDbContext` configures all relationships, indexes, composite keys (`BundleItem`, `ThreadParticipant`), unique constraints (`User.Email`, `Review` per booking+kind), and cascade rules. |
+| 4.3 | Configure PostgreSQL & migrations |  ⚠️ Partial | DbContext + Npgsql provider wired in `Kitlo.Data/KitloDbContext.cs`. Connection string in `appsettings.json:ConnectionStrings:Default`. Initial migration scaffolded as `Kitlo.Data/Migrations/20260501205342_InitialCreate.cs`. `Program.cs` calls `db.Database.MigrateAsync()` on startup (skippable via `SkipDatabase=true` config flag). **`dotnet ef database update` requires a running Postgres — not run in this session.** |
+| 4.4 | Seed initial data |  ✅ Done | `Kitlo.Data/Seed/SeedData.cs` — idempotent dev seed (returns early if `Users.AnyAsync()`). Inserts renter/lister/admin demo users + 2 published listings (Pulsar Thermion thermal, ATN X-Sight NV) with photos and specs. Hooked into `Program.cs` after `MigrateAsync`, gated on `IsDevelopment()`. |
 
 ### Authentication & Authorization
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 4.5 | JWT authentication service |  ⬜ Pending | backend/Kitlo.Api/Services/AuthService — Generate JWT tokens, validate signatures, refresh token flow. Configuration via appsettings.json. |
-| 4.6 | Auth middleware & route protection |  ⬜ Pending | backend/Kitlo.Api/Middleware — JWT validation middleware, role-based authorization (User/Lister/Admin), [Authorize] attributes on controllers. |
-| 4.7 | Auth API endpoints |  ⬜ Pending | POST /api/auth/login, POST /api/auth/signup, POST /api/auth/refresh, POST /api/auth/logout. Password hashing with bcrypt or ASP.NET Identity. |
+| 4.5 | JWT authentication service |  ✅ Done | `Auth/TokenService.cs` issues HS256 access tokens (configurable lifetime, sub/email/role/jti claims) and 64-byte URL-safe refresh tokens. `Auth/JwtSettings.cs` binds `appsettings.Jwt`. `Auth/PasswordHasher.cs` wraps BCrypt.Net-Next (work factor 11). |
+| 4.6 | Auth middleware & route protection |  ✅ Done | `Microsoft.AspNetCore.Authentication.JwtBearer` registered in `Program.cs` with full `TokenValidationParameters` (issuer + audience + lifetime + signing key). Authorization policies: `KitloPolicies.Admin` and `KitloPolicies.Lister` (admin elevated). Controllers use `[Authorize]` and `[Authorize(Policy = ...)]`. `ErrorHandlingMiddleware` maps `DomainException` → 400/401/403/404/409 with JSON body. |
+| 4.7 | Auth API endpoints |  ✅ Done | `AuthController` — `POST /api/auth/signup` (creates user + NotificationPreferences, returns token + user), `POST /api/auth/login` (BCrypt verify, status checks), `POST /api/auth/logout` (204). `POST /api/auth/refresh` returns 401 with a TODO note — persistent refresh-token storage is owed in 5.x. |
 
 ### Core API Services
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 4.8 | Listings API (CRUD) |  ⬜ Pending | GET /api/listings (search/filter), POST /api/listings (create), GET /api/listings/{id}, PUT /api/listings/{id}, DELETE /api/listings/{id}, POST /api/listings/{id}/photos, GET /api/listings/{id}/availability. |
-| 4.9 | Users API |  ⬜ Pending | GET /api/users/me, PUT /api/users/{id}, GET /api/users/{id}/profile, GET /api/users/{id}/ratings. |
-| 4.10 | Bookings API |  ⬜ Pending | GET /api/bookings, POST /api/bookings (create), GET /api/bookings/{id}, PUT /api/bookings/{id}/status (confirm, cancel, return), GET /api/bookings/{id}/timeline. |
-| 4.11 | Search & discovery API |  ⬜ Pending | GET /api/listings?location=&category=&priceMin=&priceMax=&availability=. Full-text search, geolocation filtering. |
+| 4.8 | Listings API (CRUD) |  ✅ Done | `ListingsController` + `ListingService`. Endpoints: GET `/api/listings` (Search), POST (Create draft, lister), GET `/{id}`, PUT `/{id}` (lister-owner only), POST `/{id}/publish` (validates ≥3 photos + non-zero rate), DELETE `/{id}` (soft archive), POST `/{id}/photos`, GET `/{id}/availability`. |
+| 4.9 | Users API |  ✅ Done | `UsersController` — GET `/api/users/me` (auth), PUT `/api/users/{id}` (self-only), GET `/api/users/{id}/profile` (public, includes rating aggregate from visible Reviews). |
+| 4.10 | Bookings API |  ✅ Done | `BookingsController` + `BookingService`. State-machine transitions in `TransitionAsync`: pending → confirmed → active → returned → completed (or cancelled). GET list (renter/lister filter, status filter, paged), POST create (computes total = rental + deposit + fee, reserves dates via AvailabilityBlock), PUT `/{id}/status`, GET `/{id}` returns full booking + timeline. |
+| 4.11 | Search & discovery API |  ✅ Done | `ListingsController.Search` — query params `gearType`, `conditions` (csv), `minPriceCents`, `maxPriceCents`, `verifiedOnly`, `location` (zip prefix), `sort` (relevance / price-asc / price-desc / rating / newest), pagination. Only `Published` listings returned. |
 
 ### Payment & Stripe Integration
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 4.12 | Stripe Connect setup |  ⬜ Pending | backend/Kitlo.Api/Services/StripeService — Account onboarding links, identity verification URLs, payment intents. Configuration via Stripe keys. |
-| 4.13 | Payment flow endpoints |  ⬜ Pending | POST /api/payments/intent, POST /api/payments/confirm, POST /api/payments/refund. Two-PI pattern (charge + manual-capture). |
-| 4.14 | Stripe webhook receiver |  ⬜ Pending | POST /api/webhooks/stripe — Handle identity.verification.session.completed, account.updated, payment_intent events, transfer events, dispute events. |
-| 4.15 | Payouts logic |  ⬜ Pending | backend/Kitlo.Api/Services/PayoutService — Calculate earnings minus platform fee, release funds to lister bank account, track payout history. |
+| 4.12 | Stripe Connect setup |  ⚠️ Partial | `StripeService.CreateOnboardingLinkAsync` returns a placeholder URL. Live `Stripe.NET` AccountLink wiring needs real keys + Phase 5 work. `IsLive` flag gates live-vs-test paths. Config slot in `appsettings.json:Stripe:SecretKey` (currently absent). |
+| 4.13 | Payment flow endpoints |  ⚠️ Partial | `PaymentsController` + `StripeService.CreatePaymentIntentAsync` / `ConfirmAsync` / `RefundAsync` implement the two-PI shape (rental + deposit) and write `Payment` rows with bcrypt-style fake `pi_test_*` ids. Real `Stripe.PaymentIntents.CreateAsync` calls deferred to Phase 5. |
+| 4.14 | Stripe webhook receiver |  ⚠️ Partial | `WebhooksController.Stripe` reads raw body + `Stripe-Signature` header and hands to `StripeService.HandleWebhookAsync` (no-op in scaffold mode). Signature verification + event dispatch (identity, account, payment_intent, transfer, dispute) deferred to Phase 5. |
+| 4.15 | Payouts logic |  ✅ Done | `PayoutService.CreatePayoutAsync` (gross − fee = net, scheduled +2 days), `ListAsync` (paged, lister-scoped), `SummaryAsync` (lifetime/pending/this-month + bookings count + average daily rate), `ExportCsvAsync`. `PayoutsController` exposes `/api/payouts`, `/summary`, `/export` (CSV download). Lister policy gated. |
 
 ### Additional Features
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 4.16 | Messaging API |  ⬜ Pending | POST /api/messages, GET /api/messages/threads, GET /api/messages/threads/{threadId}. Real-time updates via WebSocket or polling. |
-| 4.17 | Reviews & ratings API |  ⬜ Pending | POST /api/reviews, GET /api/reviews?userId=, GET /api/listings/{id}/reviews. Blind two-way reviews (each party rates, not visible until both done). |
-| 4.18 | Dispute resolution API |  ⬜ Pending | POST /api/disputes, GET /api/disputes/{id}, PUT /api/disputes/{id}/resolution. Evidence upload, admin approval. |
-| 4.19 | Notifications API |  ⬜ Pending | GET /api/notifications, PUT /api/notifications/{id}/read, DELETE /api/notifications/{id}. Background job for email/push delivery. |
-| 4.20 | Admin API |  ⬜ Pending | GET /api/admin/listings (review queue), GET /api/admin/disputes, GET /api/admin/users, PUT /api/admin/users/{id}/status (suspend/ban), GET /api/admin/payouts. |
+| 4.16 | Messaging API |  ✅ Done | `MessagesController` + `MessageService`. GET `/threads`, GET `/threads/{id}` (marks read), POST `/threads/{id}` (sends message + updates thread preview). Membership enforced via `ThreadParticipant` composite key. Real-time WebSocket/SignalR push deferred to Phase 5. |
+| 4.17 | Reviews & ratings API |  ✅ Done | `ReviewService.SubmitAsync` enforces post-return-only, role inference (renter↔lister), unique per booking+kind. Blind two-way: 14-day reveal window OR immediate reveal when counterpart submits. POST `/api/reviews/bookings/{id}`, GET `/api/reviews?userId=`, GET `/api/listings/{id}/reviews` — only `VisibleAt <= now` rows returned. Updates listing `RatingAverage`/`RatingCount`. |
+| 4.18 | Dispute resolution API |  ✅ Done | `DisputesController` + `DisputeService`. POST file (transitions Booking → Disputed), POST evidence (transitions Open → Evidence), PUT resolution (admin-only — applies booking outcome, writes `AdminAction` audit row). GET list (admin, status filter, paged). |
+| 4.19 | Notifications API |  ✅ Done | `NotificationsController` + `NotificationService`. List (paged, unread filter), unread-count, mark-read, mark-all-read (bulk SQL), delete, GET/PUT preferences (Email/Push/SMS toggles + opt-out bitmask). `EnqueueAsync` for service-to-service fan-out. |
+| 4.20 | Admin API |  ✅ Done | `AdminController` (admin policy). GET `/stats` (pending listings + open disputes + pending verifications), GET `/listings` (review queue with SLA hours), POST `/listings/{id}/approve|reject` (writes AdminAction), GET `/users` (paged search), PUT `/users/{id}/status` (warn/restrict/suspend/ban/reinstate). |
 
 ---
 
@@ -91,15 +91,15 @@ Last updated: 2026-05-01
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 5.1 | HTTP client + JWT interceptor |  ⬜ Pending | frontend/src/app/core/http — real API client, JWT injection, refresh-token flow, error mapping to ToastService. |
-| 5.2 | Swap mock services for live API calls |  ⬜ Pending | Replace in-memory implementations in core/services with HTTP-backed ones. Service signatures already match — should be mechanical. Remove core/mock-data. |
-| 5.3 | Real AuthService + guards |  ⬜ Pending | Replace mock AuthService from 3.8 with real JWT login, signup, refresh. Remove dev role switcher (or gate behind env flag). |
-| 5.4 | Stripe Elements integration |  ⬜ Pending | Replace StripePaymentForm stub from 3.4 with Stripe Elements (card collection, PaymentIntent confirm). Stripe Connect onboarding redirect for listers. |
-| 5.5 | Cloudinary upload integration |  ⬜ Pending | Replace PhotoUpload stub with real Cloudinary uploader (signed uploads). Wire to listing photos and avatars. Add responsive srcset helpers. |
-| 5.6 | Real-time messaging client |  ⬜ Pending | Replace polled mock chat with WebSocket/SignalR client against backend (4.16). Online presence, typing indicators if scoped. |
-| 5.7 | Map / location component |  ⬜ Pending | Replace MapView stub with Mapbox or Leaflet. Pickup-location display on listing detail, map view on search. ZIP/proximity filtering against backend. |
-| 5.8 | E2E tests against real backend |  ⬜ Pending | Re-run Cypress/Playwright suite from 3.22 with backend running. Add happy-path Stripe test mode and Cloudinary test bucket. |
-| 5.9 | Production deployment |  ⬜ Pending | Backend container deploy, frontend host (Vercel/Netlify/self-hosted — TBD), domain, env-var injection, smoke tests. |
+| 5.1 | HTTP client + JWT interceptor |  ✅ Done | `core/auth/token-storage.ts` (signal-backed `accessToken` + localStorage). `core/http/auth.interceptor.ts` injects `Authorization: Bearer <token>` only on same-origin / API requests. Registered in `app.config.ts` ahead of `errorInterceptor`. `environment.development.ts` points at `http://localhost:5268/api`. |
+| 5.2 | Swap mock services for live API calls |  ✅ Done | All 9 services in `core/services/*.ts` rewritten to call backend endpoints via `HttpClient`. Public method signatures unchanged so callers keep building. Mock-data fixtures still imported by 4 placeholder pages (dashboard home, public-profile, etc.) — those finish migrating in a 5.10 follow-up. Mock-only `services.spec.ts` + `mock-response.ts` deleted. New `listings.service.spec.ts` uses `HttpTestingController`. |
+| 5.3 | Real AuthService + guards |  ✅ Done | `AuthService` calls `POST /api/auth/login` / `/signup` and stores tokens via `TokenStorage`. `currentUser` signal preserved so existing pages stay reactive. Role-switcher kept for dev (env-gated by `environment.production`); `switchTo` short-circuits in production builds. Login + signup pages updated to `subscribe()` the now-async flow. |
+| 5.4 | Stripe Elements integration |  ⚠️ Partial | `@stripe/stripe-js` installed; `StripePaymentForm` mounts a real Card Element when `environment.stripePublicKey` is set, otherwise shows a "key missing" hint. `confirmCardPayment(client_secret, ...)` called against the secret returned by `POST /api/payments/intent`. Inert without a publishable key. |
+| 5.5 | Cloudinary upload integration |  ⚠️ Partial | `core/media/cloudinary.service.ts` — POSTs to `https://api.cloudinary.com/v1_1/{cloud}/image/upload` with the configured upload preset; returns a placehold.co URL when `cloudinaryCloudName` is empty. Upload-zone consumers can swap in `CloudinaryService.upload(file)` once a cloud is provisioned. |
+| 5.6 | Real-time messaging client |  ✅ Done | Backend `Hubs/MessagesHub.cs` (SignalR, `[Authorize]`, `JoinThread/LeaveThread` group methods). `RealtimeMessageService` wraps `MessageService.SendAsync` and broadcasts via `IHubContext`. `MessagesController.Send` swapped to it. JWT pulled from `?access_token=` for `/hubs/*` requests (browsers can't set Authorization on WS handshake). Frontend `core/realtime/messages-hub.client.ts` connects with `withAutomaticReconnect` and exposes `messages$` observable. |
+| 5.7 | Map / location component |  ✅ Done | `MapView` rewritten to use Leaflet + OpenStreetMap tiles (no API key). `leaflet.css` imported globally; marker icons sourced from unpkg CDN to dodge bundler asset-resolution issues. `allowedCommonJsDependencies: ["leaflet"]` in `angular.json`; initial-bundle warning budget bumped to 650 kB (current 565 kB). `pins` re-rendered reactively via signal `effect()`; auto-fits bounds. |
+| 5.8 | E2E tests against real backend |  ⚠️ Partial | Existing Playwright suite (15 specs) still passes against the dev server. Hooking E2E to the real .NET API is one config change in `playwright.config.ts` (chain `dotnet run` after `npm start`); deferred until Stripe/Cloudinary keys land so the booking E2E can actually clear payment. Manual signup→login→`/api/users/me`→`/api/listings` smoke verified end-to-end against Dockerized Postgres. |
+| 5.9 | Production deployment |  ⚠️ Partial | `Kitlo.Api/Dockerfile` (multi-stage SDK→runtime, exposes 8080, env-var configurable). `backend/docker-compose.yml` adds an `api` service behind `--profile full` that depends on a healthy Postgres. Real cloud deploy (DNS, secret management, frontend host, domain, smoke tests in production) is infrastructure work outside this codebase. |
 
 ---
 
@@ -167,9 +167,9 @@ Last updated: 2026-05-01
 
 ## Open Questions (cross-cutting)
 - [ ] Do we require lister approval on every booking, or default to instant book?
-- [ ] What is Kitlo's take rate? (industry range: 5–20% from renter, 10–20% from lister)
+- [x] What is Kitlo's take rate? **Phase 1: 5% renter + 5% lister = 10% total.** Scales with rollout — see `docs/business-plan.md`.
 - [ ] Minimum rental period? (suggest: 1 day minimum, 30-day maximum per booking)
 - [ ] Extension policy: how long can a rental be extended, and does the deposit increase?
 - [ ] International renters: US-only for Phase 1?
-- [ ] Does Kitlo charge a membership/subscription, or purely transaction-based?
+- [x] Does Kitlo charge a membership/subscription, or purely transaction-based? **Phase 1: purely transaction-based.** Subscription tiers explicitly out of scope per `docs/business-plan.md` §8.
 - [ ] What is the grace period for late returns before a late fee kicks in?

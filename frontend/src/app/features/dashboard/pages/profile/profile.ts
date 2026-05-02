@@ -130,6 +130,7 @@ export class DashboardProfile {
         name: `${value.firstName} ${value.lastName}`.trim(),
         city: city || undefined,
         state: state || undefined,
+        bio: value.bio || undefined,
       })
       .subscribe({
         next: () => {

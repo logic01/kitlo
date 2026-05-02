@@ -118,7 +118,7 @@ Each feature owns its own layout (`PublicLayout` / `AuthenticatedLayout` / `Admi
 
 **Coverage:**
 - 8 users (3 renters, 4 listers, 1 admin), with `MOCK_PROFILES` derivative for cards/profile pages
-- 15 listings across thermal / NV / rifle / bow / optics / treestand / pack / saddle, mix of mint / field-ready / battle-scarred. `lst-008` is the bundle (Pulsar XQ50 + ATN 4K Pro)
+- 15 listings across thermal / NV / optics / treestand / pack / saddle, mix of mint / field-ready / battle-scarred. `lst-008` is the bundle (Pulsar XQ50 + ATN 4K Pro). Weapons (rifles, bows) are excluded by listing policy — see `gear-catalogue.md` and `features/18-admin-listing-review.md`.
 - 8 bookings, one per terminal status + two confirmed-future
 - 5 listing-grouped review sets + 2 renter-side reviews
 - 4 message threads with full message history
@@ -230,6 +230,100 @@ Admin queues + detail pages call `AdminService` for approve/reject/rule/warn/res
 | E | `payouts` aggregates pending/in-transit/paid stats from history items |
 
 **Verification (3.13–3.16):** ESLint clean · 10/10 vitest pass · `npm run build` 374.11 kB initial / 94.78 kB transfer.
+
+---
+
+## Phase 5 — Integration ✅ (with Stripe / Cloudinary / deploy gates)
+
+Frontend now talks to the real .NET backend over HTTP + SignalR. Mock services swapped one-for-one for HTTP-backed implementations with identical public signatures so consumer pages didn't need to change.
+
+| Area | Implementation |
+|---|---|
+| **Auth** (5.1, 5.3) | `core/auth/token-storage.ts` — signal-backed access/refresh storage in localStorage. `core/http/auth.interceptor.ts` injects `Authorization: Bearer <token>` only on same-origin / API URLs. Real `AuthService` calls `/api/auth/login` + `/signup`, persists tokens, exposes `currentUser` signal unchanged. Login + signup pages now subscribe to the async response. Role-switcher kept for dev (env-gated). |
+| **HTTP services** (5.2) | All 9 services rewritten: `ListingsService`, `UsersService`, `BookingsService`, `MessagesService`, `NotificationsService`, `ReviewsService`, `DisputesService`, `PayoutsService`, `AdminService`. Each maps backend integer enums (`gearType: 0`) to frontend string discriminators (`'thermal'`). Old `mock-response.ts` + `services.spec.ts` deleted; new `listings.service.spec.ts` uses `HttpTestingController`. |
+| **Realtime messaging** (5.6) | Backend `Hubs/MessagesHub.cs` (`[Authorize]`, `JoinThread/LeaveThread` group methods). `RealtimeMessageService` wraps `MessageService.SendAsync` and fans out via `IHubContext`. JWT bearer pulls from `?access_token=` query for `/hubs/*` (WS handshake can't carry `Authorization`). Frontend `core/realtime/messages-hub.client.ts` (`@microsoft/signalr`) keeps a single auto-reconnecting connection; exposes `messages$` Observable. |
+| **Map** (5.7) | `MapView` rewritten to Leaflet + OpenStreetMap tiles (no API key). Marker icons sourced from unpkg CDN. Leaflet CSS imported globally; `allowedCommonJsDependencies: ["leaflet"]` registered in `angular.json`. Initial-bundle warning budget bumped 500 kB → 650 kB to accommodate Leaflet. |
+| **Stripe** ⚠️ Partial (5.4) | `@stripe/stripe-js` installed. `StripePaymentForm` mounts a real Card Element when `environment.stripePublicKey` is set, calls `confirmCardPayment(client_secret, …)` against the secret returned by `POST /api/payments/intent`. Shows "key missing" hint when no key is configured. |
+| **Cloudinary** ⚠️ Partial (5.5) | `core/media/cloudinary.service.ts` POSTs to `https://api.cloudinary.com/v1_1/{cloud}/image/upload` with the configured upload preset. Returns a placehold.co URL when `cloudinaryCloudName` is empty. Signed-upload flow (production) requires a backend `POST /api/uploads/sign` endpoint. |
+| **JWT key length** | Bumped `appsettings.json:Jwt:Key` from 29 chars → 76 chars. HS256 requires ≥256 bits and the original placeholder threw `IDX10720` at runtime. |
+| **Deployment** ⚠️ Partial (5.9) | `Kitlo.Api/Dockerfile` (multi-stage SDK 10 → ASP.NET runtime, exposes 8080). `backend/docker-compose.yml` gains an `api` service behind `--profile full` that depends on a healthy Postgres. Cloud deploy (DNS, secret management, frontend host) is infrastructure work outside this codebase. |
+
+**Verification:**
+- `dotnet build Kitlo.slnx` 0 warnings / 0 errors
+- `npm run lint` clean · `npm run build` 565 kB initial / 142 kB transfer
+- 52 / 52 vitest unit tests pass · 15 / 15 Playwright E2E pass
+- End-to-end smoke against Dockerized Postgres: `POST /api/auth/signup` (200) → `POST /api/auth/login` (returns real 497-char JWT) → `GET /api/users/me` (returns the persisted user) → `GET /api/listings` (returns real seeded listings)
+
+---
+
+## Phase 4 — Backend Development & Database (in progress, completed items only)
+
+### 4.2–4.20 — Backend implementation ✅ (with two ⚠️ Partial gates)
+
+Full ASP.NET Core 10 backend implemented in one pass: 13 entity files, DbContext with all relationships + indexes, JWT + bcrypt auth, 11 controllers covering 60+ endpoints across listings/users/bookings/messages/reviews/disputes/notifications/payouts/admin/payments. Build clean (0 warnings); `/openapi/v1.json` returns 200; `/api/users/me` returns 401 without auth (auth pipeline working).
+
+**Domain layer (`Kitlo.Core`)**
+
+| File | Entities |
+|---|---|
+| `Enums/Enums.cs` | UserRole, UserStatus, GearType, Condition, ListingStatus, CancellationPolicy, AvailabilityReason, BookingStatus, BookingEventKind, PaymentStatus, PaymentKind, PayoutStatus, DisputeStatus, DisputeReason, DisputeResolution, DisputeEvidenceKind, ReviewKind, ReviewAccuracy, NotificationKind, AdminActionKind, ReportTargetType |
+| `Models/User.cs` | User (BCrypt password hash, role, status, identity-verified, Stripe account id) |
+| `Models/Listing.cs` | Listing, ListingPhoto, ListingSpec, BundleItem (composite-key join), AvailabilityBlock |
+| `Models/Booking.cs` | Booking, BookingEvent (state-machine audit) |
+| `Models/Payment.cs` | Payment (Stripe intent id, two-PI kinds: Rental/Deposit/Extension/DamageCharge) |
+| `Models/Payout.cs` | Payout (gross/fee/net split, Stripe transfer id) |
+| `Models/Message.cs` | MessageThread, ThreadParticipant (composite key + LastReadAt), Message |
+| `Models/Review.cs` | Review (blind two-way: VisibleAt either set immediately when counterpart submits OR scheduled +14 days) |
+| `Models/Dispute.cs` | Dispute, DisputeEvidence |
+| `Models/Notification.cs` | Notification, NotificationPreferences (channel toggles + opt-out bitmask) |
+| `Models/AdminAction.cs` | Audit log of all admin moderation decisions |
+| `Models/Report.cs` | User-submitted reports (abuse, listing concerns) |
+
+**Data layer (`Kitlo.Data`)**
+
+| File | Notes |
+|---|---|
+| `KitloDbContext.cs` | All DbSets, relationships, composite keys, indexes (`User.Email` unique, `Listing.GearType+Status`, `Listing.PickupZip`, `Booking.RenterId/ListerId/ListingId/Status`, `Payment.StripePaymentIntentId`, `Review` unique per booking+kind, etc.), cascade rules |
+| `Migrations/20260501205342_InitialCreate.cs` | Initial migration generated via `dotnet ef migrations add` (dotnet-ef installed globally) |
+| `Seed/SeedData.cs` | Idempotent dev seed: 3 demo users (renter/lister/admin) + 2 published listings (Pulsar Thermion thermal, ATN X-Sight NV) with photos and specs |
+
+**API layer (`Kitlo.Api`)**
+
+| Area | Files |
+|------|-------|
+| Auth | `Auth/JwtSettings.cs`, `Auth/PasswordHasher.cs` (BCrypt.Net-Next, work factor 11), `Auth/TokenService.cs` (HS256 access tokens + URL-safe random refresh tokens). Policies `KitloPolicies.Admin` and `KitloPolicies.Lister` |
+| Common | `Common/PagedResult.cs`, `Common/CurrentUser.cs` (claims helpers), `Common/DomainException.cs` (status-code-mapped exceptions) |
+| Middleware | `Middleware/ErrorHandlingMiddleware.cs` (DomainException → JSON error response with proper status code) |
+| DTOs | `Models/Dtos.cs` — request/response records aligned with frontend `core/services` signatures |
+| Services | `UserService`, `ListingService`, `BookingService` (state machine with transitions: confirm/pickup/return/complete/cancel + auto AvailabilityBlock release), `MessageService`, `ReviewService` (blind reveal + listing rating aggregate update), `DisputeService` (auto-transitions Booking.Status), `NotificationService` (paged + bulk mark-read), `PayoutService` (CSV export), `AdminService`, `StripeService` (scaffold-only — see ⚠️ below) |
+| Controllers | `AuthController`, `UsersController`, `ListingsController`, `BookingsController`, `MessagesController`, `ReviewsController` (+ `ListingReviewsController`), `DisputesController`, `NotificationsController`, `PayoutsController`, `AdminController`, `PaymentsController` (+ `WebhooksController`, `StripeConnectController`) |
+| Wiring | `Program.cs`: connection string, JWT bearer + policies, services registered, CORS for `localhost:4200`, ErrorHandlingMiddleware, `MigrateAsync` + dev seed on startup (skippable via `SkipDatabase=true`) |
+
+**⚠️ Partial gates**
+
+- **4.3** — DbContext + initial migration scaffolded, but `dotnet ef database update` requires a running Postgres. Schema applies automatically on first boot via `db.Database.MigrateAsync()`.
+- **4.12 / 4.13 / 4.14** — `StripeService` writes the right Booking/Payment state-machine rows and exposes endpoints, but live Stripe.NET SDK calls + webhook signature verification are deferred to Phase 5 once test/live keys are provisioned. `IsLive` flag distinguishes scaffold-vs-live mode. Set `Stripe:SecretKey` in `appsettings.json` to enable.
+
+**Verification:** `dotnet build Kitlo.slnx` clean (0 warnings, 0 errors). `dotnet run --project Kitlo.Api` boots on :5268; `GET /openapi/v1.json` → 200; `GET /api/users/me` → 401 (auth pipeline live); `GET /api/listings` → 500 in this session (no Postgres available).
+
+---
+
+### 4.1 — Scaffold C# .NET project ✅
+
+Three-project ASP.NET Core 10 solution standing up — pure scaffolding for future Phase 4 tasks (EF models 4.2, JWT 4.5, controllers 4.7+) to build on.
+
+| File / change | Notes |
+|---|---|
+| `backend/Kitlo.slnx` | New .NET 10 XML solution format. References all three projects. |
+| `backend/Kitlo.Api/` | `webapi` template, net10.0, controllers + built-in OpenAPI. WeatherForecast sample stripped. Folder skeleton: `Controllers/`, `Services/`, `Models/`, `Middleware/` (each with `.gitkeep`). |
+| `backend/Kitlo.Core/` | `classlib`, net10.0. Empty — domain POCOs land here in 4.2. |
+| `backend/Kitlo.Data/` | `classlib`, net10.0. Packages: `Microsoft.EntityFrameworkCore` + `Npgsql.EntityFrameworkCore.PostgreSQL`. DbContext lands here in 4.2/4.3. |
+| Project refs | `Kitlo.Api` → `Kitlo.Core` + `Kitlo.Data`; `Kitlo.Data` → `Kitlo.Core`. |
+| `appsettings.json` | `ConnectionStrings:Default` (local Postgres) + `Jwt` (Issuer/Audience/Key) placeholders. |
+| `Kitlo.Api` packages | `Microsoft.EntityFrameworkCore.Design` for `dotnet ef migrations`. |
+| `backend/.gitignore` | `bin/`, `obj/`, IDE noise, `appsettings.Production.json`. |
+
+**Verification:** `dotnet build` 0 warnings / 0 errors. `dotnet run --project Kitlo.Api` boots on port 5268; `GET /openapi/v1.json` → 200.
 
 ---
 

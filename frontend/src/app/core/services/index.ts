@@ -46,6 +46,9 @@ export type {
 export { PayoutsService } from './payouts.service';
 export type { ListingEarnings, PayoutPage } from './payouts.service';
 
+export { PaymentsService } from './payments.service';
+export type { PaymentIntentResponse } from './payments.service';
+
 export { AdminService } from './admin.service';
 export type {
   AdminStats,
