@@ -1,6 +1,6 @@
 # Kitlo — Business Plan
 
-> Version 1.0 · Effective 2026-05-02
+> Version 1.1 · Effective 2026-05-06
 >
 > Owns: pricing, take rate, revenue model, phased rollout. Cross-references `docs/p2p-business-model.md` for general P2P theory and `docs/gear-catalogue.md` for inventory categories. Operational fee values used by the product live in `docs/features/03-create-listing.md`, `docs/features/07-booking-request.md`, and `docs/features/15-payouts-earnings.md` — those files defer to this document for the source of truth.
 
@@ -61,11 +61,56 @@ Every transaction must clear these costs before it generates margin:
 
 **Net margin at 10% take rate is roughly 6–7%** of GMV after Stripe and infrastructure — thin but viable when ops are kept lean.
 
-## 6. Profit Targets & Modeling
+## 6. Phase Modeling & Profit Targets
+
+### Phase 0: Bozeman Market Validation
+
+Before committing engineering and capital to a 3-metro Phase 1 rollout, Kitlo runs a controlled validation in a single beachhead market. **Bozeman, MT** is the test bed.
+
+**Why Bozeman:**
+
+- High concentration of serious, gear-heavy hunters (MeatEater HQ; transplant population overweighted on premium optics, packs, and thermals).
+- Strong digital adoption — Meta ad targeting reaches a real audience, unlike pure rural markets.
+- Tight, outdoors-focused community that rewards word-of-mouth and forms trust loops faster than a major metro.
+- Affluent transplants own expensive gear that sits unused 11 months a year — exactly the supply-side persona Kitlo's economics depend on.
+
+**Test design — $100 Meta ad spend:**
+
+| Field | Value |
+|---|---|
+| Budget | $100 over 10 days ($10/day) |
+| Geo | Bozeman + 30 mi radius |
+| Demographic | Men 28–55 |
+| Interest stack (AND) | MeatEater + (Sitka OR Kuiu OR First Lite OR Stone Glacier OR Vortex Optics) + OnX Hunt |
+| Objective | Leads (instant form) or Traffic to landing page with email capture |
+| Side tested | **Supply** (lister side) — the harder side of the marketplace |
+| Creative | Real tailgate/truck-bed photo of a pack or spotter. Headline: "Your $2,000 spotter is sitting in a closet 11 months a year." Subhead: "List it on Kitlo. Keep 95%. Bozeman hunters launching first." CTA: "Get early access." |
+
+**Why test the supply side, not the demand side:**
+Demand ("hunters want to rent gear") is plausible by default and can be validated through forums and gun-shop visits at zero cost. Supply ("hunters will lend their $3,000 thermal to a stranger") is the actual business risk. If supply doesn't exist, demand doesn't matter. The $100 buys signal on the harder question.
+
+**Decision criteria:**
+
+| Outcome (10-day window) | Signal | Action |
+|---|---|---|
+| ≥ 10 email signups | Lister-side intent confirmed | Scale to $500 spend; begin onboarding waitlist into closed beta. |
+| 3–9 signups | Ambiguous | Rerun with renter-side framing; if still weak, revisit creative, not thesis. |
+| 0–2 signups | Targeting/creative likely broken | Diagnose; do not kill thesis on $100 of data. |
+
+**Parallel zero-cost validation (run alongside the ad test):**
+
+- Posts in r/Bozeman, r/Hunting, r/Wyoming, RokSlide, and ArcheryTalk asking "would you list/rent this?" — qualitative signal that often writes the next ad's copy.
+- In-person visits to 3 archery shops + 1 RMEF or DU banquet in the Bozeman area for direct lister-side conversations.
+
+**What Phase 0 informs:**
+
+- Go / no-go on the Phase 1 plan below ($100k profit at 3 active metros).
+- Determines the order of the second and third Phase 1 metros (Casper vs. Boise vs. Denver) based on what the Bozeman validation reveals about lister persona.
+- If validation succeeds, Bozeman becomes the first of the three Phase 1 metros, not a separate market.
 
 ### Phase 1: $100k profit at 3 active metros
 
-Conservative model for a Mountain West regional launch (CO, MT, WY):
+Conservative model for a Mountain West regional launch led by **Bozeman, MT** as the validated beachhead, with the second and third metros (candidates: Casper WY, Boise ID, Denver CO) selected based on Phase 0 outcomes:
 
 | Input | Value |
 |---|---|
@@ -172,3 +217,6 @@ For engineering and product to consume:
 | 2026-05-02 | Phased rollout to 22% by nationwide peak | Industry-norm pricing once brand and liquidity are established. Scales linearly with market presence. |
 | 2026-05-02 | 24-month lock-in for first 1,000 listers | Cheap trust-building; protects supply during fee transitions. |
 | 2026-05-02 | No listing fees, ever | P2P supply growth beats short-term margin extraction. |
+| 2026-05-06 | Phase 0 added: $100 Meta ad validation in Bozeman before Phase 1 commit | De-risk the supply-side assumption with cheap, fast signal before scaling engineering and capital into a 3-metro launch. |
+| 2026-05-06 | Bozeman selected as the test-bed market | Best combination of digital adoption, gear-heavy hunting population, and culture density in the Mountain West. Replaces the vague "CO/MT/WY" Phase 1 framing with a concrete starting point. |
+| 2026-05-06 | Supply-side framing for the Phase 0 ad test | Supply is the harder side of a P2P marketplace; demand can be validated for free via forums and shop visits. The $100 is allocated to the question that actually carries business risk. |

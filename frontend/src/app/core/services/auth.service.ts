@@ -90,11 +90,31 @@ export class AuthService {
   }
 
   logout(): void {
+    const refreshToken = this.tokens.getRefresh();
     this.tokens.clear();
     this.setUser(null);
-    this.http.post(`${environment.apiUrl}/auth/logout`, {}).subscribe({
-      error: () => undefined, // best-effort
-    });
+    this.http
+      .post(`${environment.apiUrl}/auth/logout`, refreshToken ? { refreshToken } : {})
+      .subscribe({ error: () => undefined }); // best-effort
+  }
+
+  /**
+   * Exchange the stored refresh token for a fresh access+refresh pair via the
+   * backend's `/auth/refresh` rotation endpoint. Used by the auth interceptor
+   * to recover from a 401 transparently.
+   */
+  refresh(): Observable<string> {
+    const refreshToken = this.tokens.getRefresh();
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
+    return this.http
+      .post<AuthResponse>(`${environment.apiUrl}/auth/refresh`, { refreshToken })
+      .pipe(
+        tap((res) => this.tokens.set(res.accessToken, res.refreshToken)),
+        tap((res) => this.setUser(this.toUser(res.user))),
+        map((res) => res.accessToken),
+      );
   }
 
   /**

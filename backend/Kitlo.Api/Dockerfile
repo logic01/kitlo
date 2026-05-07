@@ -19,11 +19,29 @@ RUN dotnet publish Kitlo.Api/Kitlo.Api.csproj \
     -o /app/publish \
     --no-restore
 
+# ---- Runtime ----
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
+
+# Install curl for the HEALTHCHECK probe; -y --no-install-recommends keeps the layer small.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app/publish ./
 
-ENV ASPNETCORE_URLS=http://+:8080
+# Run as a dedicated non-root user. The aspnet base image ships with `app` (uid 1654);
+# we re-chown the application directory so that user can read it.
+RUN chown -R app:app /app
+USER app
+
+ENV ASPNETCORE_URLS=http://+:8080 \
+    DOTNET_RUNNING_IN_CONTAINER=true \
+    DOTNET_EnableDiagnostics=0
 EXPOSE 8080
+
+# `/api/listings` is unauthenticated and touches the DB, so it doubles as a readiness check.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl --fail --silent http://localhost:8080/api/listings >/dev/null || exit 1
 
 ENTRYPOINT ["dotnet", "Kitlo.Api.dll"]

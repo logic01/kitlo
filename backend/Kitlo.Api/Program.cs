@@ -22,6 +22,7 @@ var jwt = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()
     ?? throw new InvalidOperationException("Jwt section not configured");
 builder.Services.AddSingleton(jwt);
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<RefreshTokenService>();
 builder.Services.AddScoped<PasswordHasher>();
 
 builder.Services
@@ -74,6 +75,7 @@ builder.Services.AddScoped<DisputeService>();
 builder.Services.AddScoped<PayoutService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<StripeService>();
+builder.Services.AddScoped<WaitlistService>();
 
 // ---------- ASP.NET ----------
 builder.Services.AddControllers();
@@ -99,7 +101,8 @@ if (!app.Configuration.GetValue<bool>("SkipDatabase"))
         await db.Database.MigrateAsync();
         if (app.Environment.IsDevelopment())
         {
-            await SeedData.ApplyAsync(db);
+            var hasher = scope.ServiceProvider.GetRequiredService<PasswordHasher>();
+            await SeedData.ApplyAsync(db, hasher.Hash);
         }
     }
     catch (Exception ex)

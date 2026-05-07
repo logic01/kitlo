@@ -1,0 +1,14 @@
+# Local secrets — never commit these.
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs / scratch
+*.log
+.tmp-*

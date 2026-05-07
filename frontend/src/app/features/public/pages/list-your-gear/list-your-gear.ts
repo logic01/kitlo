@@ -8,13 +8,12 @@ import { Button, StepCard, StatCard } from '../../../../shared';
   template: `
     <section class="border-b-2 border-slate">
       <div class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-20 text-center">
-        <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">For listers</p>
+        <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">Thermal · NV · optics · stands · packs</p>
         <h1 class="font-condensed text-hero font-black uppercase text-slate leading-none">
-          Earn from the gear<br /><span class="text-olive">already in your safe.</span>
+          Your gear should<br /><span class="text-olive">earn its keep.</span>
         </h1>
         <p class="text-body-lg text-muted mt-6 max-w-2xl mx-auto">
-          Most hunting gear is used 3–5 weeks a year. List on Kitlo, set your daily rate, and let your thermal, night vision, or
-          spotting optics work for you the other 47.
+          Verified renters. Big payouts. List kit. Get paid. Most hunting gear sits unused 47 weeks a year — put yours to work.
         </p>
         <div class="mt-8">
           <a appButton variant="primary" routerLink="/auth/signup">Start listing</a>

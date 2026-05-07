@@ -10,6 +10,7 @@ import { AdminDisputeDetail } from './pages/dispute-detail/dispute-detail';
 import { AdminUsers } from './pages/users/users';
 import { AdminUserDetail } from './pages/user-detail/user-detail';
 import { AdminPayouts } from './pages/payouts/payouts';
+import { AdminWaitlist } from './pages/waitlist/waitlist';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -25,6 +26,7 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'users', component: AdminUsers, data: { title: 'Users' } },
       { path: 'users/:id', component: AdminUserDetail, data: { title: 'User detail' } },
       { path: 'payouts', component: AdminPayouts, data: { title: 'Payouts' } },
+      { path: 'waitlist', component: AdminWaitlist, data: { title: 'Waitlist' } },
     ],
   },
 ];

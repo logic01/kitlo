@@ -31,7 +31,7 @@ This is the path that lets you exercise real auth, real listings, and the seeded
 ### 1. Start Postgres
 
 ```powershell
-cd C:\repo\kitlo\backend
+cd C:\repo\kitlo\database
 docker compose up -d
 ```
 
@@ -163,6 +163,12 @@ docker compose --profile full up -d   # Postgres + API
 docker compose down                   # stop, keep data
 docker compose down -v                # stop + wipe the kitlo-pgdata volume
 ```
+
+---
+
+## Deploy
+
+The early-access waitlist page deploys to **kitlo.net** as a static S3 + CloudFront + Route 53 site. The form posts to Formspree (no backend required for the waitlist phase). Step-by-step in [`docs/deploy-early-access.md`](docs/deploy-early-access.md).
 
 ---
 

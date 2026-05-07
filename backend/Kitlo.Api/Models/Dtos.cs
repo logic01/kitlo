@@ -53,6 +53,7 @@ public record ListingSummaryDto(
     int DailyRateCents,
     string PickupZip,
     string HeroPhotoUrl,
+    Guid ListerId,
     string ListerName,
     bool ListerVerified,
     bool IsBundle,
@@ -239,3 +240,28 @@ public record UserAdminActionRequest(string Action, string? Note);
 public record CreatePaymentIntentRequest(Guid BookingId);
 public record PaymentIntentResponse(string ClientSecret, string PaymentIntentId);
 public record StripeWebhookRequest(); // body is read raw
+
+// =================== Waitlist ===================
+public record WaitlistJoinRequest(
+    string Name,
+    string Email,
+    string Zip,
+    string? FirstRental,
+    bool InterestedAsLister,
+    string? Source,
+    // Honeypot — bots fill all fields, real browsers leave hidden inputs blank.
+    // Non-empty value silently drops the submission.
+    string? HpCompany);
+
+public record WaitlistJoinResponse(Guid Id, bool AlreadyOnList);
+
+public record WaitlistEntryDto(
+    Guid Id,
+    string Email,
+    string Name,
+    string Zip,
+    string? FirstRental,
+    bool InterestedAsLister,
+    string? Source,
+    DateTimeOffset CreatedAt,
+    Guid? ConvertedUserId);

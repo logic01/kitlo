@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { forkJoin, map } from 'rxjs';
+import { combineLatest, forkJoin, map, of, switchMap } from 'rxjs';
 import { PageHeader, ReviewCard, ReviewSummary, Tabs, type TabDef } from '../../../../shared';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ListingsService } from '../../../../core/services/listings.service';
 import { ReviewsService } from '../../../../core/services/reviews.service';
-import { MOCK_REVIEWS_BY_LISTING } from '../../../../core/mock-data';
 
 @Component({
   selector: 'app-dashboard-reviews',
@@ -31,21 +31,32 @@ import { MOCK_REVIEWS_BY_LISTING } from '../../../../core/mock-data';
 })
 export class DashboardReviews {
   private readonly auth = inject(AuthService);
+  private readonly listingsApi = inject(ListingsService);
   private readonly reviewsApi = inject(ReviewsService);
 
   protected readonly activeTab = signal('received');
 
+  // "Received" reviews are aggregated across the user's own listings (renter→lister direction).
   private readonly received = toSignal(
-    forkJoin(
-      MOCK_REVIEWS_BY_LISTING.map((g) =>
-        this.reviewsApi.getByListing(g.listingId).pipe(map((page) => page.items)),
+    this.listingsApi.getMine().pipe(
+      switchMap((listings) =>
+        listings.length
+          ? forkJoin(
+              listings.map((l) =>
+                this.reviewsApi.getByListing(l.id).pipe(map((page) => page.items)),
+              ),
+            ).pipe(map((groups) => groups.flat()))
+          : of([]),
       ),
-    ).pipe(map((groups) => groups.flat())),
+    ),
     { initialValue: [] },
   );
 
+  // "Given" reviews are reviews the current user wrote (about counterparties).
   private readonly given = toSignal(
-    this.reviewsApi.getByUser(this.auth.currentUser()?.id ?? 'u-renter-1'),
+    combineLatest([of(this.auth.currentUser())]).pipe(
+      switchMap(([me]) => (me ? this.reviewsApi.getByUser(me.id) : of([]))),
+    ),
     { initialValue: [] },
   );
 

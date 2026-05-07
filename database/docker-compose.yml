@@ -2,11 +2,16 @@
 # Connection params match Kitlo.Api/appsettings.json -> ConnectionStrings:Default.
 #
 # Usage:
-#   cd backend
-#   docker compose up -d                       # DB only (default workflow)
-#   docker compose --profile full up -d        # DB + API
+#   cd database
+#   cp .env.example .env                       # then edit secrets
+#   docker compose up -d                       # DB + pgAdmin (default workflow)
+#   docker compose --profile full up -d        # DB + pgAdmin + API
 #   docker compose down                        # stop, keep data
 #   docker compose down -v                     # stop and wipe the data volume
+#
+# pgAdmin: http://localhost:5050
+#   The "Kitlo Postgres" server is pre-registered; enter the DB password
+#   from .env once on first connect and pgAdmin will remember it.
 
 services:
   postgres:
@@ -14,22 +19,40 @@ services:
     container_name: kitlo-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: kitlo
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-kitlo}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - kitlo-pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d kitlo"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-kitlo}"]
       interval: 5s
       timeout: 5s
       retries: 10
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: kitlo-pgadmin
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@kitlo.dev}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?PGADMIN_PASSWORD must be set in .env}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    volumes:
+      - kitlo-pgadmin:/var/lib/pgadmin
+      - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+
   api:
     build:
-      context: .
+      context: ../backend
       dockerfile: Kitlo.Api/Dockerfile
     container_name: kitlo-api
     restart: unless-stopped
@@ -37,14 +60,15 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=kitlo;Username=postgres;Password=postgres"
-      Jwt__Issuer: kitlo
-      Jwt__Audience: kitlo-api
-      Jwt__Key: "DEV_ONLY_REPLACE_WITH_A_LONG_RANDOM_STRING_AT_LEAST_32_BYTES"
+      ASPNETCORE_ENVIRONMENT: ${API_ASPNETCORE_ENVIRONMENT:-Development}
+      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-kitlo};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD}"
+      Jwt__Issuer: ${JWT_ISSUER:-kitlo}
+      Jwt__Audience: ${JWT_AUDIENCE:-kitlo-api}
+      Jwt__Key: ${JWT_KEY:?JWT_KEY must be set in .env (min 32 bytes)}
     ports:
-      - "5268:8080"
+      - "${API_PORT:-5268}:8080"
     profiles: ["full"]
 
 volumes:
   kitlo-pgdata:
+  kitlo-pgadmin:

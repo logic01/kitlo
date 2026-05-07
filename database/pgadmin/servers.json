@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Kitlo Postgres",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "kitlo",
+      "Username": "postgres",
+      "SSLMode": "prefer"
+    }
+  }
+}

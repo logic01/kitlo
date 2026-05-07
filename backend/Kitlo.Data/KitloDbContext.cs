@@ -27,6 +27,8 @@ public class KitloDbContext : DbContext
     public DbSet<NotificationPreferences> NotificationPreferences => Set<NotificationPreferences>();
     public DbSet<AdminAction> AdminActions => Set<AdminAction>();
     public DbSet<Report> Reports => Set<Report>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<WaitlistEntry> WaitlistEntries => Set<WaitlistEntry>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -261,6 +263,32 @@ public class KitloDbContext : DbContext
             e.HasOne(r => r.ResolvedByAdmin)
                 .WithMany()
                 .HasForeignKey(r => r.ResolvedByAdminId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // ----- RefreshToken -----
+        b.Entity<RefreshToken>(e =>
+        {
+            e.HasIndex(r => r.TokenHash).IsUnique();
+            e.HasIndex(r => r.UserId);
+            e.HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.Ignore(r => r.IsActive);
+        });
+
+        // ----- WaitlistEntry -----
+        b.Entity<WaitlistEntry>(e =>
+        {
+            // Email is normalized to lowercase at write time, so a plain unique
+            // index gives us case-insensitive dedupe without a function index.
+            e.HasIndex(w => w.Email).IsUnique();
+            e.HasIndex(w => w.CreatedAt);
+            e.HasIndex(w => w.Zip);
+            e.HasOne(w => w.ConvertedUser)
+                .WithMany()
+                .HasForeignKey(w => w.ConvertedUserId)
                 .OnDelete(DeleteBehavior.SetNull);
         });
     }

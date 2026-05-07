@@ -10,12 +10,12 @@ namespace Kitlo.Data.Seed;
 /// </summary>
 public static class SeedData
 {
-    public static async Task ApplyAsync(KitloDbContext db, CancellationToken ct = default)
+    public static async Task ApplyAsync(KitloDbContext db, Func<string, string> hashPassword, CancellationToken ct = default)
     {
         if (await db.Users.AnyAsync(ct)) return; // already seeded
 
-        // Note: PasswordHash here is a placeholder ("password" → bcrypt). Real signup goes through PasswordHasher.
-        const string demoHash = "$2a$11$0j4ER1A3yhI5W2aR9j5TROzXhB.wDiXa4MfNfx7qeuVVw1UO3uD0G";
+        // Hash "password" at seed time so the hash can't drift out of sync with the verifier.
+        var demoHash = hashPassword("password");
 
         var renter = new User
         {

@@ -61,3 +61,12 @@ export type {
 
 export { ToastService } from './toast.service';
 export type { Toast, ToastTone, ShowToastOptions } from './toast.service';
+
+export { WaitlistService } from './waitlist.service';
+export type {
+  WaitlistEntry,
+  WaitlistJoinInput,
+  WaitlistJoinResult,
+  WaitlistListQuery,
+  WaitlistPage,
+} from './waitlist.service';

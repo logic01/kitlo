@@ -22,6 +22,7 @@ export const PUBLIC_ROUTES: Routes = [
       { path: 'search', component: PublicSearch, data: { title: 'Search & discovery' } },
       { path: 'listing/:id', component: PublicListingDetail, data: { title: 'Listing detail' } },
       { path: 'list-your-gear', component: PublicListYourGear, data: { title: 'For listers' } },
+      { path: 'list', component: PublicListYourGear, data: { title: 'List your gear' } },
       { path: 'about', component: PublicAbout, data: { title: 'About' } },
       { path: 'trust', component: PublicTrust, data: { title: 'Trust & safety' } },
       { path: 'contact', component: PublicContact, data: { title: 'Contact' } },

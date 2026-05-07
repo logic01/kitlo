@@ -4,4 +4,5 @@ export const environment = {
   signalRUrl: 'http://localhost:5268/hubs',
   stripePublicKey: '',
   cloudinaryCloudName: '',
+  waitlistEndpoint: 'https://formspree.io/f/xbdwkjrr',
 };

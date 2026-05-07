@@ -50,4 +50,13 @@ public class TokenService
         RandomNumberGenerator.Fill(bytes);
         return Convert.ToBase64String(bytes).Replace('+', '-').Replace('/', '_').TrimEnd('=');
     }
+
+    /// <summary>SHA-256 hex of a raw refresh token, used as the column value in `refresh_tokens.token_hash`.</summary>
+    public static string HashRefreshToken(string raw)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(raw));
+        return Convert.ToHexString(bytes).ToLowerInvariant();
+    }
+
+    public TimeSpan RefreshTokenLifetime => TimeSpan.FromDays(_settings.RefreshTokenDays);
 }

@@ -32,6 +32,7 @@ export interface ListingSummary {
   pickupZip: string;
   heroPhotoUrl: string;
   rating?: { average: number; count: number };
+  listerId: string;
   listerName: string;
   listerVerified: boolean;
   isBundle?: boolean;

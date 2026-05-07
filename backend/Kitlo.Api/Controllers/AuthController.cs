@@ -11,35 +11,45 @@ public class AuthController : ControllerBase
 {
     private readonly UserService _users;
     private readonly TokenService _tokens;
+    private readonly RefreshTokenService _refresh;
 
-    public AuthController(UserService users, TokenService tokens)
+    public AuthController(UserService users, TokenService tokens, RefreshTokenService refresh)
     {
         _users = users;
         _tokens = tokens;
+        _refresh = refresh;
     }
 
     [HttpPost("signup")]
     public async Task<ActionResult<AuthResponse>> Signup([FromBody] SignupRequest req, CancellationToken ct)
     {
         var user = await _users.SignupAsync(req, ct);
-        return new AuthResponse(_tokens.CreateAccessToken(user), _tokens.CreateRefreshToken(), UserService.ToDto(user));
+        var refresh = await _refresh.IssueAsync(user.Id, ClientIp(), ct);
+        return new AuthResponse(_tokens.CreateAccessToken(user), refresh, UserService.ToDto(user));
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest req, CancellationToken ct)
     {
         var user = await _users.LoginAsync(req.Email, req.Password, ct);
-        return new AuthResponse(_tokens.CreateAccessToken(user), _tokens.CreateRefreshToken(), UserService.ToDto(user));
+        var refresh = await _refresh.IssueAsync(user.Id, ClientIp(), ct);
+        return new AuthResponse(_tokens.CreateAccessToken(user), refresh, UserService.ToDto(user));
     }
 
-    /// <summary>
-    /// Refresh-token rotation. Today this re-issues from a still-trusted access token; persistent
-    /// refresh-token storage + revocation is owed when we ship real session management.
-    /// </summary>
     [HttpPost("refresh")]
-    public ActionResult<AuthResponse> Refresh([FromBody] RefreshRequest _) =>
-        Unauthorized(new { message = "Refresh-token rotation lands with persistent session storage in Phase 5." });
+    public async Task<ActionResult<AuthResponse>> Refresh([FromBody] RefreshRequest req, CancellationToken ct)
+    {
+        var (newRaw, user) = await _refresh.RotateAsync(req.RefreshToken, ClientIp(), ct);
+        return new AuthResponse(_tokens.CreateAccessToken(user), newRaw, UserService.ToDto(user));
+    }
 
     [HttpPost("logout")]
-    public IActionResult Logout() => NoContent();
+    public async Task<IActionResult> Logout([FromBody] RefreshRequest? req, CancellationToken ct)
+    {
+        if (!string.IsNullOrWhiteSpace(req?.RefreshToken))
+            await _refresh.RevokeAsync(req.RefreshToken, ct);
+        return NoContent();
+    }
+
+    private string? ClientIp() => HttpContext.Connection.RemoteIpAddress?.ToString();
 }

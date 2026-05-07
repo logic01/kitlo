@@ -227,6 +227,7 @@ public class ListingService
             l.Id, l.Title, l.GearType, l.GearTypeLabel, l.Condition,
             l.DailyRateCents, l.PickupZip,
             hero?.Url ?? "",
+            l.ListerId,
             l.Lister?.Name ?? "",
             l.Lister?.IdentityVerified ?? false,
             l.IsBundle,

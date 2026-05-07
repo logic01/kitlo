@@ -16,7 +16,8 @@ import {
 } from '../../../../shared';
 import { ListingsService } from '../../../../core/services';
 import { loadable } from '../../../../core/loading/loadable';
-import { MOCK_PROFILES } from '../../../../core/mock-data';
+import type { ListingSummary } from '../../../../core/models/listing';
+import type { ProfileSummary } from '../../../../core/models/user';
 
 @Component({
   selector: 'app-public-home',
@@ -34,13 +35,13 @@ import { MOCK_PROFILES } from '../../../../core/mock-data';
   ],
   template: `
     <app-hero
-      kicker="Peer-to-peer hunting equipment"
-      headline="Rent the gear."
-      accent="Own the hunt."
-      sub="Thermal, night vision, and high-value hunting equipment — from verified hunters, for hunters."
+      kicker="Thermal · NV · optics · stands · packs"
+      headline="Your gear should"
+      accent="earn its keep."
+      sub="Verified renters. Big payouts. List kit. Get paid."
     >
       <div slot="right" class="flex flex-col gap-3">
-        @for (profile of featuredProfiles; track profile.id) {
+        @for (profile of featuredProfiles(); track profile.id) {
           <app-profile-card [profile]="profile" />
         }
       </div>
@@ -95,10 +96,29 @@ import { MOCK_PROFILES } from '../../../../core/mock-data';
       </div>
     </section>
 
+    <section class="bg-olive">
+      <div
+        class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-20 flex flex-col md:flex-row md:items-center md:justify-between gap-8"
+      >
+        <div>
+          <p class="font-mono text-overline text-on-dark/70 tracking-[0.10em] uppercase mb-3">Got gear?</p>
+          <h2 class="font-condensed text-h1 font-black uppercase text-on-dark leading-none">
+            List kit. <span class="text-amber">Get paid.</span>
+          </h2>
+          <p class="text-body-lg text-on-dark/85 mt-5 max-w-xl">
+            Most hunting kit sits unused 47 weeks a year. Put yours to work — we handle payments, verification, and disputes.
+          </p>
+        </div>
+        <div class="shrink-0">
+          <a appButton variant="primary" routerLink="/list">Start listing</a>
+        </div>
+      </div>
+    </section>
+
     <app-dark-band
-      heading="Built for the"
-      accent="hunting community"
-      sub="Every transaction is vetted, mediated, and reviewed."
+      heading="Big payouts."
+      accent="Verified renters."
+      sub="Your gear earns while it waits. Kitlo handles the money, the IDs, and the paperwork."
       [cards]="trustCards"
     />
   `,
@@ -106,13 +126,32 @@ import { MOCK_PROFILES } from '../../../../core/mock-data';
 })
 export class PublicHome {
   private readonly listings = inject(ListingsService);
+
   private readonly featured = loadable(
     this.listings.search({ pageSize: 6 }).pipe(map((r) => r.items)),
   );
   protected readonly featuredLoading = this.featured.loading;
   protected readonly featuredListings = computed(() => this.featured.data() ?? []);
   protected readonly skeletonSlots = Array(6).fill(0);
-  protected readonly featuredProfiles = MOCK_PROFILES.filter((p) => p.rating).slice(0, 3);
+
+  // Featured profile cards in the hero are derived from the top-rated listings:
+  // dedupe by lister, take three. This keeps the home page driven entirely by live API
+  // data without a dedicated "featured listers" endpoint.
+  private readonly profilesQuery = loadable(
+    this.listings.search({ sort: 'rating', pageSize: 12 }).pipe(map((r) => r.items)),
+  );
+  protected readonly featuredProfiles = computed<ProfileSummary[]>(() => {
+    const items = this.profilesQuery.data() ?? [];
+    const seen = new Set<string>();
+    const profiles: ProfileSummary[] = [];
+    for (const l of items) {
+      if (seen.has(l.listerId)) continue;
+      seen.add(l.listerId);
+      profiles.push(toProfile(l));
+      if (profiles.length === 3) break;
+    }
+    return profiles;
+  });
 
   protected readonly pillars: OliveBandPillar[] = [
     { title: 'Verified hunters only', body: 'Government ID + selfie verify before listing' },
@@ -121,9 +160,20 @@ export class PublicHome {
   ];
 
   protected readonly trustCards: TrustCardData[] = [
-    { label: 'ID', title: 'Identity verified', body: 'Government ID and selfie match required before any lister can post gear.' },
-    { label: '$', title: 'Escrow payment', body: 'Funds are held securely until both parties confirm the rental is complete.' },
-    { label: '★', title: 'Two-way reviews', body: 'Renters rate gear. Listers rate renters. Every transaction builds public reputation.' },
-    { label: '⚖', title: 'Dispute resolution', body: 'Admin-mediated with photo evidence. Damage deposit held until resolved.' },
+    { label: '$', title: 'Keep 95%', body: 'Flat 5% lister fee. No subscriptions, no listing fees, no surprises.' },
+    { label: 'ID', title: 'Verified renters only', body: 'Government ID and selfie match required before anyone can book your gear.' },
+    { label: '→', title: 'Fast payouts', body: 'Stripe Connect direct deposit. Released within days of a confirmed return.' },
+    { label: '★', title: 'You set the rules', body: 'Your daily rate, your availability, your pickup terms. Kitlo just runs the rails.' },
   ];
+}
+
+function toProfile(l: ListingSummary): ProfileSummary {
+  return {
+    id: l.listerId,
+    name: l.listerName,
+    verified: l.listerVerified,
+    rating: l.rating,
+    primaryGear: l.gearTypeLabel,
+    primaryRateCents: l.dailyRateCents,
+  };
 }

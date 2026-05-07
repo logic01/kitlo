@@ -8,6 +8,7 @@ const ADMIN_ITEMS: SidebarItem[] = [
   { label: 'Disputes', route: '/admin/disputes', section: 'Moderation', badgeCount: 2 },
   { label: 'Users', route: '/admin/users', section: 'Operations' },
   { label: 'Payouts', route: '/admin/payouts', section: 'Operations' },
+  { label: 'Waitlist', route: '/admin/waitlist', section: 'Growth' },
 ];
 
 @Component({

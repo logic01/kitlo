@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import {
   AvailabilityCalendar,
   Button,
   PageHeader,
   type Crumb,
 } from '../../../../shared';
-import { listingById, MOCK_LISTINGS } from '../../../../core/mock-data';
+import { ListingsService } from '../../../../core/services';
 
 @Component({
   selector: 'app-dashboard-availability-calendar',
@@ -27,20 +28,32 @@ import { listingById, MOCK_LISTINGS } from '../../../../core/mock-data';
         </p>
         <app-availability-calendar mode="select-range" />
       </div>
+    } @else {
+      <div class="px-8 py-16 text-center text-muted">Listing not found.</div>
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardAvailabilityCalendar {
   private readonly route = inject(ActivatedRoute);
+  private readonly listings = inject(ListingsService);
+
   private readonly listingId = toSignal(
-    this.route.params.pipe(map((p) => p['id'] as string)),
-    { initialValue: MOCK_LISTINGS[0].id },
+    this.route.params.pipe(map((p) => p['id'] as string | undefined)),
+    { initialValue: undefined },
   );
-  protected readonly listing = computed(() => listingById(this.listingId()) ?? null);
+
+  protected readonly listing = toSignal(
+    this.route.params.pipe(
+      map((p) => p['id'] as string | undefined),
+      switchMap((id) => (id ? this.listings.getById(id) : of(null))),
+    ),
+    { initialValue: null },
+  );
+
   protected readonly crumbs = computed<Crumb[]>(() => [
     { label: 'My listings', route: '/dashboard/listings' },
-    { label: this.listing()?.title ?? '', route: `/dashboard/listings/${this.listingId()}/edit` },
+    { label: this.listing()?.title ?? '', route: `/dashboard/listings/${this.listingId() ?? ''}/edit` },
     { label: 'Availability' },
   ]);
 }

@@ -74,6 +74,7 @@ interface BackendListingSummary {
   dailyRateCents: number;
   pickupZip: string;
   heroPhotoUrl: string;
+  listerId: string;
   listerName: string;
   listerVerified: boolean;
   isBundle: boolean;
@@ -131,6 +132,7 @@ function mapSummary(b: BackendListingSummary): ListingSummary {
     dailyRateCents: b.dailyRateCents,
     pickupZip: b.pickupZip,
     heroPhotoUrl: b.heroPhotoUrl,
+    listerId: b.listerId,
     listerName: b.listerName,
     listerVerified: b.listerVerified,
     isBundle: b.isBundle,
@@ -154,6 +156,7 @@ function mapListing(b: BackendListing): Listing {
     pickupZip: b.pickupZip,
     description: b.description,
     heroPhotoUrl: heroPhoto?.url ?? '',
+    listerId: b.listerId,
     listerName: b.listerName,
     listerVerified: b.listerVerified,
     isBundle: b.isBundle,
