@@ -1,9 +1,21 @@
 ## ! IMPORTANT ! ##
 Read docs/task.md for your next task.
 
-# Kitlo — Peer-to-Peer Hunting Equipment Rental
+# Kitlo — Peer-to-Peer Overlanding Gear Rental
 
-A marketplace where hunters can list and rent hunting equipment to/from each other.
+A marketplace where overlanders list and rent the high-value gear that makes long trips possible — rooftop tents, 12V fridges, recovery kit, awnings, dual-battery / power stations, navigation, and the optics, fly-fishing kit, and trip-specific gear they carry on the way.
+
+## Verticals
+
+Kitlo is **overlanding-led**. Hunting trips, fly-fishing trips, and outage prep are framed as things overlanders do — not separate brands.
+
+| Vertical | Status | Notes |
+|---|---|---|
+| **Camping & Overlanding gear** | Anchor (Phase 1) | RTTs, 12V fridges, awnings, recovery boards, dual-battery, full kits. The wedge. |
+| **Night Hunting Optics** | Phase 1 (already wired) | Thermal + NV monoculars, scopes, clip-ons, bundles. The bundle (thermal-detect + NV-engage) is the flagship product. |
+| **Portable Power Stations** | Phase 1 bundle add-on | Bundled with overlanding kits, not standalone. Standalone is foreclosed by Hygglo / FriendWithA. |
+| **Fly Fishing gear** | Phase 2 (layered vertical) | Waders, boots, rod-reel setups, specialty weights. Layered onto overlanding's owner base for additive revenue. |
+| **Smokers & Pizza Ovens** | Phase 2+ (provisional, marginal) | Documented in catalogue but not built. Sub-2x/year frequency and BGE-owner activation friction make standalone unviable. Re-evaluate after Phase 1 traction. |
 
 ## Listing Policy — Weapons Prohibited
 
@@ -80,7 +92,8 @@ kitlo/
 ## Core Domain Models
 
 - **User** — lister or renter (same user can be both)
-- **Listing** — equipment item with photos, price/day, availability, condition, pickup location
+- **Listing** — equipment item with photos, price/day, availability, condition, pickup location, and a vertical (`overlanding | hunting-optics | power-station | fly-fishing | smoker-pizza`)
+- **Bundle** — a parent listing composed of multiple owner-supplied items rented as one unit (e.g., RTT + fridge + awning; thermal monocular + NV scope; pizza oven + peel + dough board)
 - **Booking** — rental period with status (pending, confirmed, active, returned, disputed)
 - **Payment** — Stripe PaymentIntent linked to a Booking
 - **Review** — bidirectional (renter reviews listing, lister reviews renter)
@@ -90,7 +103,8 @@ kitlo/
 - Lister sets a daily rate; renter pays rate × days + 5% renter service fee (Phase 1 launch pricing).
 - Funds are held until the rental period ends, then released to lister minus the 5% lister payout fee.
 - Both parties must confirm return before funds release.
-- Equipment must have at minimum: title, 3 photos, condition, pickup ZIP, daily rate.
+- Equipment must have at minimum: title, 3 photos, condition, pickup ZIP, daily rate, **vertical**.
+- Vertical-specific minimums (per `docs/gear-catalogue.md`): overlanding listings require vehicle-fit info; night-optics listings require a US-Person attestation (ITAR); power stations require UL 9540 / 2743 cert; fly-fishing wading-boot listings must declare felt vs. rubber sole; pizza-oven/smoker listings (Phase 2+) require ≥$800 retail price for the rental ratio to clear.
 
 ## Pricing — Phase 1 (Launch)
 

@@ -10,7 +10,7 @@ type RowStatus = 'active' | 'paused' | 'pending' | 'archived' | 'draft' | 'rejec
 
 const STATUS_TO_ROW: Record<ListingStatus, RowStatus> = {
   draft: 'draft',
-  pending: 'pending',
+  pendingReview: 'pending',
   published: 'active',
   paused: 'paused',
   rejected: 'rejected',

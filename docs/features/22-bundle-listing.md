@@ -1,15 +1,30 @@
 # Feature: Bundle Listing
 
-**Personas:** Lister (P3/P4), Dual User (P5), Renter (P1/P2)  
-**Trigger:** Lister creates a bundle from their existing individual listings  
-**Depends on:** 03-create-listing, 04-manage-listings  
+**Personas:** Lister (P3/P4/P9/P11), Dual User (P5), Renter (P1/P2/P8/P10)
+**Trigger:** Lister creates a bundle from their existing individual listings
+**Depends on:** 03-create-listing, 04-manage-listings
 **Blocks:** None (but feeds into 05-search-discovery and 06-listing-detail with special treatment)
+
+> **v2.0 — overlanding pivot.** Bundle is no longer thermal-+-NV-only. Three first-class bundle archetypes ship in Phase 1: **Overlanding kit**, **Hunting optics bundle** (thermal + NV), and **Power station + overlanding kit** (the bundle-only path for power stations). A fourth archetype — **Pizza oven + accessories** — is Phase 2+ and not implemented. All bundle archetypes share the creation flow and pricing logic below; per-archetype field sets diverge in Step 1.
 
 ---
 
 ## Goal
 
-The thermal + night vision bundle is Kitlo's flagship product. No competitor offers combined booking of a thermal unit and a night vision unit as a single transaction. This is what makes Kitlo purpose-built for hunters rather than a general gear rental platform. The bundle must be easy to create, easy to find, and easy to book.
+Bundles are Kitlo's defining product. No B2C or P2P competitor offers a single-transaction overlanding kit (RTT + fridge + awning + power) or a single-transaction night-hunt kit (thermal-detect + NV-engage). The bundle must be easy to create, easy to find, and easy to book.
+
+---
+
+## Bundle archetypes
+
+| Archetype | Typical contents | Status | Why it's a bundle |
+|---|---|---|---|
+| **Weekend overland** | RTT + awning + 12V fridge + camp kitchen + power station | Phase 1 | Single owner; one pickup; intersection of compatible vehicle-fit |
+| **Trailhead expedition** | Weekend overland + recovery boards + air compressor + sat communicator | Phase 1 | Same as above; higher AOV |
+| **Hunting optics bundle** | Thermal monocular (detection) + NV scope (engagement) | Phase 1 | The original Kitlo flagship; documented unmet demand on Predator Masters / HuntTalk |
+| **Power station + overlanding** | Any qualifying overlanding listing + a 1500Wh+ power station | Phase 1 | Power stations are bundle-only on Kitlo (standalone foreclosed by Hygglo/FriendWithA) |
+| **Pizza oven + accessories** (Phase 2+) | Premium pizza oven + peel + dough scraper + thermometer | **Not built** | Documented in `gear-catalogue.md`; vertical opens after Phase 1 traction |
+| **Fly fishing destination kit** (Phase 2 layered vertical) | Waders + boots + rod-reel setup + loaded fly box | Phase 2 | Layered onto overlanding's owner base for additive revenue |
 
 ---
 
@@ -35,12 +50,17 @@ A bundle is two or more listings packaged as a single bookable unit with:
 
 Accessed from: Lister dashboard → "My Listings" → "Create Bundle"
 
-### Step 1 — Select listings
+### Step 1 — Archetype + listings
 
-- Lister sees their Active listings in a checklist
-- Selects 2–4 listings to include in the bundle
-- Validation: selected listings must not have conflicting existing bookings
-- Recommended starting point: thermal unit + NV unit (system suggests compatible pairs based on gear category)
+- Lister picks an archetype (Weekend overland / Trailhead expedition / Hunting optics / Power station + overlanding / Fly fishing destination kit). The archetype drives suggested listings and validation rules.
+- System surfaces the lister's Active listings most likely to fit the archetype:
+  - *Weekend overland* — at minimum 1 RTT or ground tent. Surfaces matching fridges, awnings, kitchens, power stations.
+  - *Trailhead expedition* — Weekend overland prerequisites + recovery boards / compressor / SATCOM.
+  - *Hunting optics* — at minimum 1 thermal + 1 NV listing.
+  - *Power station + overlanding* — at minimum 1 qualifying overlanding listing + 1 power station ≥ 1500Wh.
+  - *Fly fishing destination kit* — at minimum 1 wader + 1 wading boot. Surfaces matching rod-reel setups.
+- Selects 2–6 listings to include in the bundle (raised from 4 to accommodate full overland kits).
+- Validation: selected listings must not have conflicting existing bookings; for overlanding bundles, vehicle-fit fields must be present and consistent across components.
 
 ### Step 2 — Bundle identity
 
@@ -50,14 +70,16 @@ Accessed from: Lister dashboard → "My Listings" → "Create Bundle"
 
 ### Step 3 — Pricing
 
-- **Individual price breakdown shown:** 
-  > ATN Thor 4 640: $135/day  
-  > ATN X-Sight 4K Pro: $65/day  
-  > Individual total: $200/day
-- **Bundle daily rate:** Lister sets this. System shows a suggested bundle discount range (10–20% off individual total is the platform recommendation — not enforced).
-- **Example:** $175/day (12.5% bundle discount)
-- Bundle deposit: calculated as sum of individual deposits (or lister can set a custom bundle deposit, not below the sum)
-- Protection plan: applied based on combined MSRP (highest-tier plan of the two items)
+- **Individual price breakdown shown** (example for a Weekend overland bundle):
+  > iKamper Skycamp 3.0: $120/day
+  > Dometic CFX3 55IM: $35/day
+  > ARB Awning 2500: $25/day
+  > Goal Zero Yeti 1500X: $40/day
+  > Individual total: $220/day
+- **Bundle daily rate:** Lister sets this. System shows a suggested bundle discount range — overlanding 5–15%, hunting optics 10–20% (the original flagship target).
+- **Example:** $195/day Weekend overland (11% discount), or $175/day hunting optics (12.5% discount).
+- Bundle deposit: calculated as sum of individual deposits (or lister can set a custom bundle deposit, not below the sum).
+- Protection plan: applied based on combined MSRP (highest-tier plan of the items in the bundle). Bundles with combined MSRP > $5,000 trigger admin review (`feature 18`).
 
 ### Step 4 — Availability
 
@@ -79,7 +101,9 @@ The bundle listing page has the same structure as a standard listing but with bu
 
 ### What's in the bundle section
 
-Replaces the standard "Spec table" with a two-column card layout:
+Replaces the standard "Spec table" with an N-column card layout (one card per included listing). Examples:
+
+**Hunting optics bundle:**
 
 | ATN Thor 4 640 | ATN X-Sight 4K Pro |
 |---|---|
@@ -88,7 +112,16 @@ Replaces the standard "Spec table" with a two-column card layout:
 | [Condition: Mint] | [Condition: Field-Ready] |
 | [Link to individual listing →] | [Link to individual listing →] |
 
-Each card links to the individual listing so renters can see full specs and photos for each item.
+**Weekend overland bundle:**
+
+| iKamper Skycamp 3.0 | Dometic CFX3 55IM | ARB Awning 2500 | Goal Zero Yeti 1500X |
+|---|---|---|---|
+| Hardshell RTT | 12V fridge/freezer | 270° awning | 1516Wh power station |
+| Sleeps 4 | 55L, dual-zone | Driver-side mount | 2000W AC inverter |
+| [Condition: Field-Ready] | [Condition: Mint] | [Condition: Field-Ready] | [Condition: Mint] |
+| [Link →] | [Link →] | [Link →] | [Link →] |
+
+Each card links to the individual listing so renters can see full specs and photos for each item. Overlanding bundles also surface a unified **vehicle-fit summary** (crossbar pattern, max load, RTT mount type) at the top of the section.
 
 ### Pricing block
 
@@ -121,7 +154,13 @@ Bundle listings get distinct visual treatment in search results:
 - **Price display:** Bundle price prominently shown; individual total shown smaller as "value comparison"
 - **Filter:** Users can filter search results to show "Bundles only" — for renters who specifically want the full night hunt kit
 
-Bundles rank above individual listings in search results when the renter's search query implies a bundled need (e.g., searching "thermal night vision" or "hog hunting kit") — this is a relevance signal, not a paid placement.
+Bundles rank above individual listings in search results when the renter's search query implies a bundled need:
+- "thermal night vision" / "hog hunting kit" → hunting optics bundle
+- "rooftop tent fridge" / "weekend overland" / "overland kit" → overlanding bundles
+- "power station camping" → power-station-+-overlanding bundles
+- "wader rod kit" → fly fishing destination kits
+
+This is a relevance signal, not paid placement.
 
 ---
 

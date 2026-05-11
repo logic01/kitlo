@@ -1,9 +1,11 @@
 # Feature: Create a Listing
 
-**Personas:** New Lister (P3), Power Lister (P4), Dual User (P5)  
-**Trigger:** Lister clicks "Add listing" from their dashboard  
-**Depends on:** 02-lister-onboarding (must be complete), 17-identity-verification  
+**Personas:** New Lister (P3), Power Lister (P4), Dual User (P5), Overlander Lister (P9), Multi-Vertical Lister (P11)
+**Trigger:** Lister clicks "Add listing" from their dashboard
+**Depends on:** 02-lister-onboarding (must be complete), 17-identity-verification
 **Blocks:** 05-search-discovery (listing must exist), 07-booking-request
+
+> **v2.0 — overlanding pivot.** This flow now begins with a **vertical picker** (overlanding / hunting-optics / power-station / fly-fishing). The remaining steps adapt their field set to the selected vertical. See `feature-23-category-listing-rules.md` for per-vertical fields, and `gear-catalogue.md` for the canonical accept/decline matrix.
 
 ---
 
@@ -22,24 +24,56 @@ Allow a verified lister to publish a gear listing with enough detail that renter
 
 ## Happy Path
 
-### Step 1 — Gear category
-Select one:
-- **Thermal Imaging** (monoculars, rifle scopes, clip-ons, binoculars, spotting scopes)
-- **Night Vision** (goggles/head-mount, monoculars, rifle scopes, clip-ons)
-- **Bundle** (thermal + NV combined — see 22-bundle-listing)
-- **Camp & Support** (power stations, solar panels, ground blinds)
+### Step 1 — Vertical
+Select one. **The vertical drives every subsequent field set.**
 
-Subcategory selected narrows the spec fields shown in Step 3.
+- **Overlanding** — RTTs, awnings, 12V fridges, recovery, dual-battery, navigation, full kits
+- **Hunting Optics** — thermal monoculars/scopes/clip-ons, NV monoculars/scopes/clip-ons, binoculars, spotting scopes
+- **Power Station** — Jackery, Goal Zero, EcoFlow, Bluetti, Anker Solix; solar panels (default to bundle mode)
+- **Fly Fishing** — waders, wading boots, rod-reel setups, specialty weights, packs, float tubes
+- **Bundle** — multi-item booking composed of two or more of the lister's existing items (overlanding kit; thermal+NV; oven+accessories). See `22-bundle-listing.md`.
 
-### Step 2 — Gear identity
-- **Make** (text field with autocomplete: Pulsar, ATN, AGM, InfiRay, FLIR, L3Harris, etc.)
-- **Model** (text field, autocomplete based on Make selection)
-- **Year purchased** (optional — used to assess age)
+> Smokers & pizza ovens are documented in `gear-catalogue.md` but the vertical is **not selectable** in the create-listing flow — Phase 2+ provisional. Listing form support lands when the vertical opens.
+
+### Step 2 — Gear category & identity
+Subcategory selection narrows the spec fields shown in Step 3.
+
+**Per-vertical subcategory:**
+- *Overlanding:* Rooftop tent (hardshell/softshell) · Awning · 12V fridge · Camp kitchen · Dual-battery · Recovery boards · Air compressor · Navigation/SATCOM · Full kit
+- *Hunting Optics:* Thermal monocular · Thermal rifle scope · Clip-on thermal · Thermal binoculars · Thermal spotting scope · NV goggle/head-mount · NV monocular · NV rifle scope · Clip-on NV · Premium binoculars · Spotting scope
+- *Power Station:* Large LFP (1500–3000Wh) · XL (3000Wh+) · Medium (500–1000Wh) · Solar panel · Solar generator combo
+- *Fly Fishing:* Waders · Wading boots (sole material required) · Rod+reel setup · Specialty rod weight · Net · Sling/hip pack · Float tube/pontoon · Fly tying kit
+
+**Identity fields (all verticals):**
+- **Make** (text field with autocomplete; vertical-specific brand list — Pulsar/ATN for optics; iKamper/Roofnest/Dometic/ARB for overlanding; Jackery/Goal Zero/EcoFlow/Bluetti/Anker for power; Simms/Patagonia/Orvis/Sage for fly fishing)
+- **Model** (autocomplete)
+- **Year purchased** (optional)
 - **MSRP** (required — drives deposit calculation and admin review threshold)
-- Serial number (optional — for lister's own records, not shown publicly)
+- Serial number (optional — lister's records only, not public)
 
-### Step 3 — Specs (category-specific fields)
-*Thermal fields:*
+### Step 3 — Specs (vertical + category specific)
+
+*Overlanding — Rooftop tent / awning:*
+- Mount type (universal crossbar / Front Runner Slimline / pioneer platform / vehicle-specific rail)
+- Mount load rating (lbs static / dynamic)
+- Crossbar pattern compatibility (multi-select)
+- Setup time (min)
+- Sleeping capacity (RTT)
+- Awning size (270° / 180° / standard)
+- Power requirements (none / 12V cigarette / hardwired)
+
+*Overlanding — 12V fridge:*
+- Capacity (qt / L)
+- Power draw (Ah/24h at 90°F ambient)
+- Voltage compatibility (12V / 24V / 110V)
+- Internal compartments (single / dual zone)
+
+*Overlanding — Recovery / dual-battery:*
+- Vehicle compatibility notes (free text)
+- Wiring: portable / pre-wired
+- Capacity (Ah / Wh)
+
+*Hunting Optics — Thermal:*
 - Sensor resolution (320×240 / 384×288 / 640×480 / 1280×1024)
 - Detection range (meters)
 - Magnification range
@@ -48,13 +82,36 @@ Subcategory selected narrows the spec fields shown in Step 3.
 - Reticle types (freeform)
 - Accessories included (checkboxes: remote, mount, case, charger, lens cloth)
 
-*Night Vision fields:*
+*Hunting Optics — Night Vision:*
 - Generation (Gen 1 / Gen 2 / Gen 3 / Digital)
 - Magnification
 - Head-mount compatible (yes/no)
 - Weapon-mount compatible (yes/no)
 - IR illuminator included (yes/no)
 - Accessories included (checkboxes)
+
+*Power Station:*
+- Capacity (Wh)
+- Continuous AC output (W); surge (W)
+- Battery chemistry (LFP/LiFePO4 required to publish; NMC accepted with Li-ion thermal-event rider)
+- Cycle count remaining (declared %)
+- UL 9540 / UL 2743 cert number (required)
+- Output ports (AC count, USB-A, USB-C PD wattage, 12V cigarette, Anderson)
+- Recharge time (AC, solar)
+- Approximate AC load capacity for common appliances (fridge / CPAP / WiFi router / induction burner)
+
+*Fly Fishing — Waders / boots:*
+- Wader size (S / M / L / XL / XXL — and stout / king variants)
+- Boot size (US men's / women's)
+- **Sole material (felt / rubber)** — required; cross-state booking defaults to rubber
+- Last decontamination date
+
+*Fly Fishing — Rod / reel:*
+- Rod weight (1 / 2 / 3 / 4 / 5 / 6 / 7 / 8 / 9 / 10 / 11 / 12+)
+- Length (ft / pieces)
+- Action (slow / medium / fast / extra fast)
+- Reel weight class
+- Line included (yes/no — type and weight)
 
 ### Step 4 — Condition rating
 Three options with tooltip explanations:
@@ -78,12 +135,15 @@ After selecting condition, text field: "Notes for renters" — describe specific
 
 ### Step 6 — Pricing
 - **Daily rate** (lister sets this)
-- Pricing reference panel shown alongside (pulled from `docs/gear-catalogue.md` market rates):
-  - "ATN ThOR thermal scopes: $199–$375/weekend on competitor platforms"
-  - "PVS-14 Gen 3: $150–$300/weekend"
+- Pricing reference panel shown alongside (per-vertical, pulled from `docs/gear-catalogue.md` market rates):
+  - *Overlanding:* "Built to Roam B2C: $125/day specialty kit; Hygglo US roof tents: ~$47/day, ~$234/week"
+  - *Hunting optics:* "Ultimate Night Vision: $199 (ATN ThOR)/weekend, $200–500/weekend NVG"
+  - *Power stations:* "FriendWithA: Jackery 1000 Pro $40/day; Goal Zero 3000X $70/day; Hygglo US median $38/day"
+  - *Fly fishing:* "Anglers All $25/day per piece; Breckenridge Outfitters $40/day waders+boots, $100/day full kit"
 - Platform fee shown: "Kitlo charges renters a 5% service fee on top of your rate, and deducts a 5% payout fee from your earnings (Phase 1 launch pricing — see business-plan.md)"
-- **Minimum rental period**: 1 day (default). Lister can set minimum (e.g., "3 days minimum").
-- **Weekend rate**: option to set a different rate for Fri–Sun bookings
+- **Minimum rental period**: 1 day (default). Lister can set minimum (e.g., "3 days minimum"). Overlanding bundles default to a 2-day minimum.
+- **Weekend rate**: option to set a different rate for Fri–Sun bookings.
+- **Bundle discount** (bundle listings only): 5–15% off summed component daily rates, lister's choice.
 
 ### Step 7 — Deposit & insurance
 - Deposit amount auto-suggested based on MSRP:
@@ -105,6 +165,11 @@ After selecting condition, text field: "Notes for renters" — describe specific
 - Full address optional at listing creation — can be set to reveal only after booking confirmed
 - State shown automatically from ZIP
 - "Meet at a neutral location" toggle — for listers who prefer not to share home address
+- **Per-vertical attestations** (gates "Continue"):
+  - *Overlanding* (RTT/awning/dual-battery): vehicle-fit info present in Step 3; lister acknowledges right-of-refusal at handoff
+  - *Hunting optics:* US-Person attestation (ITAR §120.15); lister will not ship internationally; renter must also be a US Person
+  - *Fly fishing wading boots:* sole-material declaration confirmed; cross-state defaults to rubber acknowledged
+  - *Power station:* UL 9540 / 2743 cert confirmed; no renter-arranged shipping >1,000Wh
 
 ### Step 10 — Review & publish
 - Full listing preview shown in listing-card and listing-detail formats
@@ -136,7 +201,7 @@ After selecting condition, text field: "Notes for renters" — describe specific
 - Photo honesty: disputes where pickup condition doesn't match listing photos result in lister rating penalty and potential suspension
 - MSRP > $5,000: admin review before publishing — prevents fraudulent listings for premium gear
 - Serial number (optional): recommended for high-value items to help with insurance claims
-- Prohibited categories enforced at category selection (no firearms, no hunting bows or crossbows, no drone thermal, no NFA items). Weapons of any kind cannot be loaned through Kitlo — see `18-admin-listing-review.md` for the full list.
+- Prohibited categories enforced at vertical / category selection (no firearms, no hunting bows or crossbows, no drone thermal, no NFA items, no vehicles, no non-empty propane tanks, no uncertified Li-ion power stations, no smokers/pizza ovens — Phase 2+ provisional). Weapons of any kind cannot be loaned through Kitlo — see `18-admin-listing-review.md` and `gear-catalogue.md` for the full list.
 
 ---
 

@@ -13,7 +13,7 @@ import { Button, StepCard, TrustCard } from '../../../../shared';
           Trust isn't a tagline.<br /><span class="text-olive">It's the product.</span>
         </h1>
         <p class="text-body-lg text-muted mt-6 max-w-2xl mx-auto">
-          Hunting gear is expensive, the community is small, and reputation travels. Kitlo is built so the
+          Overlanding kit is expensive, the community is tight, and reputation travels. Kitlo is built so the
           right things happen by default — verified identities, escrowed payments, documented condition, and
           a dispute process that doesn't disappear when something goes wrong.
         </p>
@@ -26,8 +26,8 @@ import { Button, StepCard, TrustCard } from '../../../../shared';
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <app-step-card
           stepNumber="01"
-          title="Verified hunters"
-          body="Listers complete government ID and selfie verification before publishing any gear. The Verified Hunter badge means a real person passed identity checks — not just an email confirmation."
+          title="Verified listers"
+          body="Listers complete government ID and selfie verification before publishing any gear. The Verified badge means a real person passed identity checks — not just an email confirmation."
         />
         <app-step-card
           stepNumber="02"
@@ -112,8 +112,8 @@ import { Button, StepCard, TrustCard } from '../../../../shared';
         <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">Listing policy</p>
         <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-6">Weapons are not listable on Kitlo.</h2>
         <p class="text-body text-muted leading-relaxed mb-6 max-w-3xl">
-          Kitlo does not facilitate the loan or rental of weapons. The platform is for optics, support gear, and other
-          non-weapon equipment a hunter brings to the field.
+          Kitlo does not facilitate the loan or rental of weapons. The platform is for overlanding kit,
+          optics, power, fly fishing gear, and other non-weapon equipment.
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="border border-line bg-bone p-5">
@@ -129,11 +129,12 @@ import { Button, StepCard, TrustCard } from '../../../../shared';
           <div class="border border-line bg-bone p-5">
             <p class="font-mono text-overline text-amber tracking-[0.10em] uppercase mb-2">Allowed</p>
             <ul class="space-y-2 text-sm text-slate leading-relaxed list-disc list-inside marker:text-muted">
+              <li>Rooftop tents, awnings, 12V fridges, recovery boards, dual-battery systems</li>
               <li>Thermal and night-vision optics — including weapon-mounted</li>
               <li>Rifle scopes and clip-on thermals (the renter brings their own rifle)</li>
               <li>Spotting scopes, binoculars, rangefinders that are part of an optic</li>
-              <li>Treestands, saddles, packs, and camp support gear</li>
               <li>Power stations and solar arrays for camp use</li>
+              <li>Waders, wading boots, fly rods and reels, fly packs</li>
             </ul>
           </div>
         </div>

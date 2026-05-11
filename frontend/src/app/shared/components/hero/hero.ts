@@ -6,8 +6,21 @@ import { SearchBar, SearchQuery } from '../search-bar/search-bar';
   imports: [SearchBar],
   template: `
     <section class="border-b-2 border-slate">
-      <div class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) grid md:grid-cols-2">
-        <div class="py-20 pr-15 md:border-r border-line">
+      <div
+        class="mx-auto max-w-(--kitlo-max-width) flex flex-col md:grid md:grid-cols-2 md:px-(--kitlo-page-gutter)"
+      >
+        <!--
+          Right slot renders first in DOM so on mobile (flex column) the image
+          appears above the headline. Desktop reverses via grid order.
+        -->
+        <div
+          class="order-1 md:order-2 flex flex-col justify-center md:py-15 md:pl-15"
+        >
+          <ng-content select="[slot=right]" />
+        </div>
+        <div
+          class="order-2 md:order-1 px-(--kitlo-page-gutter) md:pl-0 md:pr-15 py-12 md:py-20 md:border-r border-line"
+        >
           @if (kicker()) {
             <p
               class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-7 pb-3.5 border-b border-line"
@@ -29,9 +42,6 @@ import { SearchBar, SearchQuery } from '../search-bar/search-bar';
               <app-search-bar variant="hero" (submitted)="searched.emit($event)" />
             </div>
           }
-        </div>
-        <div class="py-15 pl-15 flex flex-col justify-center">
-          <ng-content select="[slot=right]" />
         </div>
       </div>
     </section>

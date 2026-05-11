@@ -46,6 +46,7 @@ public class KitloDbContext : DbContext
         b.Entity<Listing>(e =>
         {
             e.HasIndex(l => l.ListerId);
+            e.HasIndex(l => new { l.Vertical, l.Status });
             e.HasIndex(l => new { l.GearType, l.Status });
             e.HasIndex(l => l.PickupZip);
             e.HasOne(l => l.Lister)

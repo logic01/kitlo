@@ -24,11 +24,11 @@ let nextId = 0;
           (change)="checked.set(asChecked($event))"
         />
         <span
-          class="absolute inset-0 bg-surface border border-line transition-colors peer-checked:bg-olive peer-checked:border-olive"
+          class="absolute inset-0 rounded-full bg-surface border border-line transition-colors peer-checked:bg-olive peer-checked:border-olive"
           aria-hidden="true"
         ></span>
         <span
-          class="absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-muted transition-transform peer-checked:translate-x-[18px] peer-checked:bg-white"
+          class="absolute top-0.5 left-0.5 w-3.5 h-3.5 rounded-full bg-muted transition-transform peer-checked:translate-x-[18px] peer-checked:bg-white"
           aria-hidden="true"
         ></span>
       </span>

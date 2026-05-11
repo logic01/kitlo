@@ -15,16 +15,57 @@ public enum UserStatus
     Banned = 3
 }
 
+// Top-level taxonomy. Drives admin review triggers, deposit tiers, attestation flow,
+// search filter primary axis. Smokers/pizza is foreclosed at the type level — Phase 2+.
+public enum Vertical
+{
+    Overlanding = 0,
+    HuntingOptics = 1,
+    PowerStation = 2,
+    FlyFishing = 3
+}
+
 public enum GearType
 {
     // Weapons (firearms, hunting bows, crossbows) are prohibited on Kitlo —
     // see docs/features/18-admin-listing-review.md for the policy.
+    // Existing optics values 0–5 retained for backward compatibility.
     Thermal = 0,
     NightVision = 1,
     TreeStand = 2,
     Optics = 3,
     Pack = 4,
-    Other = 5
+    Other = 5,
+
+    // Overlanding (10–19)
+    RooftopTent = 10,
+    Awning = 11,
+    Fridge12V = 12,
+    DualBattery = 13,
+    RecoveryBoard = 14,
+    AirCompressor = 15,
+    Navigation = 16,
+    CampKitchen = 17,
+    OverlandKit = 18,
+
+    // Optics expansions (20–29)
+    ThermalMonocular = 20,
+    ThermalScope = 21,
+    ClipOnThermal = 22,
+    NvScope = 23,
+    ClipOnNv = 24,
+
+    // Power (30–39)
+    PowerStation = 30,
+    SolarPanel = 31,
+
+    // Fly fishing (40–49)
+    Wader = 40,
+    WadingBoot = 41,
+    FlyRodReel = 42,
+    FlyPack = 43,
+    SpecialtyWeight = 44,
+    FloatTube = 45
 }
 
 public enum Condition

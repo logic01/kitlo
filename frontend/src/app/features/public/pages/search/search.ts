@@ -14,11 +14,12 @@ import {
 } from '../../../../shared';
 import { ListingsService, type ListingSearchQuery } from '../../../../core/services';
 import { loadable } from '../../../../core/loading/loadable';
-import type { GearType } from '../../../../core/models';
+import type { GearType, Vertical } from '../../../../core/models';
+import { VERTICAL_CATEGORY_MAP, ALL_VERTICALS } from '../../../../core/catalogue/vertical-rules';
 import type { Condition } from '../../../../shared';
 
 const DEFAULT_FILTERS: SearchFilters = {
-  conditions: ['mint', 'field-ready'],
+  conditions: ['mint', 'fieldReady'],
   gearTypes: [],
   verifiedOnly: false,
   instantBook: false,
@@ -34,14 +35,10 @@ const SORT_MAP: Record<SortKey, ListingSearchQuery['sort']> = {
   distance: 'relevance',
 };
 
-const KNOWN_GEAR_TYPES: GearType[] = [
-  'thermal',
-  'night-vision',
-  'tree-stand',
-  'optics',
-  'pack',
-  'other',
-];
+// Derived from VERTICAL_CATEGORY_MAP — stays in sync as new gear types are added.
+const KNOWN_GEAR_TYPES: GearType[] = Array.from(
+  new Set(Object.values(VERTICAL_CATEGORY_MAP).flat()),
+);
 
 @Component({
   selector: 'app-public-search',
@@ -158,6 +155,7 @@ export class PublicSearch {
     const typed = this.normalizeGearType(q.gearType, f.gearTypes);
     return {
       location: q.location || undefined,
+      vertical: f.vertical,
       gearType: typed,
       condition: f.conditions.length ? f.conditions : undefined,
       minPriceCents: f.minPriceCents,
@@ -199,6 +197,7 @@ export class PublicSearch {
     const maxPrice = params.get('maxPrice');
     const conditions = params.get('conditions');
     const gearTypes = params.get('gearTypes');
+    const verticalParam = params.get('vertical');
     const verifiedOnly = params.get('verifiedOnly');
     const radius = params.get('radius');
 
@@ -206,6 +205,9 @@ export class PublicSearch {
     if (maxPrice && !Number.isNaN(Number(maxPrice))) next.maxPriceCents = Number(maxPrice) * 100;
     if (conditions) next.conditions = conditions.split(',').filter(Boolean) as Condition[];
     if (gearTypes) next.gearTypes = gearTypes.split(',').filter(Boolean);
+    if (verticalParam && (ALL_VERTICALS as string[]).includes(verticalParam)) {
+      next.vertical = verticalParam as Vertical;
+    }
     if (verifiedOnly === 'true') next.verifiedOnly = true;
     if (radius && !Number.isNaN(Number(radius))) next.radiusMiles = Number(radius);
 
@@ -226,6 +228,7 @@ export class PublicSearch {
       // null clears the param so the URL stays clean for default values
       q: q.gearType?.trim() || null,
       location: q.location?.trim() || null,
+      vertical: f.vertical ?? null,
       conditions: this.diffArr(f.conditions, DEFAULT_FILTERS.conditions),
       gearTypes: f.gearTypes.length ? f.gearTypes.join(',') : null,
       minPrice: f.minPriceCents != null ? String(Math.round(f.minPriceCents / 100)) : null,

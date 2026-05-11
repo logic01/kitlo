@@ -47,6 +47,7 @@ public record ListingSpecDto(string Key, string Value);
 public record ListingSummaryDto(
     Guid Id,
     string Title,
+    Vertical Vertical,
     GearType GearType,
     string GearTypeLabel,
     Condition Condition,
@@ -64,6 +65,7 @@ public record ListingSummaryDto(
 public record ListingDto(
     Guid Id,
     string Title,
+    Vertical Vertical,
     GearType GearType,
     string GearTypeLabel,
     Condition Condition,
@@ -86,6 +88,7 @@ public record ListingDto(
 
 public record CreateListingRequest(
     string Title,
+    Vertical Vertical,
     GearType GearType,
     string GearTypeLabel,
     Condition Condition,
@@ -104,6 +107,9 @@ public record UpdateListingRequest(
     CancellationPolicy? CancellationPolicy,
     Condition? Condition,
     string? PickupZip,
+    Vertical? Vertical = null,
+    GearType? GearType = null,
+    string? GearTypeLabel = null,
     bool? IsBundle = null,
     IReadOnlyList<Guid>? BundleListingIds = null);
 

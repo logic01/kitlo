@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-trust-card',
+  host: { class: 'block h-full' },
   template: `
-    <article class="p-5 border border-line-dark">
+    <article class="h-full p-5 border border-line-dark">
       <p
         class="font-mono text-overline text-amber tracking-[0.10em] uppercase mb-2"
       >

@@ -101,9 +101,21 @@
 /* Non-Tailwind tokens — used directly via var(...) in component CSS. */
 :root {
   --kitlo-max-width: 1280px;
-  --kitlo-page-gutter: 52px;
+  --kitlo-page-gutter: 20px;
   --kitlo-transition-fast: 120ms ease;
   --kitlo-transition-base: 200ms ease;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --kitlo-page-gutter: 32px;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --kitlo-page-gutter: 52px;
+  }
 }
 
 html {

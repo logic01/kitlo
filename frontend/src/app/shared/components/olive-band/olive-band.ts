@@ -10,7 +10,7 @@ export interface OliveBandPillar {
   template: `
     <section class="bg-olive py-10 px-(--kitlo-page-gutter)">
       <div
-        class="mx-auto max-w-(--kitlo-max-width) grid md:grid-cols-[auto_1fr] gap-15 items-center"
+        class="mx-auto max-w-(--kitlo-max-width) grid md:grid-cols-[auto_1fr] gap-10 md:gap-15 items-center"
       >
         <div>
           <p
@@ -21,7 +21,7 @@ export interface OliveBandPillar {
           >{{ headline() }}</h2>
           <p class="text-body text-on-dark-muted leading-relaxed mt-2">{{ sub() }}</p>
         </div>
-        <ul class="grid grid-cols-3 gap-8 list-none">
+        <ul class="grid grid-cols-1 md:grid-cols-3 gap-8 list-none">
           @for (pillar of pillars(); track pillar.title) {
             <li class="border-t-2 border-on-dark-muted/40 pt-4">
               <p

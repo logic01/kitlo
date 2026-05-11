@@ -1,6 +1,8 @@
 # Kitlo
 
-Peer-to-peer rental marketplace for hunting optics. Angular 21 frontend, ASP.NET (.NET 10) backend, PostgreSQL, JWT auth, Stripe Connect (scaffold), Cloudinary (scaffold).
+Peer-to-peer rental marketplace for **overlanding gear** — rooftop tents, 12V fridges, recovery kit, awnings, dual-battery and power stations, plus the night-hunting optics, fly-fishing kit, and trip-specific gear overlanders carry. Angular 21 frontend, ASP.NET (.NET 10) backend, PostgreSQL, JWT auth, Stripe Connect (scaffold), Cloudinary (scaffold).
+
+Verticals: **camping/overlanding** (anchor) · **night hunting optics** (Phase 1) · **portable power stations** (Phase 1 bundle add-on) · **fly fishing** (Phase 2) · **smokers & pizza ovens** (Phase 2+, provisional). See [`docs/gear-catalogue.md`](docs/gear-catalogue.md) for full per-vertical policy.
 
 > **Listing policy:** weapons (firearms, hunting bows, crossbows) are not listable on Kitlo. See [`docs/gear-catalogue.md`](docs/gear-catalogue.md) and [`docs/features/18-admin-listing-review.md`](docs/features/18-admin-listing-review.md).
 
@@ -106,8 +108,8 @@ A walkthrough that hits the most important pages once you're logged in:
    - Inbox: `/dashboard/messages`
 2. **As a lister (`jess@example.com`)**
    - Sign out, log back in as Jess
-   - `/dashboard/listings` shows your published listings (Pulsar Thermion, ATN X-Sight from seed)
-   - `/dashboard/listings/new` walks the create-listing wizard (categories: thermal / NV / optics / treestand / pack — weapons are intentionally absent)
+   - `/dashboard/listings` shows your published listings (Pulsar Thermion, ATN X-Sight from seed — overlanding seed listings land in 6.x)
+   - `/dashboard/listings/new` walks the create-listing wizard. Vertical picker: overlanding / hunting-optics / power-station / fly-fishing. Weapons are intentionally absent.
    - `/dashboard/earnings` shows the payout summary (empty until bookings flow through)
 3. **As an admin (`lee@kitlo.com`)**
    - `/admin` dashboard: pending listings, open disputes, verification queue

@@ -16,13 +16,13 @@ const OPTIONS: Option[] = [
     tone: 'text-mint',
   },
   {
-    value: 'field-ready',
+    value: 'fieldReady',
     label: 'Field-Ready',
     description: 'Solid working order. Honest wear from time in the field.',
     tone: 'text-olive',
   },
   {
-    value: 'battle-scarred',
+    value: 'battleScarred',
     label: 'Battle-Scarred',
     description: 'Functional but well-used. Visible wear and tear.',
     tone: 'text-battle',

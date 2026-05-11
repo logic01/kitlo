@@ -1,19 +1,33 @@
 # Kitlo — Business Plan
 
-> Version 1.1 · Effective 2026-05-06
+> Version 2.0 · Effective 2026-05-10
 >
-> Owns: pricing, take rate, revenue model, phased rollout. Cross-references `docs/p2p-business-model.md` for general P2P theory and `docs/gear-catalogue.md` for inventory categories. Operational fee values used by the product live in `docs/features/03-create-listing.md`, `docs/features/07-booking-request.md`, and `docs/features/15-payouts-earnings.md` — those files defer to this document for the source of truth.
+> **v2.0 — overlanding pivot.** Kitlo is now an overlanding-led marketplace; hunting optics, fly fishing, power stations, and (Phase 2+) outdoor cooking are sub-verticals inside it. Source research: `C:/repo/p2p/concept-research.md` (Adventure Ventures top-4 matrix) and the per-niche briefs in `C:/repo/p2p/{camping-overlanding-gear,night-hunting-optics,fly-fishing-gear,portable-power-stations,smoker-and-pizza-oven-rental}/`.
+>
+> Owns: pricing, take rate, revenue model, phased rollout, vertical sequencing. Cross-references `docs/p2p-business-model.md` for general P2P theory and `docs/gear-catalogue.md` for inventory categories. Operational fee values used by the product live in `docs/features/03-create-listing.md`, `docs/features/07-booking-request.md`, and `docs/features/15-payouts-earnings.md` — those files defer to this document for the source of truth.
 
 ---
 
 ## 1. Mission
 
-Kitlo is a peer-to-peer marketplace where hunters list and rent hunting equipment to and from each other. We make underutilized gear (thermal optics, NV, spotters, treestands, packs, power stations) earn its keep, and we make premium gear accessible without a $5,000 outlay.
+Kitlo is a peer-to-peer marketplace where overlanders list and rent the high-value gear that makes long trips possible. The anchor catalogue is **camping & overlanding kit** (rooftop tents, 12V fridges, awnings, recovery boards, dual-battery, full builds). Layered on top are the gear categories overlanders carry on the way: **night hunting optics**, **portable power stations**, **fly fishing**, and (Phase 2+, provisional) **outdoor cooking**.
+
+We make underutilized gear earn its keep, and we make premium gear accessible without a $4,000 RTT or $5,000 thermal outlay.
 
 ## 2. Customer & Value
 
-- **Renters** — hunters who want to use premium gear (especially thermal/NV optics) without buying it. We offer access at a fraction of MSRP, with verified listers and escrowed payments.
-- **Listers** — hunters whose gear sits unused 47 weeks a year. We turn that gear into income with no listing fee, identity-verified renters, and Stripe-backed payouts.
+- **Renters** — overlanders, weekend campers, destination hunters and anglers, and outage-prep households who want to use premium gear without buying it. Same-day local pickup beats 2–3 day mail-order shipping; bundle rentals (RTT + fridge + awning, or thermal + NV) eliminate the multi-vendor coordination tax.
+- **Listers** — owners whose specialty gear sits idle 60–95% of the year. Overlanders typically own 5–10 listable items per truck (RTT, fridge, awning, recovery boards, power station, navigation, camp kitchen). Hunters own thermal/NV stacks worth $5–15k that see 10–20 nights a season. Anglers own size-specific waders + specialty rod weights that travel poorly. We turn idle gear into income with no listing fee, identity-verified renters, and Stripe-backed payouts.
+
+### Vertical sequencing
+
+| # | Vertical | Phase | Why this order |
+|---|---|---|---|
+| 1 | **Camping & Overlanding** | Phase 1 anchor | Highest weighted score (8.65); easiest cold start (ExpeditionPortal 180K, r/overlanding 67,888); highest geographic distribution; best AOV-per-supply-acquisition. |
+| 2 | **Night Hunting Optics** | Phase 1 (already wired) | Most defensible vertical (no national P2P competitor); highest unit economics ($500–900 bundle AOV); already implemented in the existing codebase. Sequenced as a parallel vertical, not a follow-on. |
+| 3 | **Portable Power Stations** | Phase 1 bundle add-on only | Standalone is foreclosed by Hygglo / FriendWithA / ShareGrid (active US horizontal P2P). Bundled with overlanding kit, marginal CAC is near-zero and contribution margin is the highest in the portfolio. |
+| 4 | **Fly Fishing** | Phase 2 layered vertical | Lowest standalone economics ($150–250 AOV); only viable layered onto overlanding's owner base, payments, and trust infrastructure. Trout Unlimited 300+ chapter network is the supply-side acquisition channel. |
+| 5 | **Smokers & Pizza Ovens** | Phase 2+ provisional | Documented in `docs/gear-catalogue.md` but not built. Sub-2x/year frequency and Big Green Egg owner activation friction make it marginal. Re-evaluate after the first four verticals show liquidity. |
 
 ## 3. Revenue Model
 
@@ -63,33 +77,42 @@ Every transaction must clear these costs before it generates margin:
 
 ## 6. Phase Modeling & Profit Targets
 
-### Phase 0: Bozeman Market Validation
+### Phase 0: Two-market validation (overlanding + hunting optics)
 
-Before committing engineering and capital to a 3-metro Phase 1 rollout, Kitlo runs a controlled validation in a single beachhead market. **Bozeman, MT** is the test bed.
+Before committing engineering and capital to a multi-metro Phase 1 rollout, Kitlo runs **two parallel validations**, one per anchor vertical. The two verticals have different supply communities and different beachhead geographies — validating them together avoids over-fitting the platform to either.
 
-**Why Bozeman:**
+#### Phase 0a — Denver overlanding validation
 
-- High concentration of serious, gear-heavy hunters (MeatEater HQ; transplant population overweighted on premium optics, packs, and thermals).
-- Strong digital adoption — Meta ad targeting reaches a real audience, unlike pure rural markets.
-- Tight, outdoors-focused community that rewards word-of-mouth and forms trust loops faster than a major metro.
-- Affluent transplants own expensive gear that sits unused 11 months a year — exactly the supply-side persona Kitlo's economics depend on.
+**Test bed:** Denver / Boulder, CO. Highest concentration of ExpeditionPortal-active overlanders per capita; gateway to high-elevation routes; affluent transplants who own RTTs, 12V fridges, and dual-battery setups that sit idle 60% of the year.
 
-**Test design — $100 Meta ad spend:**
+**$100 Meta ad spend:**
+
+| Field | Value |
+|---|---|
+| Budget | $100 over 10 days ($10/day) |
+| Geo | Denver + Boulder + 30 mi radius |
+| Demographic | Men + women 28–50 |
+| Interest stack (AND) | ExpeditionPortal OR Overland Bound OR ARB OR iKamper OR Dometic OR Goose Gear + (Toyota 4Runner OR Tacoma OR Lexus GX OR Jeep Wrangler OR Land Cruiser) |
+| Objective | Leads (instant form) — supply-side waitlist |
+| Creative | Truck + RTT photo at trailhead. Headline: "Your iKamper sits in the garage 8 months a year." Subhead: "List it on Kitlo. Keep 95%. Denver overlanders launching first." CTA: "Get early access." |
+
+#### Phase 0b — Bozeman hunting optics validation
+
+**Test bed:** Bozeman, MT. Already wired in the existing codebase. The existing supply-side framing carries over verbatim:
 
 | Field | Value |
 |---|---|
 | Budget | $100 over 10 days ($10/day) |
 | Geo | Bozeman + 30 mi radius |
 | Demographic | Men 28–55 |
-| Interest stack (AND) | MeatEater + (Sitka OR Kuiu OR First Lite OR Stone Glacier OR Vortex Optics) + OnX Hunt |
-| Objective | Leads (instant form) or Traffic to landing page with email capture |
-| Side tested | **Supply** (lister side) — the harder side of the marketplace |
-| Creative | Real tailgate/truck-bed photo of a pack or spotter. Headline: "Your $2,000 spotter is sitting in a closet 11 months a year." Subhead: "List it on Kitlo. Keep 95%. Bozeman hunters launching first." CTA: "Get early access." |
+| Interest stack (AND) | MeatEater + (Sitka OR Kuiu OR First Lite OR Stone Glacier OR Vortex Optics OR Pulsar) + OnX Hunt |
+| Objective | Leads (instant form) — supply-side waitlist |
+| Creative | Real tailgate/truck-bed photo of a thermal monocular. Headline: "Your $3,000 thermal sits in a closet 11 months a year." Subhead: "List it on Kitlo. Keep 95%. Bozeman hunters launching first." CTA: "Get early access." |
 
 **Why test the supply side, not the demand side:**
-Demand ("hunters want to rent gear") is plausible by default and can be validated through forums and gun-shop visits at zero cost. Supply ("hunters will lend their $3,000 thermal to a stranger") is the actual business risk. If supply doesn't exist, demand doesn't matter. The $100 buys signal on the harder question.
+Demand ("overlanders want to rent gear" / "hunters want to rent gear") is plausible by default and can be validated through forums (ExpeditionPortal, r/overlanding, HuntTalk, Predator Masters, Texas Hunting Forum) and shop visits at zero cost. Supply ("overlanders will lend their $4,000 RTT to a stranger" / "hunters will lend their $3,000 thermal to a stranger") is the actual business risk. The $100 per market buys signal on the harder question.
 
-**Decision criteria:**
+**Decision criteria (per market):**
 
 | Outcome (10-day window) | Signal | Action |
 |---|---|---|
@@ -97,20 +120,22 @@ Demand ("hunters want to rent gear") is plausible by default and can be validate
 | 3–9 signups | Ambiguous | Rerun with renter-side framing; if still weak, revisit creative, not thesis. |
 | 0–2 signups | Targeting/creative likely broken | Diagnose; do not kill thesis on $100 of data. |
 
-**Parallel zero-cost validation (run alongside the ad test):**
+**Parallel zero-cost validation (run alongside the ad tests):**
 
-- Posts in r/Bozeman, r/Hunting, r/Wyoming, RokSlide, and ArcheryTalk asking "would you list/rent this?" — qualitative signal that often writes the next ad's copy.
-- In-person visits to 3 archery shops + 1 RMEF or DU banquet in the Bozeman area for direct lister-side conversations.
+- **Overlanding:** posts in ExpeditionPortal Vendor section (with permission), r/overlanding, r/CherokeeXJ, r/4Runner, Overland Bound forum asking "would you list/rent your kit?"
+- **Hunting optics:** posts in HuntTalk, Predator Masters, Texas Hunting Forum, RokSlide, ArcheryTalk.
+- **In person:** 3 visits each to overlanding outfitters (Adventure Wagons, RoamRig, local 4WD shops) and hunting/archery shops in the respective beachheads. RMEF/DU/ExpeditionPortal Big Thing event attendance where the timing fits.
 
 **What Phase 0 informs:**
 
 - Go / no-go on the Phase 1 plan below ($100k profit at 3 active metros).
-- Determines the order of the second and third Phase 1 metros (Casper vs. Boise vs. Denver) based on what the Bozeman validation reveals about lister persona.
-- If validation succeeds, Bozeman becomes the first of the three Phase 1 metros, not a separate market.
+- Determines whether overlanding or optics is the stronger primary vertical to lead Phase 1 launch comms with.
+- Overlanding result determines the second overlanding metro (candidates: Seattle/Bellingham, Phoenix, Salt Lake City).
+- Optics result determines the second optics metro (candidates: San Antonio/Austin, Minneapolis).
 
 ### Phase 1: $100k profit at 3 active metros
 
-Conservative model for a Mountain West regional launch led by **Bozeman, MT** as the validated beachhead, with the second and third metros (candidates: Casper WY, Boise ID, Denver CO) selected based on Phase 0 outcomes:
+Conservative model for a launch sequenced as **Denver (overlanding anchor) + a second overlanding metro + Bozeman (hunting optics anchor)**, with the second overlanding metro selected based on Phase 0 outcomes (Seattle/Bellingham, Phoenix, or SLC):
 
 | Input | Value |
 |---|---|
@@ -119,17 +144,19 @@ Conservative model for a Mountain West regional launch led by **Bozeman, MT** as
 | Total active listings | 1,500 |
 | Rentals / listing / month | 1.5 |
 | Annual rentals | 27,000 |
-| Average rental GMV | $150 |
-| **Annual GMV** | **$4.05M** |
+| Average rental GMV | $250 |
+| **Annual GMV** | **$6.75M** |
+
+> **AOV up from v1.x ($150) to $250.** Overlanding specialty kit ($400–800 booking) and the optics bundle ($500–900) lift the blended AOV well above the hunting-optics-only model. Power-station bundle adds 20–40% on top of qualifying overlanding bookings.
 
 | Output | Value |
 |---|---|
-| Revenue at 10% take rate | $405,000 |
-| Less Stripe (3.5% of GMV) | −$142,000 |
+| Revenue at 10% take rate | $675,000 |
+| Less Stripe (3.5% of GMV) | −$236,000 |
 | Less ops (hosting, tooling, 1–2 FTE) | −$150,000 |
-| **Profit** | **~$113,000** ✅ |
+| **Profit** | **~$289,000** ✅ |
 
-The model still works at half this volume if Phase 2 fees (15%) ship by then.
+The model clears the $100k profit target with substantial headroom. It still passes at half the volume (15K rentals @ $250 AOV) and at half the AOV ($125, ~hunting-only-equivalent) thanks to the take-rate scaling — Phase 2 fees (15%) recover the model if either lever lags.
 
 ### Phase 4: $1M–$2M profit nationwide
 
@@ -156,16 +183,29 @@ Even capturing only **20% of this scale** (≈10 metros), the math comfortably c
 
 ## 7. Competitive Context
 
+### Platform take rates (general P2P benchmark)
+
 | Platform | Combined take rate | Notes |
 |---|---|---|
-| Fat Llama (general P2P) | ~25% | Closest analogue (general rental). |
+| Hygglo (formerly Fat Llama) | ~25% | Re-entered US Nov 2025; horizontal P2P with thin overlanding/cooking depth. |
+| FriendWithA | ~20% | US horizontal P2P; some power-station and grill listings; not vertical. |
 | Outdoorsy (RV) | ~30% | Higher because of insurance bundling. |
 | Turo (cars) | 15–40% | Range driven by protection plan tier. |
-| Airbnb | ~17% | 14% guest + 3% host (newer pricing model varies). |
+| Airbnb | ~17% | 14% guest + 3% host. |
 | GetMyBoat | 16–21% | Boat-specific P2P. |
 | Hipcamp | 10% (host only) | Outdoor-adjacent. |
 
-Kitlo at 10% in Phase 1 is **the lowest combined take rate of any P2P rental marketplace in our category.** This is a marketing wedge, not a permanent commitment — it's how we win the supply side fast.
+Kitlo at 10% in Phase 1 is **the lowest combined take rate of any P2P rental marketplace in our category.** Marketing wedge, not a permanent commitment — it's how we win the supply side fast against Hygglo's horizontal-but-thin presence.
+
+### Per-vertical competition (May 2026 snapshot, full source in `C:/repo/p2p/`)
+
+| Vertical | Direct competitors | P2P gap | Kitlo's wedge |
+|---|---|---|---|
+| **Camping & Overlanding** | REI Rental (115 stores, generic), GeerGarage (multi-metro P2P, generic), Hygglo (US horizontal), BaseCamper (rig-heavy), Built to Roam (single-market B2C) | **Strong** — no national overlander-tribe-native P2P; specialty-kit catalogue gap is open | Specialty kit (RTTs, 12V fridges, dual-battery, recovery, awnings) + community-native sourcing on ExpeditionPortal / r/overlanding. |
+| **Night Hunting Optics** | Ultimate Night Vision (B2C national mail-order), Feral Texas Outdoors (TX local + ships), ~10 other B2C, no P2P | **Strong** — no P2P competitor for either thermal or NV; bundle does not exist anywhere | Same-day local pickup; bundle (thermal-detect + NV-engage) as a single booking; community-native via HuntTalk / Predator Masters / Texas Hunting Forum. |
+| **Portable Power Stations** | Hygglo, FriendWithA, ShareGrid (all active US horizontal P2P) | **Standalone foreclosed; bundled gap is strong** | Rolled into overlanding bookings. Zero standalone marketing spend. Highest contribution margin in the portfolio. |
+| **Fly Fishing** | RentWaders.com (B2C national), Borrowed Fly (Denver/CO Springs B2C concierge), CastBack (P2P resale, not rental), gateway-town shops | **Partial** — gateway towns covered; non-destination rivers and riverbank delivery open | Owner-as-guide local intel; specialty rod weights; Trout Unlimited 300+ chapter sourcing. |
+| **Smokers & Pizza Ovens** | Hygglo (~4 listings), FriendWithA (sparse), regional B2C catering operators | **Strong** but supply-activation friction is high (BGE-owner reluctance) | Phase 2+ — re-evaluate after primary verticals show liquidity. |
 
 ## 8. What We Are NOT Charging For (Phase 1)
 
@@ -220,3 +260,8 @@ For engineering and product to consume:
 | 2026-05-06 | Phase 0 added: $100 Meta ad validation in Bozeman before Phase 1 commit | De-risk the supply-side assumption with cheap, fast signal before scaling engineering and capital into a 3-metro launch. |
 | 2026-05-06 | Bozeman selected as the test-bed market | Best combination of digital adoption, gear-heavy hunting population, and culture density in the Mountain West. Replaces the vague "CO/MT/WY" Phase 1 framing with a concrete starting point. |
 | 2026-05-06 | Supply-side framing for the Phase 0 ad test | Supply is the harder side of a P2P marketplace; demand can be validated for free via forums and shop visits. The $100 is allocated to the question that actually carries business risk. |
+| 2026-05-10 | **Pivot: Kitlo is now overlanding-led, not hunting-led** | Adventure Ventures research (`C:/repo/p2p/concept-research.md`) ranks camping/overlanding #1 (8.65 weighted) on cold-start, geographic reach, and unit economics. Hunting optics remains the most defensible vertical (#2, 7.28) and stays as a Phase 1 parallel anchor. Fly fishing and power stations layer in. |
+| 2026-05-10 | Phase 0 split into 0a (Denver overlanding) + 0b (Bozeman optics) | Two anchor verticals have different supply communities and different beachheads — single-market validation would over-fit. $200 total spend; same supply-side question, two demographic targets. |
+| 2026-05-10 | Power stations bundled-only, never standalone | Hygglo, FriendWithA, ShareGrid foreclose standalone US P2P. Bundled with overlanding, marginal CAC is near zero and the $80–200 add-on is the highest contribution margin in the portfolio. |
+| 2026-05-10 | Smokers & pizza ovens documented as Phase 2+ provisional, not built | Sub-2x/year frequency and BGE-owner activation friction make standalone marginal. In catalogue for completeness; no listing-form support until first four verticals show liquidity. |
+| 2026-05-10 | Phase 1 AOV revised from $150 → $250 | Overlanding specialty kit ($400–800) and the optics bundle ($500–900) shift the blended booking value materially upward vs. the hunting-optics-only model. |

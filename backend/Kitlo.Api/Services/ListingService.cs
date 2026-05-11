@@ -1,5 +1,6 @@
 using Kitlo.Api.Common;
 using Kitlo.Api.Models;
+using Kitlo.Core.Catalogue;
 using Kitlo.Core.Enums;
 using Kitlo.Core.Models;
 using Kitlo.Data;
@@ -13,6 +14,7 @@ public class ListingService
     public ListingService(KitloDbContext db) => _db = db;
 
     public async Task<PagedResult<ListingSummaryDto>> SearchAsync(
+        Vertical? vertical,
         GearType? gearType,
         Condition[]? conditions,
         int? minPriceCents,
@@ -38,6 +40,7 @@ public class ListingService
             q = q.Where(l => l.Status == ListingStatus.Published);
 
         if (listerId is not null) q = q.Where(l => l.ListerId == listerId);
+        if (vertical is not null) q = q.Where(l => l.Vertical == vertical);
         if (gearType is not null) q = q.Where(l => l.GearType == gearType);
         if (conditions is { Length: > 0 }) q = q.Where(l => conditions.Contains(l.Condition));
         if (minPriceCents is not null) q = q.Where(l => l.DailyRateCents >= minPriceCents);
@@ -88,9 +91,13 @@ public class ListingService
         var lister = await _db.Users.FindAsync([listerId], ct)
             ?? throw DomainException.NotFound("Lister");
 
+        if (!VerticalRules.IsValid(req.Vertical, req.GearType))
+            throw new DomainException($"Gear type '{req.GearType}' is not valid for vertical '{req.Vertical}'.");
+
         var listing = new Listing
         {
             Title = req.Title.Trim(),
+            Vertical = req.Vertical,
             GearType = req.GearType,
             GearTypeLabel = req.GearTypeLabel.Trim(),
             Condition = req.Condition,
@@ -130,6 +137,15 @@ public class ListingService
         if (req.CancellationPolicy is not null) listing.CancellationPolicy = req.CancellationPolicy.Value;
         if (req.Condition is not null) listing.Condition = req.Condition.Value;
         if (req.PickupZip is not null) listing.PickupZip = req.PickupZip.Trim();
+        if (req.Vertical is not null) listing.Vertical = req.Vertical.Value;
+        if (req.GearType is not null) listing.GearType = req.GearType.Value;
+        if (req.GearTypeLabel is not null) listing.GearTypeLabel = req.GearTypeLabel.Trim();
+        // Validate the (vertical, gear-type) combo whenever either is touched.
+        if (req.Vertical is not null || req.GearType is not null)
+        {
+            if (!VerticalRules.IsValid(listing.Vertical, listing.GearType))
+                throw new DomainException($"Gear type '{listing.GearType}' is not valid for vertical '{listing.Vertical}'.");
+        }
         if (req.IsBundle is not null) listing.IsBundle = req.IsBundle.Value;
         if (req.BundleListingIds is not null)
         {
@@ -171,6 +187,8 @@ public class ListingService
             throw new DomainException("Daily rate must be greater than $0.");
         if (string.IsNullOrWhiteSpace(listing.Title))
             throw new DomainException("Title is required.");
+        if (!VerticalRules.IsValid(listing.Vertical, listing.GearType))
+            throw new DomainException($"Gear type '{listing.GearType}' is not valid for vertical '{listing.Vertical}'.");
 
         listing.Status = ListingStatus.Published;
         listing.PublishedAt = DateTimeOffset.UtcNow;
@@ -224,7 +242,7 @@ public class ListingService
     {
         var hero = l.Photos.OrderByDescending(p => p.IsHero).ThenBy(p => p.Ordinal).FirstOrDefault();
         return new ListingSummaryDto(
-            l.Id, l.Title, l.GearType, l.GearTypeLabel, l.Condition,
+            l.Id, l.Title, l.Vertical, l.GearType, l.GearTypeLabel, l.Condition,
             l.DailyRateCents, l.PickupZip,
             hero?.Url ?? "",
             l.ListerId,
@@ -239,7 +257,7 @@ public class ListingService
     public static ListingDto ToDto(Listing l)
     {
         return new ListingDto(
-            l.Id, l.Title, l.GearType, l.GearTypeLabel, l.Condition,
+            l.Id, l.Title, l.Vertical, l.GearType, l.GearTypeLabel, l.Condition,
             l.DailyRateCents, l.DepositCents, l.ServiceFeeBp, l.CancellationPolicy,
             l.PickupZip, l.Description, l.Status, l.IsBundle,
             l.ListerId, l.Lister?.Name ?? "", l.Lister?.IdentityVerified ?? false,

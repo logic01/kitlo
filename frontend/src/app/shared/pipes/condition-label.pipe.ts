@@ -3,8 +3,8 @@ import { Condition } from '../components/badge/badge';
 
 const LABELS: Record<Condition, string> = {
   mint: 'Mint',
-  'field-ready': 'Field-Ready',
-  'battle-scarred': 'Battle-Scarred',
+  fieldReady: 'Field-Ready',
+  battleScarred: 'Battle-Scarred',
 };
 
 @Pipe({ name: 'conditionLabel' })

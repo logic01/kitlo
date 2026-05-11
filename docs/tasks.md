@@ -129,10 +129,11 @@ Last updated: 2026-05-01
 12. **Admin tooling** — listing review, user management, payout control
 
 ### Kitlo-specific differentiators
-- **Bundle listing** — thermal + NV in one booking. No competitor offers this.
-- **Condition rating system** — Mint / Field-Ready / Battle-Scarred. Honest, specific to field gear.
-- **Verified Hunter badge** — ID-verified listers build community trust in a trust-insular market.
-- **Spec-first listing cards** — hunters evaluate on specs (resolution, detection range, magnification), not marketing copy.
+- **Bundle listing** — overlanding kit (RTT + fridge + awning + power), thermal+NV night-hunt, fly-fishing destination kit, power-station-+-overlanding. No competitor offers any of these as one-transaction bookings.
+- **Condition rating system** — Mint / Field-Ready / Battle-Scarred. Honest, specific to field gear; works across overlanding, optics, fly fishing, and power.
+- **Verified Member badge** — ID-verified listers build community trust in trust-insular markets (ExpeditionPortal, HuntTalk, Trout Unlimited chapters).
+- **Spec-first listing cards** — overlanders evaluate on specs (RTT mount type, fridge Wh draw, awning size; thermal sensor resolution; rod weight); not marketing copy.
+- **Vertical-aware listing form** — per-vertical field templates, attestations, and deposit tiers (`features/23-category-listing-rules.md`).
 
 ---
 
@@ -161,7 +162,8 @@ Last updated: 2026-05-01
 | features/19-admin-dispute-management.md | Mediate disputes between users | Admin |
 | features/20-admin-user-management.md | Warn, suspend, ban users | Admin |
 | features/21-cancellation.md | Cancel a confirmed booking | Renter or Lister |
-| features/22-bundle-listing.md | Create and book thermal+NV bundle | Lister + Renter |
+| features/22-bundle-listing.md | Create and book bundles (overlanding kit / thermal+NV / power+overlanding / fly fishing kit) | Lister + Renter |
+| features/23-category-listing-rules.md | Per-vertical listing fields, deposits, attestations, and walkthrough rules | Lister + Admin |
 
 ---
 

@@ -11,7 +11,7 @@ export interface FooterLink {
   imports: [RouterLink],
   template: `
     <footer
-      class="bg-charcoal text-on-dark-muted px-(--kitlo-page-gutter) py-8 flex justify-between items-center"
+      class="bg-charcoal text-on-dark-muted px-(--kitlo-page-gutter) py-8 flex flex-col gap-5 md:flex-row md:items-center md:justify-between md:gap-0"
     >
       <a
         routerLink="/"
@@ -20,7 +20,7 @@ export interface FooterLink {
         Kit<span class="text-amber">lo</span>
       </a>
       @if (links().length) {
-        <ul class="flex gap-6 list-none">
+        <ul class="flex flex-wrap gap-x-6 gap-y-2 list-none">
           @for (link of links(); track link.route) {
             <li>
               <a

@@ -7,11 +7,16 @@ import type {
   GearType,
   Listing,
   ListingPhoto,
+  ListingStatus,
   ListingSummary,
+  Vertical,
 } from '../models/listing';
+
+export type { ListingStatus };
 
 export interface ListingSearchQuery {
   location?: string;
+  vertical?: Vertical;
   gearType?: GearType;
   startDate?: string;
   endDate?: string;
@@ -53,7 +58,7 @@ export interface MarketRate {
 
 export type ListingDraftInput = Pick<
   Listing,
-  'title' | 'gearType' | 'gearTypeLabel' | 'condition' | 'pickupZip'
+  'title' | 'vertical' | 'gearType' | 'gearTypeLabel' | 'condition' | 'pickupZip'
 > & {
   listerId: string;
   listerName: string;
@@ -68,9 +73,10 @@ export type ListingDraftInput = Pick<
 interface BackendListingSummary {
   id: string;
   title: string;
-  gearType: number;
+  vertical: Vertical;
+  gearType: GearType;
   gearTypeLabel: string;
-  condition: number;
+  condition: Condition;
   dailyRateCents: number;
   pickupZip: string;
   heroPhotoUrl: string;
@@ -80,55 +86,27 @@ interface BackendListingSummary {
   isBundle: boolean;
   ratingAverage: number;
   ratingCount: number;
-  status: number;
+  status: ListingStatus;
 }
 
 interface BackendListing extends Omit<BackendListingSummary, 'heroPhotoUrl'> {
   description: string;
   depositCents: number | null;
   serviceFeeBp: number;
-  cancellationPolicy: number;
-  status: number;
-  listerId: string;
+  cancellationPolicy: 'flexible' | 'moderate' | 'strict';
   photos: { id: string; url: string; alt: string | null; isHero: boolean }[];
   specs: { key: string; value: string }[];
   bundleListingIds: string[] | null;
-}
-
-const GEAR_TYPES: GearType[] = ['thermal', 'night-vision', 'tree-stand', 'optics', 'pack', 'other'];
-const CONDITIONS: Condition[] = ['mint', 'field-ready', 'battle-scarred'];
-const POLICIES = ['flexible', 'moderate', 'strict'] as const;
-// ListingStatus enum values from backend Kitlo.Core/Enums/Enums.cs
-export type ListingStatus = 'draft' | 'pending' | 'published' | 'paused' | 'rejected' | 'archived';
-const LISTING_STATUSES: ListingStatus[] = ['draft', 'pending', 'published', 'paused', 'rejected', 'archived'];
-function listingStatusFromInt(value: number): ListingStatus {
-  return LISTING_STATUSES[value] ?? 'published';
-}
-
-function gearTypeFromInt(value: number): GearType {
-  return GEAR_TYPES[value] ?? 'other';
-}
-function gearTypeToInt(value: GearType): number {
-  return GEAR_TYPES.indexOf(value);
-}
-function conditionFromInt(value: number): Condition {
-  return CONDITIONS[value] ?? 'field-ready';
-}
-function conditionToString(value: Condition): string {
-  // Backend parses csv with hyphens stripped; send the canonical label.
-  return value;
-}
-function policyFromInt(value: number): 'flexible' | 'moderate' | 'strict' {
-  return POLICIES[value] ?? 'moderate';
 }
 
 function mapSummary(b: BackendListingSummary): ListingSummary {
   return {
     id: b.id,
     title: b.title,
-    gearType: gearTypeFromInt(b.gearType),
+    vertical: b.vertical,
+    gearType: b.gearType,
     gearTypeLabel: b.gearTypeLabel,
-    condition: conditionFromInt(b.condition),
+    condition: b.condition,
     dailyRateCents: b.dailyRateCents,
     pickupZip: b.pickupZip,
     heroPhotoUrl: b.heroPhotoUrl,
@@ -137,7 +115,7 @@ function mapSummary(b: BackendListingSummary): ListingSummary {
     listerVerified: b.listerVerified,
     isBundle: b.isBundle,
     rating: b.ratingCount > 0 ? { average: b.ratingAverage, count: b.ratingCount } : undefined,
-    status: listingStatusFromInt(b.status),
+    status: b.status,
   };
 }
 
@@ -146,13 +124,14 @@ function mapListing(b: BackendListing): Listing {
   return {
     id: b.id,
     title: b.title,
-    gearType: gearTypeFromInt(b.gearType),
+    vertical: b.vertical,
+    gearType: b.gearType,
     gearTypeLabel: b.gearTypeLabel,
-    condition: conditionFromInt(b.condition),
+    condition: b.condition,
     dailyRateCents: b.dailyRateCents,
     depositCents: b.depositCents ?? undefined,
     serviceFeePct: b.serviceFeeBp / 100,
-    cancellationPolicy: policyFromInt(b.cancellationPolicy),
+    cancellationPolicy: b.cancellationPolicy,
     pickupZip: b.pickupZip,
     description: b.description,
     heroPhotoUrl: heroPhoto?.url ?? '',
@@ -164,6 +143,7 @@ function mapListing(b: BackendListing): Listing {
     photos: b.photos.map((p) => ({ id: p.id, url: p.url, alt: p.alt ?? undefined, isHero: p.isHero })),
     specs: b.specs.map((s) => ({ key: s.key, value: s.value })),
     bundleListingIds: b.bundleListingIds ?? undefined,
+    status: b.status,
   };
 }
 
@@ -174,8 +154,9 @@ export class ListingsService {
 
   search(query: ListingSearchQuery = {}): Observable<ListingSearchResult> {
     let params = new HttpParams();
-    if (query.gearType) params = params.set('gearType', String(gearTypeToInt(query.gearType)));
-    if (query.condition?.length) params = params.set('conditions', query.condition.map(conditionToString).join(','));
+    if (query.vertical) params = params.set('vertical', query.vertical);
+    if (query.gearType) params = params.set('gearType', query.gearType);
+    if (query.condition?.length) params = params.set('conditions', query.condition.join(','));
     if (query.minPriceCents != null) params = params.set('minPriceCents', String(query.minPriceCents));
     if (query.maxPriceCents != null) params = params.set('maxPriceCents', String(query.maxPriceCents));
     if (query.verifiedOnly) params = params.set('verifiedOnly', 'true');
@@ -235,16 +216,15 @@ export class ListingsService {
     return this.http
       .post<BackendListing>(this.base, {
         title: input.title,
-        gearType: gearTypeToInt(input.gearType),
+        vertical: input.vertical,
+        gearType: input.gearType,
         gearTypeLabel: input.gearTypeLabel,
-        condition: CONDITIONS.indexOf(input.condition),
+        condition: input.condition,
         pickupZip: input.pickupZip,
         description: input.description ?? '',
         dailyRateCents: input.dailyRateCents ?? 0,
         depositCents: input.depositCents,
-        cancellationPolicy: input.cancellationPolicy
-          ? POLICIES.indexOf(input.cancellationPolicy)
-          : 1,
+        cancellationPolicy: input.cancellationPolicy ?? 'moderate',
         isBundle: input.isBundle ?? false,
       })
       .pipe(map(mapListing));
@@ -256,9 +236,12 @@ export class ListingsService {
     if (patch.description !== undefined) body['description'] = patch.description;
     if (patch.dailyRateCents !== undefined) body['dailyRateCents'] = patch.dailyRateCents;
     if (patch.depositCents !== undefined) body['depositCents'] = patch.depositCents;
-    if (patch.cancellationPolicy !== undefined) body['cancellationPolicy'] = POLICIES.indexOf(patch.cancellationPolicy);
-    if (patch.condition !== undefined) body['condition'] = CONDITIONS.indexOf(patch.condition);
+    if (patch.cancellationPolicy !== undefined) body['cancellationPolicy'] = patch.cancellationPolicy;
+    if (patch.condition !== undefined) body['condition'] = patch.condition;
     if (patch.pickupZip !== undefined) body['pickupZip'] = patch.pickupZip;
+    if (patch.vertical !== undefined) body['vertical'] = patch.vertical;
+    if (patch.gearType !== undefined) body['gearType'] = patch.gearType;
+    if (patch.gearTypeLabel !== undefined) body['gearTypeLabel'] = patch.gearTypeLabel;
     if (patch.isBundle !== undefined) body['isBundle'] = patch.isBundle;
     if (patch.bundleListingIds !== undefined) body['bundleListingIds'] = patch.bundleListingIds;
     return this.http.put<BackendListing>(`${this.base}/${id}`, body).pipe(map(mapListing));

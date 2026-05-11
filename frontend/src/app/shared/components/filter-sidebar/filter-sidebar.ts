@@ -4,11 +4,19 @@ import { Input } from '../input/input';
 import { Toggle } from '../toggle/toggle';
 import { TagPillGroup } from '../tag-pill-group/tag-pill-group';
 import type { Condition } from '../badge/badge';
+import type { GearType, Vertical } from '../../../core/models/listing';
+import {
+  ALL_VERTICALS,
+  VERTICAL_CATEGORY_MAP,
+  gearTypeLabel,
+  verticalShortLabel,
+} from '../../../core/catalogue/vertical-rules';
 
 export interface SearchFilters {
   minPriceCents?: number;
   maxPriceCents?: number;
   conditions: Condition[];
+  vertical?: Vertical;
   gearTypes: string[];
   verifiedOnly: boolean;
   instantBook: boolean;
@@ -17,17 +25,14 @@ export interface SearchFilters {
 
 const CONDITION_OPTIONS = [
   { value: 'mint', label: 'Mint' },
-  { value: 'field-ready', label: 'Field-Ready' },
-  { value: 'battle-scarred', label: 'Battle-Scarred' },
+  { value: 'fieldReady', label: 'Field-Ready' },
+  { value: 'battleScarred', label: 'Battle-Scarred' },
 ];
 
-const GEAR_OPTIONS = [
-  { value: 'thermal', label: 'Thermal' },
-  { value: 'night-vision', label: 'Night vision' },
-  { value: 'tree-stand', label: 'Tree stand' },
-  { value: 'optics', label: 'Optics' },
-  { value: 'pack', label: 'Pack' },
-];
+const VERTICAL_OPTIONS = ALL_VERTICALS.map((v) => ({
+  value: v,
+  label: verticalShortLabel(v),
+}));
 
 @Component({
   selector: 'app-filter-sidebar',
@@ -65,6 +70,27 @@ const GEAR_OPTIONS = [
       </section>
 
       <section class="mb-5">
+        <p class="font-mono text-overline tracking-[0.12em] uppercase text-muted mb-2">Vertical</p>
+        <app-tag-pill-group
+          [options]="verticalOptions"
+          [single]="true"
+          [selected]="verticalSelection()"
+          (selectedChange)="onVerticalChange($event)"
+        />
+      </section>
+
+      @if (filters().vertical) {
+        <section class="mb-5">
+          <p class="font-mono text-overline tracking-[0.12em] uppercase text-muted mb-2">Gear type</p>
+          <app-tag-pill-group
+            [options]="gearOptions()"
+            [selected]="filters().gearTypes"
+            (selectedChange)="onGearTypesChange($event)"
+          />
+        </section>
+      }
+
+      <section class="mb-5">
         <p class="font-mono text-overline tracking-[0.12em] uppercase text-muted mb-2">Condition</p>
         <app-tag-pill-group
           [options]="conditionOptions"
@@ -73,18 +99,9 @@ const GEAR_OPTIONS = [
         />
       </section>
 
-      <section class="mb-5">
-        <p class="font-mono text-overline tracking-[0.12em] uppercase text-muted mb-2">Gear type</p>
-        <app-tag-pill-group
-          [options]="gearOptions"
-          [selected]="filters().gearTypes"
-          (selectedChange)="onGearTypesChange($event)"
-        />
-      </section>
-
       <section>
         <app-toggle
-          label="Verified hunters only"
+          label="Verified listers only"
           sub="ID-verified listers only"
           [checked]="filters().verifiedOnly"
           (checkedChange)="updateBool('verifiedOnly', $event)"
@@ -104,9 +121,25 @@ export class FilterSidebar {
   readonly filters = model.required<SearchFilters>();
 
   protected readonly conditionOptions = CONDITION_OPTIONS;
-  protected readonly gearOptions = GEAR_OPTIONS;
+  protected readonly verticalOptions = VERTICAL_OPTIONS;
 
   protected readonly conditionStrings = computed<string[]>(() => this.filters().conditions);
+
+  protected readonly verticalSelection = computed<string[]>(() => {
+    const v = this.filters().vertical;
+    return v ? [v] : [];
+  });
+
+  /**
+   * Gear type options narrow to the selected vertical so we don't dump all 25
+   * categories on the user. Hidden entirely when no vertical is picked (cleaner
+   * than a 25-pill grid).
+   */
+  protected readonly gearOptions = computed(() => {
+    const v = this.filters().vertical;
+    if (!v) return [];
+    return VERTICAL_CATEGORY_MAP[v].map((g: GearType) => ({ value: g, label: gearTypeLabel(g) }));
+  });
 
   protected minPriceDollars(): string {
     const c = this.filters().minPriceCents;
@@ -132,6 +165,18 @@ export class FilterSidebar {
 
   protected onConditionsChange(values: string[]): void {
     this.filters.set({ ...this.filters(), conditions: values as Condition[] });
+  }
+
+  protected onVerticalChange(values: string[]): void {
+    const next = (values[0] as Vertical | undefined) ?? undefined;
+    const current = this.filters();
+    // When the vertical changes, drop any gear-type chips that don't belong to
+    // the new vertical (otherwise the sub-filter is stale on next render).
+    const allowed = next ? new Set<string>(VERTICAL_CATEGORY_MAP[next]) : null;
+    const gearTypes = allowed
+      ? current.gearTypes.filter((g) => allowed.has(g))
+      : [];
+    this.filters.set({ ...current, vertical: next, gearTypes });
   }
 
   protected onGearTypesChange(values: string[]): void {

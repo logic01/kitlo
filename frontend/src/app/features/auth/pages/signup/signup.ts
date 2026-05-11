@@ -82,7 +82,7 @@ type Intent = 'renter' | 'lister' | 'both';
               Tell us about yourself
             </h1>
             <p class="text-body text-muted mb-7">
-              Hunters trust real people. A photo and a city help build that trust.
+              Renters trust real people. A photo and a city help build that trust.
             </p>
 
             <div class="text-center mb-6">
@@ -196,9 +196,9 @@ export class AuthSignup {
   });
 
   protected readonly intentOptions: { id: Intent; title: string; body: string }[] = [
-    { id: 'renter', title: 'Rent gear', body: 'Find thermal, NV, and high-value gear from verified hunters near you.' },
-    { id: 'lister', title: 'List gear', body: 'Earn income from gear sitting in your safe between seasons.' },
-    { id: 'both', title: 'Both', body: 'Rent when you need extras, list what you have. Most hunters pick this.' },
+    { id: 'renter', title: 'Rent gear', body: 'Find rooftop tents, fridges, optics, waders, and power from verified overlanders near you.' },
+    { id: 'lister', title: 'List gear', body: 'Earn income from gear sitting in your garage between trips.' },
+    { id: 'both', title: 'Both', body: 'Rent when you need extras, list what you have. Most overlanders pick this.' },
   ];
 
   protected readonly ctaLabel = computed(() =>

@@ -22,8 +22,9 @@ describe('ListingsService (HTTP)', () => {
   it('serializes search filters into query params', async () => {
     const promise = firstValueFrom(
       service.search({
+        vertical: 'huntingOptics',
         gearType: 'thermal',
-        condition: ['mint', 'field-ready'],
+        condition: ['mint', 'fieldReady'],
         minPriceCents: 5000,
         verifiedOnly: true,
         sort: 'price-asc',
@@ -32,8 +33,9 @@ describe('ListingsService (HTTP)', () => {
     );
 
     const req = httpMock.expectOne((r) => r.url === `${environment.apiUrl}/listings`);
-    expect(req.request.params.get('gearType')).toBe('0');
-    expect(req.request.params.get('conditions')).toBe('mint,field-ready');
+    expect(req.request.params.get('vertical')).toBe('huntingOptics');
+    expect(req.request.params.get('gearType')).toBe('thermal');
+    expect(req.request.params.get('conditions')).toBe('mint,fieldReady');
     expect(req.request.params.get('minPriceCents')).toBe('5000');
     expect(req.request.params.get('verifiedOnly')).toBe('true');
     expect(req.request.params.get('sort')).toBe('price-asc');
@@ -44,9 +46,10 @@ describe('ListingsService (HTTP)', () => {
         {
           id: 'l1',
           title: 'Pulsar',
-          gearType: 0,
+          vertical: 'huntingOptics',
+          gearType: 'thermal',
           gearTypeLabel: 'Thermal',
-          condition: 1,
+          condition: 'fieldReady',
           dailyRateCents: 8500,
           pickupZip: '80301',
           heroPhotoUrl: 'http://img/1',
@@ -55,6 +58,7 @@ describe('ListingsService (HTTP)', () => {
           isBundle: false,
           ratingAverage: 4.8,
           ratingCount: 12,
+          status: 'published',
         },
       ],
       total: 1,
@@ -64,7 +68,8 @@ describe('ListingsService (HTTP)', () => {
 
     const result = await promise;
     expect(result.items[0].gearType).toBe('thermal');
-    expect(result.items[0].condition).toBe('field-ready');
+    expect(result.items[0].vertical).toBe('huntingOptics');
+    expect(result.items[0].condition).toBe('fieldReady');
     expect(result.items[0].rating).toEqual({ average: 4.8, count: 12 });
   });
 
@@ -74,14 +79,15 @@ describe('ListingsService (HTTP)', () => {
     req.flush({
       id: 'l1',
       title: 'Pulsar',
-      gearType: 0,
+      vertical: 'huntingOptics',
+      gearType: 'thermal',
       gearTypeLabel: 'Thermal',
-      condition: 1,
+      condition: 'fieldReady',
       dailyRateCents: 8500,
       depositCents: 50000,
       serviceFeeBp: 500,
-      cancellationPolicy: 1,
-      status: 2,
+      cancellationPolicy: 'moderate',
+      status: 'published',
       pickupZip: '80301',
       description: 'Mint',
       isBundle: false,
@@ -95,6 +101,7 @@ describe('ListingsService (HTTP)', () => {
       bundleListingIds: null,
     });
     const listing = await promise;
+    expect(listing.vertical).toBe('huntingOptics');
     expect(listing.cancellationPolicy).toBe('moderate');
     expect(listing.serviceFeePct).toBe(5);
     expect(listing.heroPhotoUrl).toBe('http://img/1');

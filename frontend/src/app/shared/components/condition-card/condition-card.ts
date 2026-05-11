@@ -3,14 +3,14 @@ import type { Condition } from '../badge/badge';
 
 const NAME_TONE: Record<Condition, string> = {
   mint: 'text-mint',
-  'field-ready': 'text-olive',
-  'battle-scarred': 'text-battle',
+  fieldReady: 'text-olive',
+  battleScarred: 'text-battle',
 };
 
 const LABELS: Record<Condition, string> = {
   mint: 'Mint',
-  'field-ready': 'Field-Ready',
-  'battle-scarred': 'Battle-Scarred',
+  fieldReady: 'Field-Ready',
+  battleScarred: 'Battle-Scarred',
 };
 
 @Component({

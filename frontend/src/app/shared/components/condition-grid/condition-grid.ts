@@ -5,17 +5,17 @@ import { ConditionCard } from '../condition-card/condition-card';
   selector: 'app-condition-grid',
   imports: [ConditionCard],
   template: `
-    <div class="grid grid-cols-3 gap-px bg-line border border-line">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line">
       <app-condition-card
         condition="mint"
         description="Like new. Minimal use, no visible wear. Functions as if pulled fresh from the box."
       />
       <app-condition-card
-        condition="field-ready"
+        condition="fieldReady"
         description="Solid working order with honest wear from time afield. Will perform to spec."
       />
       <app-condition-card
-        condition="battle-scarred"
+        condition="battleScarred"
         description="Functional but well-loved. Cosmetic damage and visible wear, no functional issues."
       />
     </div>

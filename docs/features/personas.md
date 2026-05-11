@@ -2,6 +2,8 @@
 
 Every feature decision should be checked against these personas. If a design doesn't serve at least one of them clearly, question whether it's needed.
 
+> **v2.0 — overlanding pivot.** P1–P7 are the original hunting-optics personas; they remain valid because hunting optics stays a Phase 1 anchor vertical. **P8–P12** cover the overlanding, fly-fishing, power-station, and outage-prep personas added by the multi-vertical model. The persona-vs-workflow matrix at the bottom is updated for all twelve.
+
 ---
 
 ## P1 — The First-Time Renter
@@ -192,29 +194,152 @@ Every feature decision should be checked against these personas. If a design doe
 
 ---
 
+## P8 — The Overlander Renter
+
+**Name:** Sara, 32, Denver CO
+**Occupation:** UX designer at a downtown agency. Drives a 2024 4Runner. Has done six weekend trips to the Sand Dunes, Crested Butte, and Moab in the last 18 months — always with rented or borrowed kit.
+**Context:** Wants a four-day loop on the Alpine Loop in late August with her partner. Owns nothing but a sleeping bag. Found Kitlo through r/overlanding.
+
+**Goals**
+- Book a complete weekend kit (RTT + 12V fridge + awning + power station) from a single owner
+- Confirm the kit fits her 4Runner (crossbar pattern, RTT mount type)
+- Pick up Friday morning, drop off Monday evening — minimal planning overhead
+
+**Pain points**
+- Coordinating multi-vendor pickups would kill the trip
+- Doesn't know if her crossbars are rated for the RTT she's renting
+- B2C overlanding rentals (when they exist) are 40 minutes from her apartment and closed by 6pm
+
+**What Kitlo must nail for Sara**
+- Bundle listings prominent in search ("Weekend overland kit, fits Toyota 4Runner")
+- Vehicle-fit confirmation in the listing detail and at booking time
+- Pickup walkthrough (15-min mandatory) baked into the booking flow
+- Same-day local pickup beats any B2C operator's 2–3 day shipping window
+
+---
+
+## P9 — The Overlander Lister
+
+**Name:** Tom, 44, Boulder CO
+**Occupation:** Software engineer. Drives a built Tacoma with iKamper Skycamp 3.0, ARB awning, ARB Zero fridge, dual-battery, and a Goal Zero Yeti 1500X. Trip count: 8–10 weekends a year.
+**Context:** ExpeditionPortal regular. The truck and gear sit in his driveway 9 months a year. Rental income would cover his payment.
+
+**Goals**
+- List the full kit as a bundle, not seven separate listings
+- Vet renters before handing over $12k of kit
+- Get paid quickly; have a clear damage-deposit and insurance path
+
+**Pain points**
+- Worried about RTT mount damage from a renter with the wrong crossbars
+- Doesn't want a renter who's never set up an RTT before to break the canopy struts on first deployment
+- Wants to block calendar dates around his own trips
+
+**What Kitlo must nail for Tom**
+- Bundle creation flow that lets him compose a kit from his individual listings
+- Vehicle-fit fields (crossbar pattern, max load, RTT mount type) at listing publish
+- Owner right-of-refusal at handoff if renter's vehicle doesn't match
+- Clear damage coverage: Thimble base + bundle rider for the >$5k value
+- Calendar-block tooling for personal trips
+
+---
+
+## P10 — The Destination Angler
+
+**Name:** Pete, 39, Brooklyn NY
+**Occupation:** Editor. Flies into Bozeman every July for a 5-day Madison float trip with college friends. Has done this for 6 years.
+**Context:** Owns a Sage rod and a Hatch reel. Doesn't own waders that fit his current frame. Hates packing waders; tried mailing them to the lodge twice and one trip got a leaky pair from the lodge fleet.
+
+**Goals**
+- Rent waders + boots in the right size, ready for Friday pickup at the Bozeman airport area
+- Maybe rent a 7wt for streamer water on the lower Madison (his rod is a 5wt)
+- Get local intel on which fly to fish this week — the hatch chart is two months out of date
+
+**Pain points**
+- Gateway-town fly shops carry generic mid-sized waders; he wears a XL Stout
+- Mailing waders home after the trip is a project
+- Renting from a B2C shop wastes a half day each end
+
+**What Kitlo must nail for Pete**
+- Size-specific search filters (wader size, boot size, rod weight)
+- Lister-as-guide intel surfaced (hatch this week, access points)
+- Pickup at an Airbnb or B&B the lister can meet at — not a fixed shop
+- Cross-vertical: Pete also rents a power station for his rental cabin's intermittent generator
+
+---
+
+## P11 — The Multi-Vertical Lister
+
+**Name:** Dana, 41, Bozeman MT
+**Occupation:** Full-time fly-fishing guide in summer; outfits her own DIY thermal hog hunts in TX every January. Owns 11 rods, 4 wader sizes, two thermal monoculars, and a Goal Zero Yeti 1500X.
+**Context:** Already a guide; wants a second income channel during shoulder seasons. Found Kitlo via TU chapter newsletter.
+
+**Goals**
+- List fly fishing in summer, optics in winter, power station year-round
+- Manage all listings from one dashboard
+- Use the lister-as-guide intel field to drive premium pricing
+
+**Pain points**
+- Confusing UI when listings span multiple verticals with different field requirements
+- Doesn't want to re-onboard to a "second platform" for a different vertical
+- Wants a single 1099 at year-end, not three
+
+**What Kitlo must nail for Dana**
+- Vertical picker at listing creation; per-vertical field templates
+- Unified earnings dashboard across all verticals
+- Per-listing performance: which vertical converts best for her market
+- Single payout / tax-form pipeline regardless of vertical mix
+
+---
+
+## P12 — The Outage-Prep Renter
+
+**Name:** Alex, 36, Sonoma County CA
+**Occupation:** Remote IT manager. Lives in a PSPS-prone fire zone. Lost power three times in 2025 (PG&E PSPS events).
+**Context:** Doesn't camp. Doesn't overland. Wants to test-drive a Goal Zero Yeti 3000X before committing $3,000 to the purchase. Found Kitlo via a Reddit comment in r/sonoma.
+
+**Goals**
+- Rent a power station for a 3-day "what if" simulation in his own home
+- Confirm it can run his fridge + WiFi + a CPAP without browning out
+- Apply rental fees toward purchase if it works out (TBYB credit)
+
+**Pain points**
+- Hygglo and FriendWithA listings are not vetted for outage-grade reliability
+- Doesn't know what AC loads a given Wh rating actually supports
+
+**What Kitlo must nail for Alex**
+- Outage-use-case search filter on power stations (run-time calculator, AC load capacity surfaced)
+- TBYB credit referral with major brands (Jackery, Goal Zero, EcoFlow, Anker Solix) — `business-plan.md` Phase 2
+- Optional: cross-sell into overlanding if Alex shows interest. (He's exactly the renter who buys his first power station, then his first RTT.)
+
+---
+
 ## Persona × Workflow Matrix
 
-| Workflow | Marcus (P1) | Derek (P2) | Garrett (P3) | Brad (P4) | Cody (P5) | Visitor (P6) | Admin (P7) |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Registration | ✅ | — | ✅ | ✅ | ✅ | ✅ | — |
-| Lister onboarding | — | — | ✅ | ✅ | ✅ | — | — |
-| Create listing | — | — | ✅ | ✅ | ✅ | — | — |
-| Manage listings | — | — | ✅ | ✅ | ✅ | — | — |
-| Search & discovery | ✅ | ✅ | — | — | ✅ | ✅ | — |
-| Listing detail | ✅ | ✅ | — | — | ✅ | ✅ | — |
-| Booking request | ✅ | ✅ | — | — | ✅ | — | — |
-| Payment checkout | ✅ | ✅ | — | — | ✅ | — | — |
-| Pre-pickup messaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | — |
-| Pickup inspection | ✅ | ✅ | ✅ | ✅ | ✅ | — | — |
-| Active rental | ✅ | ✅ | — | — | ✅ | — | — |
-| Return confirmation | ✅ | ✅ | ✅ | ✅ | ✅ | — | — |
-| Ratings & reviews | ✅ | ✅ | ✅ | ✅ | ✅ | — | — |
-| Dispute resolution | ✅ | ✅ | ✅ | ✅ | ✅ | — | ✅ |
-| Payouts & earnings | — | — | ✅ | ✅ | ✅ | — | — |
-| Notifications | ✅ | ✅ | ✅ | ✅ | ✅ | — | ✅ |
-| Identity verification | ✅ | — | ✅ | ✅ | ✅ | — | ✅ |
-| Admin: listing review | — | — | — | — | — | — | ✅ |
-| Admin: dispute mgmt | — | — | — | — | — | — | ✅ |
-| Admin: user mgmt | — | — | — | — | — | — | ✅ |
-| Cancellation | ✅ | ✅ | ✅ | ✅ | ✅ | — | — |
-| Bundle listing | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
+| Workflow | Marcus (P1) | Derek (P2) | Garrett (P3) | Brad (P4) | Cody (P5) | Visitor (P6) | Admin (P7) | Sara (P8) | Tom (P9) | Pete (P10) | Dana (P11) | Alex (P12) |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Registration | ✅ | — | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Lister onboarding | — | — | ✅ | ✅ | ✅ | — | — | — | ✅ | — | ✅ | — |
+| Create listing | — | — | ✅ | ✅ | ✅ | — | — | — | ✅ | — | ✅ | — |
+| Manage listings | — | — | ✅ | ✅ | ✅ | — | — | — | ✅ | — | ✅ | — |
+| Search & discovery | ✅ | ✅ | — | — | ✅ | ✅ | — | ✅ | — | ✅ | — | ✅ |
+| Listing detail | ✅ | ✅ | — | — | ✅ | ✅ | — | ✅ | — | ✅ | — | ✅ |
+| Booking request | ✅ | ✅ | — | — | ✅ | — | — | ✅ | — | ✅ | — | ✅ |
+| Payment checkout | ✅ | ✅ | — | — | ✅ | — | — | ✅ | — | ✅ | — | ✅ |
+| Pre-pickup messaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Pickup inspection | ✅ | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Active rental | ✅ | ✅ | — | — | ✅ | — | — | ✅ | — | ✅ | — | ✅ |
+| Return confirmation | ✅ | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Ratings & reviews | ✅ | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Dispute resolution | ✅ | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Payouts & earnings | — | — | ✅ | ✅ | ✅ | — | — | — | ✅ | — | ✅ | — |
+| Notifications | ✅ | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Identity verification | ✅ | — | ✅ | ✅ | ✅ | — | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Admin: listing review | — | — | — | — | — | — | ✅ | — | — | — | — | — |
+| Admin: dispute mgmt | — | — | — | — | — | — | ✅ | — | — | — | — | — |
+| Admin: user mgmt | — | — | — | — | — | — | ✅ | — | — | — | — | — |
+| Cancellation | ✅ | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Bundle listing | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | ✅ | ✅ | — |
+| Vehicle-fit attestation (overlanding) | — | — | — | — | — | — | — | ✅ | ✅ | — | — | — |
+| ITAR / US-Person attestation (optics) | ✅ | ✅ | ✅ | ✅ | ✅ | — | — | — | — | — | ✅ | — |
+| Wading-boot sole declaration (fly fishing) | — | — | — | — | — | — | — | — | — | ✅ | ✅ | — |
+| UL cert + Li-ion rider (power stations) | — | — | — | — | — | — | — | ✅ | ✅ | ✅ | ✅ | ✅ |

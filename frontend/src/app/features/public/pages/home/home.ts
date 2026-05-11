@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import {
@@ -23,6 +24,7 @@ import type { ProfileSummary } from '../../../../core/models/user';
   selector: 'app-public-home',
   imports: [
     RouterLink,
+    NgOptimizedImage,
     Hero,
     ListingCard,
     ListingCardSkeleton,
@@ -35,24 +37,43 @@ import type { ProfileSummary } from '../../../../core/models/user';
   ],
   template: `
     <app-hero
-      kicker="Thermal · NV · optics · stands · packs"
-      headline="Your gear should"
-      accent="earn its keep."
-      sub="Verified renters. Big payouts. List kit. Get paid."
+      kicker="Rooftop tents · Fridges · Recovery · Optics · Waders · Power"
+      headline="Rent the kit."
+      accent="Roll out."
+      sub="Verified renters. Real payouts. Overlanding gear from people who actually use it."
     >
-      <div slot="right" class="flex flex-col gap-3">
-        @for (profile of featuredProfiles(); track profile.id) {
-          <app-profile-card [profile]="profile" />
-        }
+      <div slot="right" class="w-full">
+        <img
+          ngSrc="/utv-hero.png"
+          width="1200"
+          height="630"
+          priority
+          alt="A UTV with a rooftop tent set up at a backcountry camp."
+          class="w-full h-auto border-y md:border border-line"
+        />
       </div>
     </app-hero>
 
     <app-olive-band
       label="Why Kitlo"
       headline="Trust built into every rental"
-      sub="Three things make peer-to-peer rental work for hunters."
+      sub="Three things make peer-to-peer rental work for overlanders."
       [pillars]="pillars"
     />
+
+    <section class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-16">
+      <div class="flex justify-between items-end mb-6">
+        <div>
+          <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-2">Real people, verified</p>
+          <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate">Featured listers</h2>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @for (profile of featuredProfiles(); track profile.id) {
+          <app-profile-card [profile]="profile" />
+        }
+      </div>
+    </section>
 
     <section class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-16">
       <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">The condition system</p>
@@ -91,7 +112,7 @@ import type { ProfileSummary } from '../../../../core/models/user';
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <app-step-card stepNumber="01" title="Find the gear" body="Search by location, gear type, and dates. Filter by condition, price, and verified listers." />
           <app-step-card stepNumber="02" title="Book and pay securely" body="Funds held in escrow. Confirm at pickup. Payment released to lister only after return." />
-          <app-step-card stepNumber="03" title="Pick up, hunt, return" body="Meet at the agreed location. Both parties confirm condition at handoff and return." />
+          <app-step-card stepNumber="03" title="Pick up, roll out, return" body="Meet at the agreed location. Both parties confirm condition at handoff and return." />
         </div>
       </div>
     </section>
@@ -106,7 +127,8 @@ import type { ProfileSummary } from '../../../../core/models/user';
             List kit. <span class="text-amber">Get paid.</span>
           </h2>
           <p class="text-body-lg text-on-dark/85 mt-5 max-w-xl">
-            Most hunting kit sits unused 47 weeks a year. Put yours to work — we handle payments, verification, and disputes.
+            Most overland and outdoor kit sits unused 47 weeks a year. Put yours to work —
+            we handle payments, verification, and disputes.
           </p>
         </div>
         <div class="shrink-0">
@@ -154,7 +176,7 @@ export class PublicHome {
   });
 
   protected readonly pillars: OliveBandPillar[] = [
-    { title: 'Verified hunters only', body: 'Government ID + selfie verify before listing' },
+    { title: 'Verified listers', body: 'Government ID + selfie verify before listing' },
     { title: 'Funds held in escrow', body: 'Payment released only after confirmed return' },
     { title: 'Gear inspected at handoff', body: 'Photo-documented condition at pickup and drop-off' },
   ];

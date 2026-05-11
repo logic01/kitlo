@@ -40,11 +40,11 @@ interface CategoryTile {
                 class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-7 pb-3.5 border-b border-line"
               >Early access — coming soon</p>
               <h1 class="font-condensed font-black text-hero uppercase text-slate leading-[0.95]">
-                Rent thermal, night-vision, and high-end hunting gear
-                <span class="text-olive"> from hunters near you.</span>
+                Rooftop tents, fridges, recovery, optics, and waders
+                <span class="text-olive"> from overlanders near you.</span>
               </h1>
               <p class="text-body-lg text-muted mt-7 max-w-md">
-                Try $5,000+ optics for one hunt. No commitment. Coming soon to your zip code.
+                Build the rig for one trip without buying it. No commitment. Coming soon to your zip code.
               </p>
               <div class="mt-10 flex flex-wrap gap-3">
                 <button appButton size="lg" condensed type="button" (click)="scrollToForm()">
@@ -132,7 +132,7 @@ interface CategoryTile {
                     <input
                       appInput
                       formControlName="firstRental"
-                      placeholder="e.g., thermal monocular for hog hunting"
+                      placeholder="e.g., rooftop tent + fridge for a weekend in Moab"
                     />
                   </app-form-field>
 
@@ -192,11 +192,12 @@ interface CategoryTile {
         <section id="how" class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-16">
           <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">The catalogue</p>
           <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-3">
-            Optics, power, and field gear
+            Overlanding, optics, power, and waders
           </h2>
           <p class="text-body text-muted max-w-2xl mb-10">
-            Kitlo focuses on high-value gear hunters use seasonally. No firearms, no bows —
-            Kitlo never moves a weapon. Optics that mount to your own rifle are welcome.
+            Kitlo focuses on high-value gear that sits idle most of the year. Camping and overlanding is the anchor;
+            hunting optics, fly fishing, and portable power layer in for the trips overlanders take. No firearms,
+            no bows — Kitlo never moves a weapon. Optics that mount to your own rifle are welcome.
           </p>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @for (cat of categories; track cat.label) {
@@ -246,8 +247,8 @@ interface CategoryTile {
                 class="font-condensed text-[48px] font-black uppercase text-on-dark leading-tight tracking-[0.01em]"
               >Want to earn money renting out your gear?</h2>
               <p class="text-body-lg text-on-dark-muted leading-relaxed mt-4">
-                Average booking value: <span class="text-on-dark font-medium">$500–$900</span>
-                for a 3–5 day hunt. Kitlo takes 5%. Payouts run through Stripe.
+                Average booking value: <span class="text-on-dark font-medium">$400–$900</span>
+                for a 3–5 day overland trip. Kitlo takes 5%. Payouts run through Stripe.
               </p>
             </div>
             <div class="flex md:justify-end">
@@ -273,7 +274,7 @@ interface CategoryTile {
               <span class="block text-olive">Be first to book.</span>
             </h2>
             <p class="text-body-lg text-muted mt-6 max-w-lg mx-auto">
-              Kitlo opens to early-access hunters first. One email when we launch in your zip.
+              Kitlo opens to early-access overlanders first. One email when we launch in your zip.
             </p>
             <div class="mt-8">
               <button appButton size="lg" condensed type="button" (click)="scrollToForm()">
@@ -288,7 +289,7 @@ interface CategoryTile {
         <div
           class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-8 flex flex-wrap items-center justify-between gap-4 text-xs text-muted"
         >
-          <span>&copy; {{ year }} Kitlo. Peer-to-peer hunting equipment rental.</span>
+          <span>&copy; {{ year }} Kitlo. Peer-to-peer overlanding gear rental.</span>
           <a routerLink="/privacy" class="hover:text-slate">Privacy</a>
         </div>
       </footer>
@@ -320,27 +321,27 @@ export class EarlyAccess {
   private readonly formAnchor = viewChild<ElementRef<HTMLElement>>('formAnchor');
 
   protected readonly categories: CategoryTile[] = [
-    { label: 'Thermal imaging', body: 'Monoculars, scopes, clip-ons, binoculars — for detection at distance.' },
-    { label: 'Night vision', body: 'Goggles, scopes, and clip-ons for shot placement after dark.' },
-    { label: 'Spotting & glassing', body: 'Premium binoculars and spotting scopes for destination hunts.' },
-    { label: 'Camp power & blinds', body: 'Power stations and ground blinds — bundle with your optics rental.' },
+    { label: 'Camping & overlanding', body: 'Rooftop tents, awnings, 12V fridges, recovery boards, dual-battery, full kits.' },
+    { label: 'Hunting optics', body: 'Thermal monoculars, NV scopes, clip-ons, spotting scopes — bundle thermal+NV.' },
+    { label: 'Portable power', body: 'Power stations and solar — pairs with overlanding rigs and basecamps.' },
+    { label: 'Fly fishing', body: 'Waders, wading boots, rod-and-reel setups, specialty Spey/Switch weights.' },
   ];
 
   protected readonly trust = [
     {
       label: 'Safe & secure',
-      title: 'Verified hunters only',
+      title: 'Verified listers only',
       body: 'Government ID + selfie verification. Funds held in escrow until both parties confirm return.',
     },
     {
       label: 'Affordable',
       title: 'Try before you buy',
-      body: 'Test a $5,000 thermal for the cost of a tank of gas. Pay only when you book.',
+      body: 'Test a rooftop tent or fridge for the cost of a tank of gas. Pay only when you book.',
     },
     {
       label: 'Local',
       title: 'Pickup nearby',
-      body: 'Meet a verified hunter in your area. No shipping, no waiting.',
+      body: 'Meet a verified overlander in your area. No shipping, no waiting.',
     },
   ];
 

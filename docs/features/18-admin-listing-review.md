@@ -1,9 +1,11 @@
 # Feature: Admin — Listing Review
 
-**Personas:** Admin  
-**Trigger:** New listing submitted with MSRP ≥ $5,000, or listing flagged by a user  
-**Depends on:** 03-create-listing  
-**Blocks:** Listing goes live only after admin approval (for high-value items)
+**Personas:** Admin
+**Trigger:** New listing submitted with MSRP ≥ $5,000, **or any new listing in a vertical-specific gating tier (overlanding bundle ≥ $5,000 sum, hunting optics bundle, power station ≥ $2,000, fly fishing waders cross-state)**, or listing flagged by a user
+**Depends on:** 03-create-listing, `gear-catalogue.md`
+**Blocks:** Listing goes live only after admin approval (for high-value or vertical-gated items)
+
+> **v2.0 — overlanding pivot.** Review tiers are now per-vertical. Overlanding bundles, hunting optics bundles, premium power stations, and felt-sole wading boots have specific review triggers in addition to the global $5K MSRP rule. The prohibited list is expanded with vehicles, non-empty propane, and uncertified Li-ion units.
 
 ---
 
@@ -25,18 +27,29 @@ Catch fraudulent, unsafe, or mis-represented listings before they reach renters.
 ### Admin dashboard view
 
 Listing review queue shows:
-- Listing name + gear category
-- MSRP
+- Listing name + **vertical** + gear category
+- MSRP (or bundle total)
 - Lister name + verification status + account age
 - Submitted at timestamp
-- Queue reason: "High value" or "Flagged by user"
+- Queue reason — see triggers below
 - Priority flag: flagged listings prioritized over high-value new listings
 
 **SLA targets:**
 - High-value new listing: reviewed within 24 hours
 - User-flagged listing: reviewed within 4 hours
+- Vertical-gated review (per below): 24 hours
 
 Queue is sorted by SLA deadline ascending (most urgent first).
+
+### Vertical-specific review triggers
+
+| Vertical | Trigger | Why |
+|---|---|---|
+| **Overlanding** | RTT/awning listing without vehicle-fit info; bundle total ≥ $5,000 | Vehicle-fit drives the dominant damage mode; bundles often exceed Thimble's $5k cap |
+| **Hunting Optics** | MSRP ≥ $5,000; any bundle (thermal+NV); listing missing US-Person attestation | Bundles routinely exceed $15k value; ITAR US-Person status is mandatory |
+| **Power Station** | MSRP ≥ $2,000; missing UL 9540 / 2743 cert; chemistry = NMC (not LFP) | Li-ion thermal-event coverage requires specialty rider; lower threshold than other tiers |
+| **Fly Fishing** | Felt-soled wading boot listing where lister's state is FL/AK/MD or other restricted state | Cross-state booking risk — admin verifies sole-material declaration is correct |
+| **Smokers & Pizza Ovens** | Vertical not yet open — submission blocked at form level (Phase 2+) | Provisional |
 
 ---
 
@@ -163,13 +176,17 @@ Kitlo does not allow listings for:
 - **Firearms** — rifles, shotguns, handguns, air rifles, ammunition, and firearm components
 - **Hunting bows** — compound bows, recurve bows, longbows, crossbows, arrows, and broadheads
 - NFA items (suppressors, SBRs, etc.) — even if lister claims they're legal in their state
-- Export-controlled night vision equipment (ITAR-restricted)
+- Export-controlled night vision equipment beyond civilian-export-allowed thermal/NV optics with US-Person attestation (ITAR-restricted)
+- **Vehicles** — campervans, trailers, full rigs sold with vehicle. Kitlo lists gear, not vehicles. Outdoorsy and BaseCamper own that surface.
+- **Non-empty propane tanks** — gas cylinders must be delivered empty; renter sources fuel locally.
+- **Uncertified Li-ion power stations / batteries** — UL 9540 / UL 2743 cert required; major brands only (Jackery, Goal Zero, EcoFlow, Bluetti, Anker Solix). White-label imports decline.
+- **Smokers & pizza ovens** — vertical not yet open (Phase 2+ provisional). Form-level block on submission.
 - Counterfeit or knockoff gear listed as genuine
 - Any gear with evidence of tampering, modification for illegal use
 
 Note: optics that mount to a renter's own weapon (rifle scopes, clip-ons, weapon-mounted thermal/NV) are **allowed**. The platform does not transfer the weapon itself.
 
-Admin maintains a prohibited gear list (internal document, updated as edge cases arise).
+Admin maintains the canonical prohibited gear list in `docs/gear-catalogue.md`. Updates flow from gear-catalogue → here, not the reverse.
 
 ---
 

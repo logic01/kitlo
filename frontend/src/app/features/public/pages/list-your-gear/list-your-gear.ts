@@ -8,12 +8,13 @@ import { Button, StepCard, StatCard } from '../../../../shared';
   template: `
     <section class="border-b-2 border-slate">
       <div class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-20 text-center">
-        <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">Thermal · NV · optics · stands · packs</p>
+        <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">Rooftop tents · Fridges · Recovery · Optics · Waders · Power</p>
         <h1 class="font-condensed text-hero font-black uppercase text-slate leading-none">
           Your gear should<br /><span class="text-olive">earn its keep.</span>
         </h1>
         <p class="text-body-lg text-muted mt-6 max-w-2xl mx-auto">
-          Verified renters. Big payouts. List kit. Get paid. Most hunting gear sits unused 47 weeks a year — put yours to work.
+          Verified renters. Real payouts. List your kit. Get paid. Most overland and outdoor gear sits unused
+          47 weeks a year — put yours to work.
         </p>
         <div class="mt-8">
           <a appButton variant="primary" routerLink="/auth/signup">Start listing</a>

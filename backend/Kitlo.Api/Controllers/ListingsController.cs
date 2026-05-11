@@ -17,6 +17,7 @@ public class ListingsController : ControllerBase
 
     [HttpGet]
     public Task<PagedResult<ListingSummaryDto>> Search(
+        [FromQuery] Vertical? vertical,
         [FromQuery] GearType? gearType,
         [FromQuery] string? conditions,
         [FromQuery] int? minPriceCents,
@@ -36,7 +37,7 @@ public class ListingsController : ControllerBase
                 .Select(c => Enum.TryParse<Condition>(c.Replace("-", ""), true, out var v) ? v : (Condition?)null)
                 .Where(c => c is not null).Select(c => c!.Value).ToArray();
         }
-        return _listings.SearchAsync(gearType, parsed, minPriceCents, maxPriceCents, verifiedOnly, location, sort, listerId, includeUnpublished: false, page, pageSize, ct);
+        return _listings.SearchAsync(vertical, gearType, parsed, minPriceCents, maxPriceCents, verifiedOnly, location, sort, listerId, includeUnpublished: false, page, pageSize, ct);
     }
 
     /// <summary>Caller's own listings — includes drafts/paused, not just published.</summary>
@@ -46,7 +47,7 @@ public class ListingsController : ControllerBase
         [FromQuery] int? page,
         [FromQuery] int? pageSize,
         CancellationToken ct) =>
-        _listings.SearchAsync(null, null, null, null, false, null, "newest", User.RequireUserId(), includeUnpublished: true, page, pageSize, ct);
+        _listings.SearchAsync(null, null, null, null, null, false, null, "newest", User.RequireUserId(), includeUnpublished: true, page, pageSize, ct);
 
     [HttpGet("{id:guid}")]
     public Task<ListingDto> Get(Guid id, CancellationToken ct) => _listings.GetByIdAsync(id, ct);

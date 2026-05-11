@@ -23,24 +23,28 @@ import type { Condition } from '../../../../shared';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ListingsService } from '../../../../core/services/listings.service';
 import { kitloValidators } from '../../../../core/forms/validators';
-import type { GearType } from '../../../../core/models/listing';
+import type { GearType, Vertical } from '../../../../core/models/listing';
+import {
+  ALL_VERTICALS,
+  SUGGESTED_SPEC_KEYS,
+  VERTICAL_CATEGORY_MAP,
+  gearTypeLabel,
+  verticalLabel,
+} from '../../../../core/catalogue/vertical-rules';
 
 const STEPS: StepDef[] = [
+  { label: 'Vertical' },
   { label: 'Category' },
+  { label: 'Basics' },
   { label: 'Photos' },
   { label: 'Pricing' },
   { label: 'Review' },
 ];
 
-// Weapons (firearms, hunting bows, crossbows) are not listable on Kitlo.
-// Keep the option set in sync with `GearType` in core/models/listing.ts.
-const CATEGORY_OPTIONS: PillOption[] = [
-  { value: 'thermal', label: 'Thermal' },
-  { value: 'night-vision', label: 'Night Vision' },
-  { value: 'optics', label: 'Optics' },
-  { value: 'tree-stand', label: 'Treestand / saddle' },
-  { value: 'pack', label: 'Pack' },
-];
+const VERTICAL_OPTIONS: PillOption[] = ALL_VERTICALS.map((v) => ({
+  value: v,
+  label: verticalLabel(v),
+}));
 
 @Component({
   selector: 'app-dashboard-listing-create',
@@ -67,12 +71,53 @@ const CATEGORY_OPTIONS: PillOption[] = [
 
       @switch (step()) {
         @case (0) {
+          <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-2">Pick a vertical</h2>
+          <p class="text-sm text-muted mb-5">
+            Overlanding is the anchor — pick the bucket your gear lives in. We use this to set deposit
+            tiers, attestation requirements, and where your listing shows up in search.
+          </p>
+          <app-form-field label="Vertical" required [error]="verticalError()">
+            <app-tag-pill-group
+              [options]="verticalOptions"
+              [single]="true"
+              [(selected)]="selectedVerticals"
+            />
+          </app-form-field>
+          <div class="flex gap-2 mt-6">
+            <button appButton variant="primary" type="button" class="flex-1" (click)="advance()">
+              Continue
+            </button>
+          </div>
+        }
+
+        @case (1) {
+          <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-2">Category</h2>
+          <p class="text-sm text-muted mb-5">
+            Pick the closest fit for {{ selectedVerticalLabel() }}. Renters use this to filter and
+            we use it to surface category-specific spec hints in the next step.
+          </p>
+          <app-form-field label="Category" required [error]="categoryError()">
+            <app-tag-pill-group
+              [options]="categoryOptions()"
+              [single]="true"
+              [(selected)]="selectedCategories"
+            />
+          </app-form-field>
+          <div class="flex gap-2 mt-6">
+            <button appButton variant="ghost" type="button" (click)="back()">Back</button>
+            <button appButton variant="primary" type="button" class="flex-1" (click)="advance()">
+              Continue
+            </button>
+          </div>
+        }
+
+        @case (2) {
           <form [formGroup]="basics" (ngSubmit)="advance()">
             <app-form-field label="What are you listing?" required [control]="basics.controls.title">
               <input
                 appInput
                 formControlName="title"
-                placeholder="Pulsar Helion 2 XP50 Pro"
+                placeholder="Roofnest Sparrow Eye XL"
                 [invalid]="showError(basics.controls.title)"
               />
             </app-form-field>
@@ -86,16 +131,9 @@ const CATEGORY_OPTIONS: PillOption[] = [
                 appInput
                 rows="5"
                 formControlName="description"
-                placeholder="Pulsar XP50 Pro thermal scope. 640×480 sensor, 50 mm objective, 2 batteries…"
+                placeholder="Hard-shell rooftop tent. Sleeps 2 adults, mounts to factory crossbars…"
                 [invalid]="showError(basics.controls.description)"
               ></textarea>
-            </app-form-field>
-            <app-form-field
-              label="Category"
-              required
-              [error]="categoryError()"
-            >
-              <app-tag-pill-group [options]="categoryOptions" [(selected)]="categories" />
             </app-form-field>
             <app-form-field label="Pickup ZIP" required [control]="basics.controls.zip">
               <input
@@ -109,11 +147,34 @@ const CATEGORY_OPTIONS: PillOption[] = [
             <app-form-field label="Condition" required>
               <app-condition-rating-input [(value)]="condition" />
             </app-form-field>
+
+            @if (suggestedSpecKeys().length > 0) {
+              <div class="mt-6">
+                <h3 class="font-condensed text-h3 font-extrabold uppercase text-slate mb-1">
+                  Suggested specs
+                </h3>
+                <p class="text-xs text-muted mb-4">
+                  Renters expect these for {{ selectedCategoryLabel() }}. Skip any that don't apply.
+                </p>
+                @for (key of suggestedSpecKeys(); track key) {
+                  <app-form-field [label]="key">
+                    <input
+                      appInput
+                      type="text"
+                      [value]="specValue(key)"
+                      (input)="onSpecInput(key, $event)"
+                      placeholder="—"
+                    />
+                  </app-form-field>
+                }
+              </div>
+            }
+
             <button appButton variant="primary" type="submit">Continue</button>
           </form>
         }
 
-        @case (1) {
+        @case (3) {
           <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-2">Photos</h2>
           <p class="text-sm text-muted mb-5">At least 3 photos. First photo becomes the listing card hero.</p>
           <app-upload-zone (filesAdded)="onFilesAdded($event)" />
@@ -147,8 +208,17 @@ const CATEGORY_OPTIONS: PillOption[] = [
           </div>
         }
 
-        @case (2) {
+        @case (4) {
           <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-2">Pricing</h2>
+          @if (showPowerStationNudge()) {
+            <app-alert tone="info" class="block mb-5">
+              Power stations rent best as part of an overlanding bundle. Standalone power station
+              rentals struggle to clear the rental ratio.
+              <a class="underline ml-1" routerLink="/dashboard/listings/bundle/new">
+                Bundle this with other gear
+              </a>.
+            </app-alert>
+          }
           <form [formGroup]="pricing" (ngSubmit)="advance()">
             <app-form-field
               label="Daily rate"
@@ -193,16 +263,27 @@ const CATEGORY_OPTIONS: PillOption[] = [
           </form>
         }
 
-        @case (3) {
+        @case (5) {
           <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-3">Review & publish</h2>
           <div class="border border-line bg-bone p-5 space-y-2 text-sm">
+            <p><strong>Vertical:</strong> {{ selectedVerticalLabel() || '—' }}</p>
+            <p><strong>Category:</strong> {{ selectedCategoryLabel() || '—' }}</p>
             <p><strong>Title:</strong> {{ basics.value.title }}</p>
-            <p><strong>Category:</strong> {{ categories().join(', ') || '—' }}</p>
             <p><strong>Pickup ZIP:</strong> {{ basics.value.zip }}</p>
             <p><strong>Condition:</strong> {{ condition() }}</p>
             <p><strong>Daily rate:</strong> {{ pricing.value.dailyRate ? '$' + pricing.value.dailyRate : '—' }}</p>
             <p><strong>Deposit:</strong> {{ pricing.value.deposit ? '$' + pricing.value.deposit : '—' }}</p>
             <p><strong>Cancellation:</strong> {{ pricing.value.cancellation }}</p>
+            @if (filledSpecs().length > 0) {
+              <div>
+                <p class="font-semibold mt-3">Specs</p>
+                <ul class="ml-4 list-disc">
+                  @for (spec of filledSpecs(); track spec.key) {
+                    <li>{{ spec.key }}: {{ spec.value }}</li>
+                  }
+                </ul>
+              </div>
+            }
           </div>
           <app-alert tone="warning" class="block mt-5">
             High-value listings (&gt; $2,500 MSRP) go through admin review before going live. Usually under 24 hours.
@@ -238,13 +319,15 @@ export class DashboardListingCreate {
 
   protected readonly steps = STEPS;
   protected readonly step = signal(0);
-  protected readonly categoryOptions = CATEGORY_OPTIONS;
-  protected readonly categories = signal<string[]>([]);
-  protected readonly condition = signal<Condition>('field-ready');
+  protected readonly verticalOptions = VERTICAL_OPTIONS;
+  protected readonly selectedVerticals = signal<string[]>([]);
+  protected readonly selectedCategories = signal<string[]>([]);
+  protected readonly condition = signal<Condition>('fieldReady');
   protected readonly submitting = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly photos = signal<{ name: string; url: string }[]>([]);
   protected readonly photoError = signal<string | null>(null);
+  protected readonly specValues = signal<Record<string, string>>({});
 
   protected readonly basics = this.fb.group({
     title: ['', Validators.required],
@@ -258,27 +341,101 @@ export class DashboardListingCreate {
     cancellation: 'moderate',
   });
 
-  protected readonly categoryError = computed(() =>
-    this.categoryTouched() && this.categories().length === 0 ? 'Pick at least one category.' : null,
-  );
+  private readonly verticalTouched = signal(false);
   private readonly categoryTouched = signal(false);
+
+  protected readonly selectedVertical = computed<Vertical | null>(() => {
+    const v = this.selectedVerticals()[0];
+    return (v as Vertical | undefined) ?? null;
+  });
+
+  protected readonly selectedCategory = computed<GearType | null>(() => {
+    const c = this.selectedCategories()[0];
+    return (c as GearType | undefined) ?? null;
+  });
+
+  protected readonly selectedVerticalLabel = computed(() => {
+    const v = this.selectedVertical();
+    return v ? verticalLabel(v) : '';
+  });
+
+  protected readonly selectedCategoryLabel = computed(() => {
+    const c = this.selectedCategory();
+    return c ? gearTypeLabel(c) : '';
+  });
+
+  protected readonly categoryOptions = computed<PillOption[]>(() => {
+    const v = this.selectedVertical();
+    if (!v) return [];
+    return VERTICAL_CATEGORY_MAP[v].map((g) => ({ value: g, label: gearTypeLabel(g) }));
+  });
+
+  protected readonly suggestedSpecKeys = computed<string[]>(() => {
+    const c = this.selectedCategory();
+    if (!c) return [];
+    return SUGGESTED_SPEC_KEYS[c] ?? [];
+  });
+
+  protected readonly verticalError = computed(() =>
+    this.verticalTouched() && !this.selectedVertical() ? 'Pick a vertical to continue.' : null,
+  );
+
+  protected readonly categoryError = computed(() =>
+    this.categoryTouched() && !this.selectedCategory() ? 'Pick a category to continue.' : null,
+  );
+
+  protected readonly showPowerStationNudge = computed(
+    () => this.selectedVertical() === 'powerStation',
+  );
+
+  protected readonly filledSpecs = computed(() => {
+    const values = this.specValues();
+    return Object.entries(values)
+      .filter(([, v]) => v.trim().length > 0)
+      .map(([key, value]) => ({ key, value: value.trim() }));
+  });
+
+  protected specValue(key: string): string {
+    return this.specValues()[key] ?? '';
+  }
+
+  protected onSpecInput(key: string, ev: Event): void {
+    const value = (ev.target as HTMLInputElement).value;
+    this.specValues.update((current) => ({ ...current, [key]: value }));
+  }
 
   protected advance(): void {
     if (this.step() === 0) {
-      if (this.basics.invalid || this.categories().length === 0) {
-        this.basics.markAllAsTouched();
+      if (!this.selectedVertical()) {
+        this.verticalTouched.set(true);
+        return;
+      }
+      // Reset category if it doesn't fit the selected vertical (e.g. user went
+      // back and changed the vertical).
+      const cat = this.selectedCategory();
+      const vertical = this.selectedVertical();
+      if (cat && vertical && !VERTICAL_CATEGORY_MAP[vertical].includes(cat)) {
+        this.selectedCategories.set([]);
+      }
+    }
+    if (this.step() === 1) {
+      if (!this.selectedCategory()) {
         this.categoryTouched.set(true);
         return;
       }
     }
-    if (this.step() === 1) {
+    if (this.step() === 2 && this.basics.invalid) {
+      this.basics.markAllAsTouched();
+      return;
+    }
+    if (this.step() === 3) {
       if (this.photos().length < 3) {
         this.photoError.set('At least 3 photos are required to publish.');
         return;
       }
       this.photoError.set(null);
     }
-    if (this.step() === 2 && this.pricing.invalid) {
+    if (this.step() === 4 && this.pricing.invalid) {
       this.pricing.markAllAsTouched();
       return;
     }
@@ -287,7 +444,6 @@ export class DashboardListingCreate {
 
   protected onFilesAdded(files: File[]): void {
     this.photoError.set(null);
-    // Local object-URL preview. Real Cloudinary upload happens at publish time.
     const next = files.map((f) => ({ name: f.name, url: URL.createObjectURL(f) }));
     this.photos.update((current) => [...current, ...next]);
   }
@@ -317,19 +473,17 @@ export class DashboardListingCreate {
     }
     if (this.photos().length < 3) {
       this.error.set('At least 3 photos are required to publish.');
-      this.step.set(1);
+      this.step.set(3);
       return;
     }
-    const gearTypeRaw = this.categories()[0] ?? 'optics';
-    const gearTypeMap: Record<string, GearType> = {
-      thermal: 'thermal',
-      'night-vision': 'night-vision',
-      optics: 'optics',
-      'tree-stand': 'tree-stand',
-      pack: 'pack',
-    };
-    const gearType = gearTypeMap[gearTypeRaw] ?? 'optics';
-    const gearTypeLabel = this.categoryOptions.find((c) => c.value === gearTypeRaw)?.label ?? 'Optics';
+    const vertical = this.selectedVertical();
+    const gearType = this.selectedCategory();
+    if (!vertical || !gearType) {
+      this.error.set('Pick a vertical and category before publishing.');
+      this.step.set(vertical ? 1 : 0);
+      return;
+    }
+
     const dailyRateCents = Math.round((this.pricing.value.dailyRate ?? 0) * 100);
     const depositCents = Math.round((this.pricing.value.deposit ?? 0) * 100);
     const cancellationPolicy = this.pricing.value.cancellation as 'flexible' | 'moderate' | 'strict';
@@ -338,14 +492,13 @@ export class DashboardListingCreate {
     this.submitting.set(true);
     this.error.set(null);
 
-    // Single create call now carries all the basics so we don't have an
-    // orphaned-draft window if the follow-up update fails.
     this.listings
       .create({
         title: this.basics.value.title!,
         description,
+        vertical,
         gearType,
-        gearTypeLabel,
+        gearTypeLabel: gearTypeLabel(gearType),
         condition: this.condition(),
         pickupZip: this.basics.value.zip!,
         dailyRateCents,
@@ -364,13 +517,18 @@ export class DashboardListingCreate {
           }));
           this.listings.addPhotos(draft.id, photosToAdd).subscribe({
             next: () => {
-              this.listings.publish(draft.id).subscribe({
-                next: () => this.router.navigateByUrl('/dashboard/listings'),
-                error: (e: { error?: { message?: string } }) => {
-                  this.error.set(e.error?.message ?? 'Could not publish listing.');
-                  this.submitting.set(false);
-                },
-              });
+              const specs = this.filledSpecs();
+              if (specs.length > 0) {
+                // Specs aren't yet exposed via a dedicated endpoint — fold them into
+                // the description as a fallback so the data isn't lost. Replace once
+                // POST /api/listings/{id}/specs ships.
+                const specBlock = specs.map((s) => `${s.key}: ${s.value}`).join('\n');
+                this.listings
+                  .update(draft.id, { description: `${description}\n\n${specBlock}` })
+                  .subscribe({ next: () => this.finalizePublish(draft.id), error: () => this.finalizePublish(draft.id) });
+              } else {
+                this.finalizePublish(draft.id);
+              }
             },
             error: (e: { error?: { message?: string } }) => {
               this.error.set(e.error?.message ?? 'Could not upload photos.');
@@ -383,5 +541,15 @@ export class DashboardListingCreate {
           this.submitting.set(false);
         },
       });
+  }
+
+  private finalizePublish(draftId: string): void {
+    this.listings.publish(draftId).subscribe({
+      next: () => this.router.navigateByUrl('/dashboard/listings'),
+      error: (e: { error?: { message?: string } }) => {
+        this.error.set(e.error?.message ?? 'Could not publish listing.');
+        this.submitting.set(false);
+      },
+    });
   }
 }

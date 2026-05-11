@@ -39,7 +39,10 @@ export interface CancelPreview {
 
 interface BackendBookingSummary {
   id: string;
-  status: number;
+  // Backend now serializes enums as camelCase strings via JsonStringEnumConverter.
+  // Kept as a wide type so the legacy int branch in mapSummary remains a no-op
+  // until any cached responses fully roll over.
+  status: BookingStatus | number;
   startDate: string;
   endDate: string;
   gearTitle: string;

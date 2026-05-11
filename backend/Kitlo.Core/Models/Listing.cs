@@ -10,8 +10,14 @@ public class Listing
     [Required, MaxLength(140)]
     public string Title { get; set; } = string.Empty;
 
+    public Vertical Vertical { get; set; }
+
     public GearType GearType { get; set; }
 
+    /// <summary>User-authored display text for the gear category. Kept alongside the enum
+    /// because listers sometimes phrase a category more naturally ("12V drawer fridge"
+    /// vs the enum's "Fridge12V"). Revisit removal once the UI can derive labels from
+    /// <see cref="GearType"/> alone.</summary>
     [Required, MaxLength(60)]
     public string GearTypeLabel { get; set; } = string.Empty;
 

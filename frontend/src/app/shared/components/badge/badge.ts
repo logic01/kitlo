@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-export type Condition = 'mint' | 'field-ready' | 'battle-scarred';
+export type Condition = 'mint' | 'fieldReady' | 'battleScarred';
 export type BadgeKind = 'verified' | 'condition' | 'gear-type';
 
 @Component({
@@ -21,8 +21,8 @@ export class Badge {
         this.label() ??
         ({
           mint: 'Mint',
-          'field-ready': 'Field-Ready',
-          'battle-scarred': 'Battle-Scarred',
+          fieldReady: 'Field-Ready',
+          battleScarred: 'Battle-Scarred',
         }[this.condition() ?? 'mint'])
       );
     }
@@ -40,8 +40,8 @@ export class Badge {
     const c = this.condition() ?? 'mint';
     const tone = {
       mint: 'text-mint bg-mint-pale border-mint-border',
-      'field-ready': 'text-olive bg-olive-pale border-olive-border',
-      'battle-scarred': 'text-battle bg-amber-pale border-[rgba(212,120,30,0.2)]',
+      fieldReady: 'text-olive bg-olive-pale border-olive-border',
+      battleScarred: 'text-battle bg-amber-pale border-[rgba(212,120,30,0.2)]',
     }[c];
     return `inline-block font-mono text-overline uppercase tracking-[0.08em] px-2 py-0.5 border ${tone}`;
   });
