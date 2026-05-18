@@ -70,61 +70,43 @@ Every transaction must clear these costs before it generates margin:
 | Chargeback / fraud reserve | ~0.5–1.0% of GMV | Industry-standard reserve for marketplace platforms. |
 | Cloudinary, hosting, tooling | ~1–2% of GMV early; declines with scale | Cloudinary tier escalates with image volume. Backend hosts on a single VPS in early phases. |
 | Customer support | $0–$80k/yr through Phase 1 | Founders cover support in Phase 1. First support hire mid-Phase 2. |
-| Marketing / CAC | Variable | Phase 1 relies on community-led growth (forums, hunting subreddits, in-person at gun shows / archery shops). |
+| **Concierge Supply Acquisition (Q3 SKUs)** | **~$5–10k direct + 80–120 founder hours over Phase 1** | Dedicated workstream for supply where renter demand is high but owner listing propensity is low — NV goggles, thermal rifle scopes, premium fly rods, sat communicators. See §"Concierge Supply Acquisition workstream" below. |
+| Marketing / CAC (Q1 organic supply + renter-side) | Variable; Phase 1 deliberately low | Community-led growth (ExpeditionPortal, HuntTalk, r/overlanding). Cold outreach to Q1 wedge SKU owners converts at near-zero CAC. |
 | Engineering / G&A | Founders' time through Phase 1 | First engineering hire upon clearing $25k MRR. |
 
 **Net margin at 10% take rate is roughly 6–7%** of GMV after Stripe and infrastructure — thin but viable when ops are kept lean.
 
+### Concierge Supply Acquisition workstream
+
+Per `docs/rental-demand-model.md` §6 (the LPS × RDS 2×2), a distinct class of SKUs sits in the **Q3 quadrant**: low listing propensity (LPS), high rental demand (RDS). Without intervention, these SKUs do not appear on the platform organically — and the night-optics flagship bundle (thermal-detect + NV-engage) depends on Q3 supply for the NV half. Treating Q3 as "founder time" inside marketing or ops obscures the fact that it is a separate workstream with its own playbook and budget.
+
+**Phase 1 Q3 targets (per `docs/geographic-liquidity-model.md`):**
+
+- Bozeman: ~7–8 seeded NV / scope listings (the Q3 half of the 15-listing optics open threshold)
+- San Antonio / Austin: ~7–8 seeded NV / scope listings (parallel)
+- Cross-metro: ~2–3 sat-communicator listings (nationwide-shippable single pool)
+- **Total Phase 1 seeded units: ~15–20**
+
+**Cost components:**
+
+| Component | Phase 1 budget | Notes |
+|---|---|---|
+| Lister incentives (first-month protection, white-glove photo, identity-tier insurance) | ~$200 × 15–20 units = $3–4k | Reimbursed to listers; not platform overhead. |
+| Manufacturer / dealer partnership outreach | ~$0–2k cash | Founder time dominates; possible co-marketing spend if a partnership closes. |
+| Guide / outfitter partnership outreach | ~$0–500 | Relationship + onboarding; cash cost minimal. |
+| Founder time | 80–120 hours over 6 months | Direct calls / DMs to high-end-gear-community members; ride-alongs at Overland Expo / hunting shows. |
+
+**Why this is its own line item:** generic marketing spend does not buy Q3 supply. A $1k Meta ad campaign targeting "NV scope owners" produces near-zero listings because the LPS-driving barriers (attachment, ITAR friction, deposit anxiety, $4k+ replacement cost) are not removed by impressions. They are removed by direct concierge handling — phone calls, custom protection terms, white-glove onboarding, manufacturer-co-signed trust. Phase 1 success depends on this workstream being staffed and budgeted as such, not absorbed into "marketing" or "ops". See `docs/marketing.md` §4.5 for the operational playbook.
+
 ## 6. Phase Modeling & Profit Targets
 
-### Phase 0: Two-market validation (overlanding + hunting optics)
+### Phase 0: Two-market supply-side validation (overlanding + hunting optics)
 
-Before committing engineering and capital to a multi-metro Phase 1 rollout, Kitlo runs **two parallel validations**, one per anchor vertical. The two verticals have different supply communities and different beachhead geographies — validating them together avoids over-fitting the platform to either.
+Before committing engineering and capital to a multi-metro Phase 1 rollout, Kitlo runs **two parallel paid-ad validations**, one per anchor vertical, to test the load-bearing supply-side assumption: that owners of $1k–$15k specialty gear will list it on a new platform. Demand is plausible by default and can be validated for free through forums and shop visits; supply is the actual business risk and merits a small paid spend.
 
-#### Phase 0a — Denver overlanding validation
+**Phase 0a — Denver overlanding validation.** $100 Meta ad campaign targeting RTT/fridge/dual-battery owners in the Denver/Boulder metro. Objective: supply-side waitlist signups.
 
-**Test bed:** Denver / Boulder, CO. Highest concentration of ExpeditionPortal-active overlanders per capita; gateway to high-elevation routes; affluent transplants who own RTTs, 12V fridges, and dual-battery setups that sit idle 60% of the year.
-
-**$100 Meta ad spend:**
-
-| Field | Value |
-|---|---|
-| Budget | $100 over 10 days ($10/day) |
-| Geo | Denver + Boulder + 30 mi radius |
-| Demographic | Men + women 28–50 |
-| Interest stack (AND) | ExpeditionPortal OR Overland Bound OR ARB OR iKamper OR Dometic OR Goose Gear + (Toyota 4Runner OR Tacoma OR Lexus GX OR Jeep Wrangler OR Land Cruiser) |
-| Objective | Leads (instant form) — supply-side waitlist |
-| Creative | Truck + RTT photo at trailhead. Headline: "Your iKamper sits in the garage 8 months a year." Subhead: "List it on Kitlo. Keep 95%. Denver overlanders launching first." CTA: "Get early access." |
-
-#### Phase 0b — Bozeman hunting optics validation
-
-**Test bed:** Bozeman, MT. Already wired in the existing codebase. The existing supply-side framing carries over verbatim:
-
-| Field | Value |
-|---|---|
-| Budget | $100 over 10 days ($10/day) |
-| Geo | Bozeman + 30 mi radius |
-| Demographic | Men 28–55 |
-| Interest stack (AND) | MeatEater + (Sitka OR Kuiu OR First Lite OR Stone Glacier OR Vortex Optics OR Pulsar) + OnX Hunt |
-| Objective | Leads (instant form) — supply-side waitlist |
-| Creative | Real tailgate/truck-bed photo of a thermal monocular. Headline: "Your $3,000 thermal sits in a closet 11 months a year." Subhead: "List it on Kitlo. Keep 95%. Bozeman hunters launching first." CTA: "Get early access." |
-
-**Why test the supply side, not the demand side:**
-Demand ("overlanders want to rent gear" / "hunters want to rent gear") is plausible by default and can be validated through forums (ExpeditionPortal, r/overlanding, HuntTalk, Predator Masters, Texas Hunting Forum) and shop visits at zero cost. Supply ("overlanders will lend their $4,000 RTT to a stranger" / "hunters will lend their $3,000 thermal to a stranger") is the actual business risk. The $100 per market buys signal on the harder question.
-
-**Decision criteria (per market):**
-
-| Outcome (10-day window) | Signal | Action |
-|---|---|---|
-| ≥ 10 email signups | Lister-side intent confirmed | Scale to $500 spend; begin onboarding waitlist into closed beta. |
-| 3–9 signups | Ambiguous | Rerun with renter-side framing; if still weak, revisit creative, not thesis. |
-| 0–2 signups | Targeting/creative likely broken | Diagnose; do not kill thesis on $100 of data. |
-
-**Parallel zero-cost validation (run alongside the ad tests):**
-
-- **Overlanding:** posts in ExpeditionPortal Vendor section (with permission), r/overlanding, r/CherokeeXJ, r/4Runner, Overland Bound forum asking "would you list/rent your kit?"
-- **Hunting optics:** posts in HuntTalk, Predator Masters, Texas Hunting Forum, RokSlide, ArcheryTalk.
-- **In person:** 3 visits each to overlanding outfitters (Adventure Wagons, RoamRig, local 4WD shops) and hunting/archery shops in the respective beachheads. RMEF/DU/ExpeditionPortal Big Thing event attendance where the timing fits.
+**Phase 0b — Bozeman hunting optics validation.** $100 Meta ad campaign targeting thermal/NV optics owners in the Bozeman metro. Objective: supply-side waitlist signups.
 
 **What Phase 0 informs:**
 
@@ -132,6 +114,8 @@ Demand ("overlanders want to rent gear" / "hunters want to rent gear") is plausi
 - Determines whether overlanding or optics is the stronger primary vertical to lead Phase 1 launch comms with.
 - Overlanding result determines the second overlanding metro (candidates: Seattle/Bellingham, Phoenix, Salt Lake City).
 - Optics result determines the second optics metro (candidates: San Antonio/Austin, Minneapolis).
+
+**Execution detail — ad specs, creative copy, targeting interest stacks, decision criteria per market, and the parallel zero-cost validation playbook (forums + in-person shop visits) — lives in `docs/marketing.md` §3.** This document owns the *strategic framing* (Phase 0 exists, what it validates, what it informs); marketing.md owns the *campaign execution*.
 
 ### Phase 1: $100k profit at 3 active metros
 
@@ -157,6 +141,34 @@ Conservative model for a launch sequenced as **Denver (overlanding anchor) + a s
 | **Profit** | **~$289,000** ✅ |
 
 The model clears the $100k profit target with substantial headroom. It still passes at half the volume (15K rentals @ $250 AOV) and at half the AOV ($125, ~hunting-only-equivalent) thanks to the take-rate scaling — Phase 2 fees (15%) recover the model if either lever lags.
+
+#### Open → mature trajectory (the 55 → 500 listing runway)
+
+The 500 listings/metro figure above is the **mature operations** target, not the launch threshold. Per `docs/geographic-liquidity-model.md` §4, the **minimum-viable density to open a metro to public marketing** is materially lower:
+
+| Milestone | Listings per metro | What it means |
+|---|---|---|
+| **Open** | ~55 (≈40 overlanding + ~15 night-optics) | Search-zero-results rate stays under 25% on top-10 queries; consumer marketing can turn on without producing a graveyard search experience. |
+| **Sustainable** | ~100 | Listing-publish-to-first-booking time medianizes under 45 days; active-listing churn drops under 30%/quarter. |
+| **Mature** | 500 (this section's model input) | The 27,000 annual rentals × $250 AOV × 10% take rate figure used above. |
+
+#### The 55 listings are not homogeneous — split by acquisition origin
+
+Per `docs/rental-demand-model.md` §6 (LPS × RDS 2×2) and `docs/geographic-liquidity-model.md` §5, the Open-threshold listing count needs to be **split by acquisition channel** because Q1 and Q3 supply require different cost structures and different workstreams:
+
+| Metro | Q1 organic (overlanding wedge) | Q1 organic (night-optics gateway) | Q3 concierge-recruited (NV / scope / sat-comm) | Total |
+|---|---|---|---|---|
+| **Denver / Boulder** (overlanding anchor) | ~40 (RTT softshell + hardshell, awning, 12V fridge, kitchen, dual-battery — community-pull) | n/a | n/a | ~40 |
+| **Second overlanding metro** (Phase 0a outcome) | ~30 organic + ~10 concierge | n/a | n/a | ~40 |
+| **Bozeman** (optics anchor) | n/a | ~7–8 organic handheld thermal + NV monocular | ~7–8 concierge NV goggles / thermal rifle scope / clip-ons | ~15 |
+| **San Antonio / Austin** (Phase 0b outcome) | n/a | ~7–8 organic handheld thermal + NV monocular | ~7–8 concierge NV goggles / thermal rifle scope / clip-ons | ~15 |
+| **Cross-metro pool** (shippable) | n/a | n/a | ~2–3 sat-communicators (single nationwide pool) | ~3 |
+
+Roughly **80% of Phase 1 Open-threshold listings come from organic Q1 outreach** (cold conversations with RTT and handheld thermal owners on ExpeditionPortal / HuntTalk — high response rate, near-zero CAC). The remaining ~20% requires the **Concierge Supply Acquisition workstream** defined in §5 above. Without the concierge work, Q3 supply does not appear, and the night-optics flagship bundle (thermal-detect + NV-engage) cannot exist on the platform — leaving Kitlo with thermal-only listings that compete head-to-head against UNV and Feral Texas.
+
+The implied runway is **6–12 months from "open" to "mature" per metro**, financed by the concierge-recruitment effort (~75 hand-recruited listings across the three Phase 1 metros) described in `docs/owner-segmentation.md`. The public-marketing gate is liquidity, not calendar time — turn on consumer acquisition only when a metro is past the Open threshold *and* the three detection signals (search-zero-results, time-to-first-booking, listing churn) have stayed in healthy bands for 30 consecutive days. See `docs/geographic-liquidity-model.md` §6 implication 4.
+
+This trajectory matters for cash modeling: Phase 1 contribution margin is back-loaded toward month 9–12 per metro, not linear from month 1. Earlier consumer-marketing spend buys disappointment, not bookings.
 
 ### Phase 4: $1M–$2M profit nationwide
 
@@ -205,7 +217,22 @@ Kitlo at 10% in Phase 1 is **the lowest combined take rate of any P2P rental mar
 | **Night Hunting Optics** | Ultimate Night Vision (B2C national mail-order), Feral Texas Outdoors (TX local + ships), ~10 other B2C, no P2P | **Strong** — no P2P competitor for either thermal or NV; bundle does not exist anywhere | Same-day local pickup; bundle (thermal-detect + NV-engage) as a single booking; community-native via HuntTalk / Predator Masters / Texas Hunting Forum. |
 | **Portable Power Stations** | Hygglo, FriendWithA, ShareGrid (all active US horizontal P2P) | **Standalone foreclosed; bundled gap is strong** | Rolled into overlanding bookings. Zero standalone marketing spend. Highest contribution margin in the portfolio. |
 | **Fly Fishing** | RentWaders.com (B2C national), Borrowed Fly (Denver/CO Springs B2C concierge), CastBack (P2P resale, not rental), gateway-town shops | **Partial** — gateway towns covered; non-destination rivers and riverbank delivery open | Owner-as-guide local intel; specialty rod weights; Trout Unlimited 300+ chapter sourcing. |
-| **Smokers & Pizza Ovens** | Hygglo (~4 listings), FriendWithA (sparse), regional B2C catering operators | **Strong** but supply-activation friction is high (BGE-owner reluctance) | Phase 2+ — re-evaluate after primary verticals show liquidity. |
+| **Smokers & Pizza Ovens** | Hygglo (~4 listings), FriendWithA (sparse), regional B2C catering operators | **Strong** but supply-activation friction is high (BGE-owner reluctance) | Phase 2+ — re-evaluate after primary verticals show liquidity. See `docs/smokers-pizza-vertical-rejection.md` for the consolidated rejection. |
+
+### Night-optics regional pooling — structural cost advantage
+
+Per `docs/geographic-liquidity-model.md` §2 and §6 implication 3, night optics has a property no other vertical shares: **renter pickup-radius willingness is 50–120 mi, and premium units are shippable via insured carrier**. Overlanding gear maxes out at ~60 mi (vehicle-fit constraints, en-route pickup) and is not practically shippable (RTTs and 12V fridges don't fit in a padded mailer).
+
+The consequence is geometric:
+
+| Vertical | Per-metro liquidity required | How many metros to cover Mountain West + Texas + Southeast |
+|---|---|---|
+| **Overlanding** | ~80 listings per metro at sustainable density; each metro serves its own 60-mi radius | 6–8 metros |
+| **Night optics** | ~30 listings in a regional pool (with shipping); one anchor metro serves a multi-state region | **2 anchor metros (Bozeman + San Antonio) cover Mountain West + Southwest + adjacent states** |
+
+**Implication for Phase 1 cost structure:** the night-optics vertical is structurally cheaper to scale than overlanding on a per-region basis. Bozeman serving WY/ID/eastern MT and San Antonio serving TX/OK/LA/AR/southern Southeast is feasible at the Phase 1 listing count (~30 active optics listings across the two metros + sat-communicator nationwide pool). Overlanding does not have this property — Denver does not serve Phoenix's renter base.
+
+This advantage feeds into the Phase 2 metro-expansion sequencing: optics expansion can run ahead of overlanding expansion because each new optics metro carries marginal supply cost, not full-stack supply cost. Plan optics Phase 2 metro additions (Minneapolis, Southeast anchor) before overlanding Phase 2 metro additions (Bend, Boise) for cost-efficient regional coverage.
 
 ## 8. What We Are NOT Charging For (Phase 1)
 

@@ -14,7 +14,7 @@ interface CategoryTile {
   selector: 'app-early-access',
   imports: [RouterLink, ReactiveFormsModule, Button, FormField, Input],
   template: `
-    <div class="bg-bone min-h-screen flex flex-col text-ink">
+    <div class="bg-bone min-h-screen flex flex-col text-ink w-full overflow-x-hidden">
       <header class="border-b border-line">
         <div
           class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) h-15 flex items-center justify-between"
@@ -33,28 +33,28 @@ interface CategoryTile {
         <!-- Hero -->
         <section class="border-b-2 border-slate">
           <div
-            class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-20 grid md:grid-cols-2 gap-12 items-center"
+            class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-12 md:py-20 grid md:grid-cols-2 gap-10 md:gap-12 items-center"
           >
-            <div>
+            <div class="min-w-0">
               <p
-                class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-7 pb-3.5 border-b border-line"
-              >Early access — coming soon</p>
-              <h1 class="font-condensed font-black text-hero uppercase text-slate leading-[0.95]">
-                Rooftop tents, fridges, recovery, optics, and waders
-                <span class="text-olive"> from overlanders near you.</span>
+                class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-6 pb-3.5 border-b border-line"
+              >Peer-to-peer overland gear rental · Early access</p>
+              <h1 class="font-condensed font-black uppercase text-slate leading-[0.95] tracking-[-0.005em] break-words text-[clamp(34px,8.5vw,104px)]">
+                Rent overland gear
+                <span class="text-olive">from the people who own it.</span>
               </h1>
               <p class="text-body-lg text-muted mt-7 max-w-md">
-                Build the rig for one trip without buying it. No commitment. Coming soon to your zip code.
+                A peer-to-peer marketplace. Owners list rooftop tents, 12V fridges, recovery, optics, and waders when their kit is sitting idle. You book it for a trip and return it when you're back.
               </p>
-              <div class="mt-10 flex flex-wrap gap-3">
-                <button appButton size="lg" condensed type="button" (click)="scrollToForm()">
+              <div class="mt-8 md:mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+                <button appButton size="lg" condensed type="button" class="w-full sm:w-auto" (click)="scrollToForm()">
                   Join the waitlist
                 </button>
-                <a appButton variant="ghost" size="lg" href="#how">How it works</a>
+                <a appButton variant="ghost" size="lg" href="#how" class="w-full sm:w-auto">How it works</a>
               </div>
             </div>
 
-            <div id="waitlist" #formAnchor class="bg-surface border border-line p-8 md:p-10">
+            <div id="waitlist" #formAnchor class="bg-surface border border-line p-6 sm:p-8 md:p-10 min-w-0 relative">
               @if (submitted()) {
                 <div class="text-center py-6">
                   <p
@@ -153,7 +153,7 @@ interface CategoryTile {
                   </label>
 
                   <!-- Honeypot. Real users never fill this; bots usually do. -->
-                  <div class="absolute -left-[10000px] w-px h-px overflow-hidden" aria-hidden="true">
+                  <div class="sr-only" aria-hidden="true">
                     <label for="hp_company">Company</label>
                     <input
                       id="hp_company"
@@ -188,16 +188,45 @@ interface CategoryTile {
           </div>
         </section>
 
+        <!-- How it works -->
+        <section id="how" class="border-b border-line">
+          <div class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-16 md:py-20">
+            <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">How Kitlo works</p>
+            <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-3 max-w-2xl">
+              Three steps from couch to campsite.
+            </h2>
+            <p class="text-body text-muted max-w-2xl mb-10">
+              Kitlo connects people with gear sitting idle to people who need it for a trip. No big-box rental counter, no shipping. You meet a verified overlander in your area, take the kit, and bring it back.
+            </p>
+            <ol class="grid md:grid-cols-3 gap-6">
+              @for (step of howItWorks; track step.title; let i = $index) {
+                <li class="border border-line p-6 bg-surface relative">
+                  <span
+                    class="font-mono text-overline text-amber tracking-[0.10em] uppercase block mb-2"
+                  >Step {{ i + 1 }}</span>
+                  <h3
+                    class="font-condensed text-h4 font-extrabold uppercase text-slate tracking-[0.04em] mb-2"
+                  >{{ step.title }}</h3>
+                  <p class="text-sm text-muted leading-relaxed">{{ step.body }}</p>
+                </li>
+              }
+            </ol>
+            <p class="font-mono text-xs uppercase tracking-[0.10em] text-muted mt-8">
+              Own gear? <a class="text-slate underline underline-offset-2 hover:text-olive" href="#listers">List it and earn when it's idle ↓</a>
+            </p>
+          </div>
+        </section>
+
         <!-- Categories -->
-        <section id="how" class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-16">
-          <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">The catalogue</p>
-          <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-3">
-            Overlanding, optics, power, and waders
+        <section class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-16">
+          <p class="font-mono text-overline text-muted tracking-[0.10em] uppercase mb-3">What you can rent</p>
+          <h2 class="font-condensed text-h2 font-extrabold uppercase text-slate mb-3 max-w-2xl">
+            High-value gear, sitting idle most of the year.
           </h2>
           <p class="text-body text-muted max-w-2xl mb-10">
-            Kitlo focuses on high-value gear that sits idle most of the year. Camping and overlanding is the anchor;
-            hunting optics, fly fishing, and portable power layer in for the trips overlanders take. No firearms,
-            no bows — Kitlo never moves a weapon. Optics that mount to your own rifle are welcome.
+            Camping and overlanding is the anchor; hunting optics, fly fishing, and portable power layer in for the
+            trips overlanders take. No firearms, no bows — Kitlo never moves a weapon. Optics that mount to your own
+            rifle are welcome.
           </p>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @for (cat of categories; track cat.label) {
@@ -235,16 +264,16 @@ interface CategoryTile {
         </section>
 
         <!-- Lenders -->
-        <section class="bg-slate">
+        <section id="listers" class="bg-slate">
           <div
-            class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-16 grid md:grid-cols-2 gap-12 items-center"
+            class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-14 md:py-16 grid md:grid-cols-2 gap-10 md:gap-12 items-center"
           >
-            <div>
+            <div class="min-w-0">
               <p
                 class="font-mono text-overline text-amber tracking-[0.10em] uppercase mb-4"
               >For listers</p>
               <h2
-                class="font-condensed text-[48px] font-black uppercase text-on-dark leading-tight tracking-[0.01em]"
+                class="font-condensed text-[clamp(34px,6vw,48px)] font-black uppercase text-on-dark leading-[1.05] tracking-[0.01em] break-words"
               >Want to earn money renting out your gear?</h2>
               <p class="text-body-lg text-on-dark-muted leading-relaxed mt-4">
                 Average booking value: <span class="text-on-dark font-medium">$400–$900</span>
@@ -258,6 +287,7 @@ interface CategoryTile {
                 size="lg"
                 condensed
                 type="button"
+                class="w-full sm:w-auto"
                 (click)="scrollToFormAsLister()"
               >List your gear</button>
             </div>
@@ -267,9 +297,9 @@ interface CategoryTile {
         <!-- Final CTA -->
         <section class="border-t-2 border-slate">
           <div
-            class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-20 text-center"
+            class="mx-auto max-w-(--kitlo-max-width) px-(--kitlo-page-gutter) py-16 md:py-20 text-center"
           >
-            <h2 class="font-condensed text-hero font-black uppercase text-slate leading-[0.95]">
+            <h2 class="font-condensed font-black uppercase text-slate leading-[0.95] tracking-[-0.005em] break-words text-[clamp(40px,9vw,104px)]">
               Get on the list.
               <span class="block text-olive">Be first to book.</span>
             </h2>
@@ -325,6 +355,21 @@ export class EarlyAccess {
     { label: 'Hunting optics', body: 'Thermal monoculars, NV scopes, clip-ons, spotting scopes — bundle thermal+NV.' },
     { label: 'Portable power', body: 'Power stations and solar — pairs with overlanding rigs and basecamps.' },
     { label: 'Fly fishing', body: 'Waders, wading boots, rod-and-reel setups, specialty Spey/Switch weights.' },
+  ];
+
+  protected readonly howItWorks = [
+    {
+      title: 'Browse listings nearby',
+      body: 'Search your zip for gear from local overlanders. See photos, condition, daily rate, and reviews from past renters before you book.',
+    },
+    {
+      title: 'Book your trip dates',
+      body: 'Pay through Kitlo when you book. Funds sit in escrow until both sides confirm the return — no cash exchanged in person.',
+    },
+    {
+      title: 'Pick up, head out, return',
+      body: 'Meet the owner at a local handoff, take the kit on your trip, and return it on the agreed date. Both parties leave a review.',
+    },
   ];
 
   protected readonly trust = [

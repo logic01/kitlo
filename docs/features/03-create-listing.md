@@ -51,6 +51,50 @@ Subcategory selection narrows the spec fields shown in Step 3.
 - **MSRP** (required — drives deposit calculation and admin review threshold)
 - Serial number (optional — lister's records only, not public)
 
+### Step 2.5 — Bundle-attachment check (Q2 Ghost SKUs)
+
+Triggered when the subcategory selected in Step 2 appears on the **Bundle-Required SKU list** in `docs/gear-catalogue.md` §"Bundle-Required SKUs (Q2 Ghost Listings)". The list is derived from the LPS × RDS 2×2 in `docs/rental-demand-model.md` §6 — these are SKUs with high listing propensity but low standalone booking demand. Standalone listings of these SKUs sit unrented and damage marketplace UX; this step enforces parent-bundle attachment before the form will publish.
+
+**Affected subcategories (canonical list — keep synced with `gear-catalogue.md`):**
+
+- *Overlanding:* Air compressor · Awning (270°/180°/standard) · 12V fridge · Recovery board set · Camp kitchen / chuck box · Premium 2-burner stove · Annex / changing room · Ground tent (4-season, premium)
+- *Power Station:* Medium power station (500–1,000Wh) · Portable solar panel
+- *Fly Fishing:* Wading boots (rubber sole) · Wading boots (felt sole) · Mid-range fly rod + reel
+- *Hunting Support:* Ground blind
+
+**Flow:**
+
+1. **Detect Q2 Ghost subcategory.** When the lister picks a subcategory on the canonical list, the form pivots into bundle-attachment mode before showing Step 3 specs.
+
+2. **Surface eligible parent bundles owned by the lister.** Query the lister's existing Active listings for an eligible parent per the catalogue's "Required parent bundle" column. Examples:
+   - Air compressor → Trailhead expedition bundle
+   - Awning → Weekend overland or RTT parent
+   - Wading boots → Fly fishing destination kit (wader parent)
+   - Portable solar panel → Power station parent
+   - Mid-range fly rod → Fly fishing destination kit
+   - Ground blind → Hunting optics bundle
+
+3. **Two paths from here:**
+
+   - **(a) Eligible parent exists.** Show "Attach to existing bundle: [parent name]" with one-click attach. Lister can preview the bundle composition and adjust before continuing to Step 3. After attach, the new SKU is created as an Active listing in standalone form *and* added as a component to the bundle.
+
+   - **(b) No eligible parent.** Show "Bundle required: this SKU rents 3× more often as part of a [parent bundle type]. Create the parent listing first, or attach to one of your existing listings:" with two CTAs:
+     1. **Create parent first** — saves the current draft, redirects to a new create-listing flow for the parent SKU. The Q2 draft resumes after the parent is published.
+     2. **Continue as standalone** — disabled by default. Only enabled when the metro override applies (see §"Metro overrides" below).
+
+4. **Block standalone publish for Q2 Ghost SKUs unless override applies.** The publish button (Step 10) is gated on either (i) bundle attachment confirmed, or (ii) a metro override flag from ops.
+
+**Metro overrides (ops-managed):**
+
+Two overrides exist, both narrow:
+
+- **Deep-density metro override** — applies to 12V fridge only, in metros that have cleared the ≥80 active overlanding listings threshold per `docs/geographic-liquidity-model.md` §4. Ops manages the metro list; when a metro qualifies, the override flag turns on automatically and standalone 12V fridge listings unlock. When the metro falls below threshold (per geographic-liquidity-model.md §6 implication 4 detection signals: search-zero-results >25%, listing-publish-to-first-booking >45 days, or active-listing churn >30%/quarter), the override auto-revokes and new standalone fridge listings are blocked.
+- **TU-partner override** — applies to wading boots (rubber sole) only, in metros with active Trout Unlimited chapter partnerships per `docs/owner-segmentation.md`. Felt-sole boots are *not* eligible for this override — they always require parent attachment because of the cross-state decontamination protocol.
+
+**Why this exists.** Without enforcement, a side-hustler with a closet full of low-RDS gear (air compressors, wading boots, recovery boards) will create six standalone listings, all of which sit unrented, and the lister churns out within 90 days. The bundle-required policy converts that scenario into one parent bundle + five high-RDS attachments that actually book. See `docs/rental-demand-model.md` §7 implication 2 for the strategic framing.
+
+---
+
 ### Step 3 — Specs (vertical + category specific)
 
 *Overlanding — Rooftop tent / awning:*
@@ -185,6 +229,9 @@ After selecting condition, text field: "Notes for renters" — describe specific
 
 | Scenario | Handling |
 |---|---|
+| Lister picks a Q2 Ghost subcategory but owns no eligible parent | Step 2.5 disables "Continue as standalone" unless metro override applies. Two CTAs: create parent first, or attach to existing listing. |
+| Lister tries to bypass Step 2.5 by submitting a Q2 Ghost SKU without parent | Publish button stays disabled at Step 10; tooltip explains bundle requirement and links to catalogue policy |
+| Metro override revokes mid-draft (deep-density metro falls below liquidity threshold) | Draft is preserved; on resume, Step 2.5 re-evaluates and now requires bundle attachment. Lister is notified inline. |
 | Lister submits < 3 photos | Cannot proceed to publish; prompt to add more |
 | Lister claims Mint condition but uploads photos showing heavy wear | Cannot auto-detect; relies on renter reporting and community flagging post-rental |
 | MSRP entered as $0 or suspiciously low | Warning prompt: "MSRP affects deposit amount — are you sure?" |
@@ -207,7 +254,7 @@ After selecting condition, text field: "Notes for renters" — describe specific
 
 ## UI Notes
 
-- Step progress bar across top: "Step 3 of 10"
+- Step progress bar across top: "Step 3 of 10" (Step 2.5 only shown when a Q2 Ghost subcategory is selected; renders as a sub-step within Step 2's progress segment, not its own pill)
 - Each step is a distinct screen on mobile; single long form on desktop with section anchors
 - Pricing reference panel is collapsible — show it by default but don't force it
 - Condition tooltip uses the exact brand language: Mint / Field-Ready / Battle-Scarred
@@ -219,9 +266,10 @@ After selecting condition, text field: "Notes for renters" — describe specific
 
 ## Dependent Features
 
-- **22-bundle-listing** — if "Bundle" category selected, see that workflow
+- **22-bundle-listing** — if "Bundle" category selected, see that workflow. Also referenced from Step 2.5 when a Q2 Ghost SKU triggers the "Create parent first" path.
 - **18-admin-listing-review** — triggered if MSRP ≥ $5,000
 - **04-manage-listings** — all editing post-publish handled there
+- **23-category-listing-rules** — defines Q2 Ghost SKU list and metro override flags; Step 2.5 reads from this source
 
 ---
 
